@@ -69,7 +69,7 @@ git clone https://github.com/yourusername/ai-alerting-system.git
 cd ai-alerting-system
 ```
 
-### Step 2: Install Python dependencies
+### Step 2: Install Python dependencies(if you choose **Manual Installation**, without using **Docker** or **Docker Compose**)
 Install the required Python libraries using pip:
 
 ```bash
