@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  prometheus-grafana:
+    build:
+      context: ./prometheus-grafana
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"   # Prometheus
+      - "3000:3000"   # Grafana
+    volumes:
+      - ./prometheus-grafana/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  python-app:
+    build:
+      context: ./my-app
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"   # Python app (Prometheus metrics)
+    depends_on:
+      - prometheus-grafana

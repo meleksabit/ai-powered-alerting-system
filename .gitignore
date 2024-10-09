@@ -11,8 +11,6 @@ venv/
 *.log
 
 # Ignore Docker-related files
-Dockerfile
-docker-compose.yml
 *.dockerignore
 *.env
 
