@@ -1,0 +1,5 @@
+# prometheus.yml
+scrape_configs:
+  - job_name: 'python_logging'
+    static_configs:
+      - targets: ['localhost:8000']

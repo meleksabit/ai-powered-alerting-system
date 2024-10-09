@@ -1,0 +1,31 @@
+# Ignore Python build artifacts
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore virtual environment
+venv/
+*.egg-info/
+
+# Ignore log files
+*.log
+
+# Ignore Docker-related files
+Dockerfile
+docker-compose.yml
+*.dockerignore
+*.env
+
+# Ignore generated files
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*.log
+*.DS_Store
+
+# Ignore IDE-specific files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
