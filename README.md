@@ -87,8 +87,8 @@ Run the following command to start the services:
 ```bash
 docker-compose up --build
 ```
-* **`docker-compose up`**: Starts the services based on the docker-compose.yml file.
-* **`--build`**: Forces Docker to rebuild the images even if nothing has changed. You can skip --build for subsequent runs if no changes are made to the Dockerfiles or dependencies.
+* **`docker-compose up`**: Starts the services based on the **`docker-compose.yml`** file.
+* **`--build`**: Forces Docker to rebuild the images even if nothing has changed. You can skip **`docker-compose up`** --build for subsequent runs if no changes are made to the Dockerfiles or dependencies.
 
 The services will be available at:
 
