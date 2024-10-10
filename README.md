@@ -65,8 +65,8 @@ Here’s the structure of the project:
 
 ### Step 1: Clone the repository
 ```bash
-git clone https://github.com/yourusername/ai-alerting-system.git
-cd ai-alerting-system
+git clone https://github.com/meleksabit/ai-powered-alerting-system.git
+cd ai-powered-alerting-system
 ```
 
 ### Step 2: Install Python dependencies(if you choose **Manual Installation**, without using **Docker** or **Docker Compose**)
