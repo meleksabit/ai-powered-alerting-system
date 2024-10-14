@@ -1,5 +1,5 @@
 # Use a lighter Python image for better performance
-FROM python:3.9-slim-buster
+FROM python:3.11-slim-buster
 
 # Set the working directory
 WORKDIR /my-app
@@ -8,7 +8,7 @@ WORKDIR /my-app
 COPY requirements.txt /my-app/requirements.txt
 
 # Install dependencies
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Now copy the application code
 COPY app.py /my-app/app.py

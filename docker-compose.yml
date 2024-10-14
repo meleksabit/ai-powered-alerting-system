@@ -1,20 +1,38 @@
-version: '3.8'
 services:
-  prometheus-grafana:
+  # Prometheus
+  prometheus:
+    image: cgr.dev/chainguard/prometheus:latest
+    volumes:
+      - ./prometheus-grafana/prometheus.yml:/etc/prometheus/prometheus.yml  # Mount the config file
+      - /home/angel3/data/:/etc/prometheus/data  # Use a Docker volume for data storage
+    user: "65534"  # Set Prometheus to run as nobody
+    ports:
+      - "9090:9090"  # Expose port 9090 on the host to port 9090 in the container
+    entrypoint:
+      - /usr/bin/prometheus
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/etc/prometheus/data
+    restart: unless-stopped
+
+  # Grafana
+  grafana:
     build:
       context: ./prometheus-grafana
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.grafana
     ports:
-      - "9090:9090"   # Prometheus
-      - "3000:3000"   # Grafana
-    volumes:
-      - ./prometheus-grafana/prometheus.yml:/etc/prometheus/prometheus.yml
+      - "3000:3000"  # Expose port 3000 for Grafana
+    restart: unless-stopped
 
+  # Python app
   python-app:
     build:
       context: ./my-app
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.app
     ports:
-      - "8000:8000"   # Python app (Prometheus metrics)
+      - "8000:8000"  # Expose port 8000 for the Python app
     depends_on:
-      - prometheus-grafana
+      - prometheus
+      - grafana
+
+volumes:
+  prometheus_data:  # Define the volume for Prometheus data storage

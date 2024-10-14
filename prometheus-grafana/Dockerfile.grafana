@@ -1,0 +1,11 @@
+# Use Chainguard's secure Grafana image
+FROM cgr.dev/chainguard/grafana:latest
+
+# Set environment variables if needed
+ENV GF_SECURITY_ADMIN_PASSWORD=admin
+
+# Expose Grafana port
+EXPOSE 3000
+
+# Set the default command
+CMD ["grafana-server", "--homepath=/usr/share/grafana", "--config=/etc/grafana/grafana.ini"]
