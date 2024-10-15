@@ -1,0 +1,11 @@
+groups:
+  - name: critical_alert_rules
+    rules:
+      - alert: CriticalLogAlert
+        expr: log_severity{level="critical"} > 0
+        for: 1m
+        labels:
+          severity: "critical"
+        annotations:
+          summary: "Critical log detected"
+          description: "A critical log event was detected in the AI-powered alerting system."

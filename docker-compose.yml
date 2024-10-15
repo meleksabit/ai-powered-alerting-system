@@ -4,6 +4,7 @@ services:
     image: cgr.dev/chainguard/prometheus:latest
     volumes:
       - ./prometheus-grafana/prometheus.yml:/etc/prometheus/prometheus.yml  # Mount the config file
+      - ./prometheus-grafana/alert_rules.yml:/etc/prometheus/alert_rules.yml  # Mount the rule file
       - /home/angel3/data/:/etc/prometheus/data  # Use a Docker volume for data storage
     user: "65534"  # Set Prometheus to run as nobody
     ports:
@@ -29,7 +30,8 @@ services:
       context: ./my-app
       dockerfile: Dockerfile.app
     ports:
-      - "8000:8000"  # Expose port 8000 for the Python app
+      - "5000:5000"  # Expose port 5000 for the Python app
+    restart: unless-stopped
     depends_on:
       - prometheus
       - grafana
