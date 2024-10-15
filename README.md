@@ -40,8 +40,8 @@ You'll also need to install the following Python libraries:
 
 - **transformers**: For Hugging Face BERT model.
 - **prometheus-client**: For exposing log metrics to Prometheus.
-- **torch**
-- **flask**
+- **torch**: The PyTorch library is used to run the Hugging Face BERT model. It provides an efficient and flexible way to run the model and classify log events.
+- **flask**: The Flask web framework is used to expose a simple web API for the AI-powered alerting system. The API allows you to send log messages to be classified and trigger alerts if needed.
 - **requests**: For sending Slack notifications (optional).
 - **smtplib**: For sending email notifications (optional).
 
