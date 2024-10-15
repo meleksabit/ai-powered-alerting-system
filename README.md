@@ -307,7 +307,7 @@ Example log classifications:
 ```bash
 curl http://localhost:5000/log/User%20logged%20in%20successfully
 ```
-2. **Test Log 2**: Classifying an SQL injection attempt as ***"not critical"***:
+2. **Test Log 2**: Classifying an SQL injection attempt as ***"critical"***:
 ```bash
 curl http://localhost:5000/log/SQL%20injection%20attempt%20detected%20in%20API
 ```
