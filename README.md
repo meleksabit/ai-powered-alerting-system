@@ -318,12 +318,13 @@ curl http://localhost:5000/log/Critical%20vulnerability%20found%20in%20package%2
 
 Each of these log messages will be classified by the AI-powered system, and the classification will be reflected in the Prometheus metrics.
 
-The Python app automatically updates the Prometheus metric log_severity with the corresponding severity label (critical or not_critical), which Prometheus will scrape.
+The Python app automatically updates the Prometheus metric **`log_severity`** with the corresponding severity label (critical or not_critical), which Prometheus will scrape.
 
 ### Step 9: Set Up Grafana for Alerts
 You can now set up Grafana to visualize and alert based on the **`log_severity`** metrics.
 
 1. **Open Grafana**: Access Grafana by navigating to **`http://localhost:3000`** in your browser.
+
 2. **Add Data Source**: Add Prometheus as the data source in Grafana:
 
 * Name: Prometheus
