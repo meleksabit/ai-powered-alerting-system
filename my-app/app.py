@@ -1,17 +1,11 @@
-from transformers import pipeline
+from flask import Flask, send_from_directory, Response
 from prometheus_client import Counter, start_http_server, generate_latest
-from flask import Flask, Response
+from transformers import pipeline
 import logging
 import os
 
 # Load Hugging Face's BERT model (sentiment analysis as a placeholder)
 classifier = pipeline("text-classification", model="distilbert-base-uncased-finetuned-sst-2-english")
-
-# Initialize Flask app
-app = Flask(__name__)
-
-# Prometheus Counter for log severity metrics
-log_severity = Counter('log_severity', 'Log severity levels classified by BERT', ['severity'])
 
 def classify_log_event(log_message):
     """
