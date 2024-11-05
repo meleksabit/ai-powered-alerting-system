@@ -20,7 +20,7 @@ scrape_configs:
     static_configs:
       - targets: ["localhost:9090"]
 
-  # Scrape metrics from the Python AI-powered alerting app
+  # Scrape metrics from the Python AI-powered alerting app (now on port 8000)
   - job_name: "ai-powered-alerting-app"
     static_configs:
-      - targets: ["python-app:5000"]  # Your Python app exposing metrics on port 5000
+      - targets: ["python-app:8000"]  # Python app exposing metrics on port 8000
