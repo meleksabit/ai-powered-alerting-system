@@ -1,49 +1,61 @@
-from flask import Flask, send_from_directory, Response
-from prometheus_client import Counter, start_http_server, generate_latest
-from transformers import pipeline
 import logging
+from prometheus_client import start_http_server, Counter, generate_latest
+from flask import Flask, send_from_directory, Response
+from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
 import os
 
-# Load Hugging Face's BERT model (sentiment analysis as a placeholder)
-classifier = pipeline("text-classification", model="distilbert-base-uncased-finetuned-sst-2-english")
+# Enable logging
+logging.basicConfig(level=logging.INFO)
+
+# Initialize Flask app
+app = Flask(__name__)
+
+# Define a Prometheus Counter to track the severity of logs
+log_severity = Counter('log_severity', 'Count of log severities', ['severity'])
+
+# Variables to hold the model and tokenizer, initialized as None
+model = None
+tokenizer = None
+classifier = None
+
+def lazy_load_model():
+    """Lazy load the model and tokenizer for text classification."""
+    global model, tokenizer, classifier
+    if model is None or tokenizer is None or classifier is None:
+        logging.info("Loading model and tokenizer lazily...")
+        tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
+        model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
+        classifier = pipeline("text-classification", model=model, tokenizer=tokenizer)
+        logging.info("Model and tokenizer loaded.")
 
 def classify_log_event(log_message):
     """
-    Classify log messages based on Hugging Face BERT model sentiment analysis.
-    We will map positive sentiment to 'not critical' and negative sentiment to 'critical'.
+    Classify log messages using Hugging Face DistilBERT model for sentiment analysis.
+    Lazily loads the model and tokenizer if they are not already loaded.
     """
+    lazy_load_model()
+
     result = classifier(log_message)
-    
-    # If the sentiment is POSITIVE, we treat the log as 'not critical'
+
+    # Determine severity based on sentiment
     if result[0]['label'] == 'POSITIVE':
         severity = 'not_critical'
-    # If the sentiment is NEGATIVE, we treat the log as 'critical'
     else:
         severity = 'critical'
 
-    # Update Prometheus metric
     log_severity.labels(severity=severity).inc()
 
-    # Log the result for visibility
     logging.info(f"Classified log '{log_message}' as {severity}")
     return severity
 
-# Root route
 @app.route('/')
 def home():
     return "AI-Powered Alerting System is running."
 
-# Serve favicon
 @app.route('/favicon.ico')
 def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico')    
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico')
 
-# Route to expose metrics to Prometheus
-@app.route('/metrics')
-def metrics():
-    return Response(generate_latest(), mimetype='text/plain')
-
-# Route to classify a log message
 @app.route('/log/<message>')
 def log_message(message):
     severity = classify_log_event(message)
@@ -51,6 +63,7 @@ def log_message(message):
 
 if __name__ == '__main__':
     # Start Prometheus metrics server on port 8000
+    logging.info("Starting Prometheus metrics server on port 8000...")
     start_http_server(8000)
     
     # Run the Flask app on port 5000

@@ -1,53 +1,72 @@
+<a name="top"></a>
 # $\color{SeaGreen}{AI-Powered\ Alerting\ System:}$ $\color{OrangeRed}{Critical\ Alerts\ Only}$
 
-This repository implements an AI-powered alerting system that uses a **Hugging Face BERT model** to classify and prioritize log alerts based on severity, specifically notifying only for **critical alerts**. The system integrates with **Prometheus** for metrics collection and **Grafana** for visualization and alerting, and is built with **Python** for log processing.
+![alt text](Prometheus_Grafana_Python_Hugging_Face.png)
+ 
+## This repository implements an AI-powered alerting system that uses a **Hugging Face BERT model** to classify and prioritize log alerts based on severity, specifically notifying only for **critical alerts**. The system integrates with **Prometheus** for metrics collection and **Grafana** for visualization and alerting, and is built with **Python** for log processing.
 
 ## Table of Contents
-- [Introduction](#introduction)
-- [Prerequisites](#prerequisites)
-- [Project Structure](#project-structure)
-- [Installation](#installation)
-- [Docker-Related Files](#docker-related-files)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [Testing and Alerts](#testing-and-alerts)
-- [Prometheus and Grafana Setup](#prometheus-and-grafana-setup)
-- [Demo](#demo)
+- [Introduction](#📢introduction)
+- [Features](#🚀features)
+- [Prerequisites](#📜prerequisites)
+- [Project Structure](#🏗️project-structure)
+- [Installation](#🧑‍🔧installation)
+- [Docker-Related Files](#🐋docker-related-files)
+- [Configuration](#🛠️configuration)
+- [Usage](#⚡usage)
+- [Testing and Alerts](#📝testing-and-alerts)
+- [Prometheus and Grafana Setup](#🔥🔅prometheus-and-grafana-setup)
+- [Demo](#💡demo)
+- [Additional Improvements](#➕📶🔝🆙additional-improvements)
+  - [Kubernetes Deployment](#☸️kubernetes-deployment)
 
-## Introduction
+## 📢Introduction
 
 This project demonstrates how to classify log events using **Hugging Face's BERT model** to filter critical log messages and trigger alerts only when critical issues arise. **Prometheus** is used to scrape the log metrics, and **Grafana** is used for visualization and alert notifications. This approach reduces noise by ensuring that only critical logs are flagged and alerted.
 
-### Core Components:
-- **Hugging Face BERT Model**: Classifies logs based on severity.
-- **Python Logging**: For generating log events.
-- **Prometheus**: Collects log metrics for monitoring.
-- **Grafana**: Visualizes log metrics and triggers alerts for critical events.
+## 🚀Features:
+* **`AI-Based Log Classification`**: Uses machine learning to classify log messages based on severity.
+* **`Critical Alerts`**: Alerts are triggered only for critical logs, reducing noise and improving response time.
+* **`Prometheus & Grafana Integration`**: Real-time metrics collection and visualization.
+* **`Production-Ready Deployment`**: Now uses **Gunicorn** to run the Flask app in a production environment.
+* **`Kubernetes Support`**: Kubernetes manifests for deploying the system in a scalable environment.
+* **`Lazy Loading`**: The system optimizes resource usage with lazy loading of machine learning models.
 
-## Prerequisites
+## 📜Prerequisites
 
 Before starting, make sure you have the following tools installed:
 
-- **Python 3.8+**: The application is built using Python.
-- **Prometheus**: For metrics collection.
-- **Grafana**: For data visualization and alerting.
-- **Docker** (Optional but recommended): To run Prometheus and Grafana easily.
-- **Pip**: For managing Python packages.
+* **Python 3.8+**: The application is built using Python.
+* **Prometheus**: For metrics collection. Prometheus will scrape metrics from the Python app.
+* **Grafana**: For data visualization and alerting. Grafana is used to monitor log metrics from Prometheus.
+* **Gunicorn**: For running the Python app in a production environment. It replaces the Flask development server.
+* **Docker** (Optional but recommended): Simplifies the setup for Prometheus, Grafana, and the Python app, and is useful for running the services in containers.
+* **Kubernetes** (Optional): If you plan to deploy the app in a Kubernetes cluster, ensure you have a working Kubernetes environment.
+* **Pip**: For managing Python packages and installing dependencies.
+* **Pipenv** (Optional): For virtual environment and dependency management, if you prefer using Pipenv over pip.
 
-### Python Dependencies
+### 🐍Python Dependencies
 
-You'll also need to install the following Python libraries:
+You'll need to install the following Python libraries:
 
-- **transformers**: For Hugging Face BERT model.
+- **transformers**: For Hugging Face's BERT model, which is used to classify log events based on their content.
 - **prometheus-client**: For exposing log metrics to Prometheus.
-- **torch**: The PyTorch library is used to run the Hugging Face BERT model. It provides an efficient and flexible way to run the model and classify log events.
-- **flask**: The Flask web framework is used to expose a simple web API for the AI-powered alerting system. The API allows you to send log messages to be classified and trigger alerts if needed.
-- **torch**: The PyTorch library is used to run the Hugging Face BERT model. It provides an efficient and flexible way to run the model and classify log events.
-- **flask**: The Flask web framework is used to expose a simple web API for the AI-powered alerting system. The API allows you to send log messages to be classified and trigger alerts if needed.
+- **torch**: The PyTorch library is used to run the Hugging Face BERT model. It provides an efficient and flexible way to run and classify log events.
+- **flask**: The Flask web framework is used to create a simple web API for the AI-powered alerting system. The API allows you to send log messages for classification and trigger alerts if needed.
+- **gunicorn**: Gunicorn is a WSGI HTTP server for running Python web applications like Flask in a production environment. It allows handling multiple requests efficiently, providing better performance and scalability compared to Flask's built-in development server.
 - **requests**: For sending Slack notifications (optional).
 - **smtplib**: For sending email notifications (optional).
 
-## Project Structure
+### 🦄Why Flask and Gunicorn?
+
+- **Flask**: Flask is a lightweight web framework, perfect for building and exposing APIs, especially in a development or small-scale environment. It provides easy setup and flexibility for defining routes and handling requests.
+
+- **Gunicorn**: Flask's built-in development server is not suitable for production, as it can only handle a single request at a time and is not designed for high-performance workloads. Gunicorn, a robust WSGI server, is typically used in production environments. It allows Flask to run as a more efficient, multi-threaded, and scalable web application, handling concurrent requests more effectively.
+
+> [!INFO]
+> In short, **Flask** handles the logic of the web application, while **Gunicorn** ensures that the application can serve requests at scale in a production environment.
+
+## 🏗️Project Structure
 
 Here’s the structure of the project:
 
@@ -76,11 +95,9 @@ Here’s the structure of the project:
 └── README.md
 
 5 directories, 10 files
-
-5 directories, 10 files
 ```	
 
-## Installation
+## 🧑‍🔧Installation
 
 ### Step 1: Clone the repository
 ```bash
@@ -111,51 +128,51 @@ docker-compose up --build
 
 The services will be available at:
 
-**Prometheus** on **`http://localhost:9090`**
-**Grafana** on **`http://localhost:3000`**
-* **Python app** (exposing metrics) on **`http://localhost:5000/metrics`**
-* **Python app** (exposing metrics) on **`http://localhost:5000/metrics`**
+* **Prometheus**: Accessible at **`http://localhost:9090`**
+* **Grafana**: Accessible at **`http://localhost:3000`**
+* **Python app**:
+  * **Flask app** running on **`http://localhost:5000`**
+  * **Prometheus metrics** exposed at **`http://localhost:8000/metrics`**
 
 #### Option 2: Manual Installation
 You can also manually install Prometheus and Grafana on your local machine. Follow the links below for instructions:
 * [Install Prometheus](https://prometheus.io/docs/introduction/first_steps/)
 * [Install Grafana](https://grafana.com/grafana/download)
 
-## Docker-Related Files
+## 🐋Docker-Related Files
 ### Dockerfile for the Python App
 ```dockerfile
-# Use a lighter Python image for better performance
+# Use a slim version of Python to reduce image size
 FROM python:3.11-slim-buster
-FROM python:3.11-slim-buster
 
-# Set the working directory
-WORKDIR /my-app
+# Install necessary system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy the requirements file first to leverage Docker's layer caching
-COPY requirements.txt /my-app/requirements.txt
+# Set the working directory in the container
+WORKDIR /app
 
-# Install dependencies
-# We use the `--no-cache-dir` flag to prevent pip from storing the package files in a cache directory,
-# which can save disk space and reduce the size of the Docker image.
-# The `-r` flag tells pip to read the list of dependencies from the `requirements.txt` file.
-RUN pip install --no-cache-dir -r requirements.txt
-# We use the `--no-cache-dir` flag to prevent pip from storing the package files in a cache directory,
-# which can save disk space and reduce the size of the Docker image.
-# The `-r` flag tells pip to read the list of dependencies from the `requirements.txt` file.
+# Copy requirements file and install dependencies
+COPY requirements.txt . 
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Now copy the application code
-COPY app.py /my-app/app.py
+# Preload Hugging Face models to avoid downloading on startup
+RUN python -c "from transformers import AutoModelForSequenceClassification, AutoTokenizer; \
+    AutoModelForSequenceClassification.from_pretrained('distilbert-base-uncased-finetuned-sst-2-english'); \
+    AutoTokenizer.from_pretrained('distilbert-base-uncased-finetuned-sst-2-english')"
 
-# Expose the port for Prometheus metrics
-EXPOSE 5000
-EXPOSE 5000
+# Copy the rest of the application code
+COPY . .
 
-# Run the Python app
-CMD ["python", "app.py"]
+# Expose necessary ports for Flask (5000) and Prometheus metrics (8000)
+EXPOSE 5000
+EXPOSE 8000
+
+# Run the application (starting both Prometheus and Gunicorn from Python)
+CMD ["python", "start_app.py"]
 ```
 
-### Dockerfile for Grafana
 ### Dockerfile for Grafana
 ```dockerfile
 # Use Chainguard's secure Grafana image
@@ -166,16 +183,7 @@ ENV GF_SECURITY_ADMIN_PASSWORD=admin
 
 # Expose Grafana port
 EXPOSE 3000
-FROM cgr.dev/chainguard/grafana:latest
 
-# Set environment variables if needed
-ENV GF_SECURITY_ADMIN_PASSWORD=admin
-
-# Expose Grafana port
-EXPOSE 3000
-
-# Set the default command
-CMD ["grafana-server", "--homepath=/usr/share/grafana", "--config=/etc/grafana/grafana.ini"]
 # Set the default command
 CMD ["grafana-server", "--homepath=/usr/share/grafana", "--config=/etc/grafana/grafana.ini"]
 ```
@@ -185,100 +193,64 @@ Here’s the **`docker-compose.yml`** that sets up both **Prometheus**, **Grafan
 
 ```yaml
 services:
-  # Prometheus
+  # Prometheus service
   prometheus:
     image: cgr.dev/chainguard/prometheus:latest
     volumes:
-      - ./prometheus-grafana/prometheus.yml:/etc/prometheus/prometheus.yml  # Mount the config file
-      - ./prometheus-grafana/alert_rules.yml:/etc/prometheus/alert_rules.yml  # Mount the rule file
-      - /home/angel3/data/:/etc/prometheus/data  # Use a Docker volume for data storage
-    user: "65534"  # Set Prometheus to run as nobody
+      - ./prometheus-grafana/prometheus.yml:/etc/prometheus/prometheus.yml  # Mount config
+      - ./prometheus-grafana/alert_rules.yml:/etc/prometheus/alert_rules.yml  # Mount alert rules
+      - /home/angel3/data/:/etc/prometheus/data  # Data storage
+    user: "65534"  # Run Prometheus as `nobody`
     ports:
-      - "9090:9090"  # Expose port 9090 on the host to port 9090 in the container
-    entrypoint:
-      - /usr/bin/prometheus
-      - --config.file=/etc/prometheus/prometheus.yml
-      - --storage.tsdb.path=/etc/prometheus/data
+      - "9090:9090"  # Expose Prometheus on port 9090
+    command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/etc/prometheus/data"]
     restart: unless-stopped
+    networks:
+      - monitor-net
 
-  # Grafana
-  grafana:
-  # Prometheus
-  prometheus:
-    image: cgr.dev/chainguard/prometheus:latest
-    volumes:
-      - ./prometheus-grafana/prometheus.yml:/etc/prometheus/prometheus.yml  # Mount the config file
-      - ./prometheus-grafana/alert_rules.yml:/etc/prometheus/alert_rules.yml  # Mount the rule file
-      - /home/angel3/data/:/etc/prometheus/data  # Use a Docker volume for data storage
-    user: "65534"  # Set Prometheus to run as nobody
-    ports:
-      - "9090:9090"  # Expose port 9090 on the host to port 9090 in the container
-    entrypoint:
-      - /usr/bin/prometheus
-      - --config.file=/etc/prometheus/prometheus.yml
-      - --storage.tsdb.path=/etc/prometheus/data
-    restart: unless-stopped
-
-  # Grafana
+  # Grafana service
   grafana:
     build:
       context: ./prometheus-grafana
       dockerfile: Dockerfile.grafana
-      dockerfile: Dockerfile.grafana
     ports:
-      - "3000:3000"  # Expose port 3000 for Grafana
+      - "3000:3000"  # Expose Grafana on port 3000
     restart: unless-stopped
+    networks:
+      - monitor-net
 
-  # Python app
-      - "3000:3000"  # Expose port 3000 for Grafana
-    restart: unless-stopped
-
-  # Python app
+  # Python Flask app service
   python-app:
     build:
       context: ./my-app
       dockerfile: Dockerfile.app
-      dockerfile: Dockerfile.app
     ports:
-      - "5000:5000"  # Expose port 5000 for the Python app
-    restart: unless-stopped
-      - "5000:5000"  # Expose port 5000 for the Python app
+      - "5000:5000"  # Expose Flask app on port 5000
+      - "8000:8000"  # Expose Prometheus metrics on port 8000
+    volumes:
+      - ./my-app:/app  # Mount app source code
     restart: unless-stopped
     depends_on:
       - prometheus
       - grafana
+    networks:
+      - monitor-net
 
-volumes:
-  prometheus_data:  # Define the volume for Prometheus data storage
-      - prometheus
-      - grafana
+# Define a shared network
+networks:
+  monitor-net:
+    driver: bridge
 
+# Define a volume for Prometheus data storage
 volumes:
-  prometheus_data:  # Define the volume for Prometheus data storage
+  prometheus_data:
 ```
 
-## Configuration
-### Step 4: Prometheus Configuration
-Edit the **`prometheus-grafana/prometheus.yml`** file to add a scrape config for your Python app that exposes metrics on **`localhost:5000`**:
-Edit the **`prometheus-grafana/prometheus.yml`** file to add a scrape config for your Python app that exposes metrics on **`localhost:5000`**:
+## 🛠️Configuration
+### 🔥Step 4: Prometheus Configuration
+Edit the **`prometheus-grafana/prometheus.yml`** file to add a scrape config for your Python app that exposes metrics on **`localhost:8000`**:
 
 ```yaml
-# Global settings
-global:
-  scrape_interval: 15s  # Scrape every 15 seconds
-  evaluation_interval: 15s  # Evaluate rules every 15 seconds
-
-# Alertmanager configuration (if using Alertmanager)
-alerting:
-  alertmanagers:
-    - static_configs:
-        - targets: ['alertmanager:9093']  # Define Alertmanager target
-
-# Reference to rule files
-rule_files:
-  - "/etc/prometheus/alert_rules.yml"  # Points to your alert rules file
-
-# Scrape configurations
 # Global settings
 global:
   scrape_interval: 15s  # Scrape every 15 seconds
@@ -301,24 +273,16 @@ scrape_configs:
     static_configs:
       - targets: ["localhost:9090"]
 
-  # Scrape metrics from the Python AI-powered alerting app
-  - job_name: "ai-powered-alerting-app"
-  # Scrape Prometheus itself
-  - job_name: "prometheus"
-    static_configs:
-      - targets: ["localhost:9090"]
-
-  # Scrape metrics from the Python AI-powered alerting app
+  # Scrape metrics from the Python AI-powered alerting app (now on port 8000)
   - job_name: "ai-powered-alerting-app"
     static_configs:
-      - targets: ["python-app:5000"]  # Your Python app exposing metrics on port 5000
-
+      - targets: ["python-app:8000"]  # Python app exposing metrics on port 8000
 ```
 
-* Scrapes metrics from your Python app (**`ai-powered-alerting-app`**) at **`python-app:5000`**.
+* Scrapes metrics from your Python app (**`ai-powered-alerting-app`**) at **`localhost:8000`**.
 * Includes the **`alert_rules.yml`** file for **Prometheus** to evaluate alert rules.
 
-### Step 5: Alert Rules Configuration
+### 📛Step 5: Alert Rules Configuration
 Create the **`alert_rules.yml`** file in your Prometheus configuration directory (**`/etc/prometheus/`**).
 
 alert_rules.yml:
@@ -336,39 +300,11 @@ groups:
           description: "A critical log event was detected in the AI-powered alerting system."
 ```
 
-#### How This Works:
-* **`prometheus.yml`**: This file tells Prometheus to scrape metrics from both Prometheus itself and the AI-powered alerting app (your Python app).
-* **`alert_rules.yml`**: This file defines alerting rules that notify you when a critical log event is detected (based on the **`log_severity`** metric exposed by the Python app).
-      - targets: ["python-app:5000"]  # Your Python app exposing metrics on port 5000
-
-```
-
-* Scrapes metrics from your Python app (**`ai-powered-alerting-app`**) at **`python-app:5000`**.
-* Includes the **`alert_rules.yml`** file for **Prometheus** to evaluate alert rules.
-
-### Step 5: Alert Rules Configuration
-Create the **`alert_rules.yml`** file in your Prometheus configuration directory (**`/etc/prometheus/`**).
-
-alert_rules.yml:
-```yml
-groups:
-  - name: critical_alert_rules
-    rules:
-      - alert: CriticalLogAlert
-        expr: log_severity{level="critical"} > 0  # Alert when critical logs are detected
-        for: 1m
-        labels:
-          severity: "critical"
-        annotations:
-          summary: "Critical log detected"
-          description: "A critical log event was detected in the AI-powered alerting system."
-```
-
-#### How This Works:
+#### 🤷‍♂️❔How This Works:
 * **`prometheus.yml`**: This file tells Prometheus to scrape metrics from both Prometheus itself and the AI-powered alerting app (your Python app).
 * **`alert_rules.yml`**: This file defines alerting rules that notify you when a critical log event is detected (based on the **`log_severity`** metric exposed by the Python app).
 
-### Step 5: Hugging Face BERT Model Setup
+### 🤗Step 6: Hugging Face BERT Model Setup
 In the **`my-app/app.py file`**, we’ll load the **BERT** model from **Hugging Face** and classify log messages.
 
 ```python
@@ -379,39 +315,42 @@ classifier = pipeline("text-classification", model="distilbert-base-uncased-fine
 
 def classify_log_event(log_message):
     """
-    Use the Hugging Face transformer model to classify log messages.
-    In this example, we use a sentiment analysis model to classify
-    logs as either critical or non-critical based on the 'positive' label.
+    Classify log messages using Hugging Face DistilBERT model for sentiment analysis.
+    Lazily loads the model and tokenizer if they are not already loaded.
     """
+    lazy_load_model()
+
     result = classifier(log_message)
+
+    # Determine severity based on sentiment
     if result[0]['label'] == 'POSITIVE':
-        return 'critical'
+        severity = 'not_critical'
     else:
-        return 'not critical'
+        severity = 'critical'
+
+    log_severity.labels(severity=severity).inc()
+
+    logging.info(f"Classified log '{log_message}' as {severity}")
+    return severity
 ```
 
-## Usage
-### Step 6: Run the Python Application
+## ⚡Usage
+### Step 7: Run the Python Application
 Now you can run the **AI-powered alerting system**:
 
 ```bash
 docker-compose up --build
 ```
 
-## Testing and Alerts
-### Step 7: Expose Metrics to Prometheus
-The Python app will expose Prometheus metrics at **`http://localhost:5000/metrics`**. Prometheus will scrape these metrics to monitor the log severity levels (e.g., **`critical`**, **`not_critical`**).
+## 📝Testing and Alerts
+### 🔥Step 8: Expose Metrics to Prometheus
+The Python app will expose Prometheus metrics at **`http://localhost:8000/metrics`**. Prometheus will scrape these metrics to monitor the log severity levels (e.g., **`critical`**, **`not_critical`**).
 
-* Metrics URL: **`http://localhost:5000/metrics`**
-
-Prometheus will automatically scrape this endpoint based on the scrape configuration.
-The Python app will expose Prometheus metrics at **`http://localhost:5000/metrics`**. Prometheus will scrape these metrics to monitor the log severity levels (e.g., **`critical`**, **`not_critical`**).
-
-* Metrics URL: **`http://localhost:5000/metrics`**
+* Metrics URL: **`http://localhost:8000/metrics`**
 
 Prometheus will automatically scrape this endpoint based on the scrape configuration.
 
-### Step 8: Test Log Classification
+### 🗂️Step 9: Test Log Classification
 You can test the log classification functionality by generating various log messages through the app's HTTP API.
 
 * Use the **`/log/<message>`** endpoint to send log messages to be classified by the Hugging Face BERT model.
@@ -436,27 +375,8 @@ Each of these log messages will be classified by the AI-powered system, and the 
 
 The Python app automatically updates the Prometheus metric **`log_severity`** with the corresponding severity label (critical or not_critical), which Prometheus will scrape.
 
-### Step 9: Set Up Grafana for Alerts
-You can now set up Grafana to visualize and alert based on the **`log_severity`** metrics.
-
-1. **Open Grafana**: Access Grafana by navigating to **`http://localhost:3000`** in your browser.
-
-2. **Add Data Source**: Add Prometheus as the data source in Grafana:
-
-* Name: Prometheus
-* Type: Prometheus
-* URL: **`http://prometheus:9090`** (Use the container name if Grafana and Prometheus are running in Docker, i.e., **`http://prometheus:9090`**)
-
-3. **Create a Dashboard**:
-
-* Build a dashboard in Grafana to visualize the log severity metrics being scraped from Prometheus.
-* For example, create a time series graph to display the metric **`log_severity`** with labels for **`critical`** and **`not_critical`** logs.
-
-4. **Set Up Alerts**:
-* Create an alert rule in Grafana to send notifications when the **`log_severity`** metric for **`critical`** logs exceeds 0.
-
-Example Grafana alert rule:
-
+## 🔥🔅Prometheus and Grafana Setup
+### Step 10: Set Up Grafana for Alerts
 You can now set up Grafana to visualize and alert based on the **`log_severity`** metrics.
 
 1. **Open Grafana**: Access Grafana by navigating to **`http://localhost:3000`** in your browser.
@@ -480,20 +400,15 @@ Example Grafana alert rule:
 ```yaml
 # Condition: Trigger an alert if any critical logs are detected
 expr: log_severity{severity="critical"} > 0
-# Condition: Trigger an alert if any critical logs are detected
-expr: log_severity{severity="critical"} > 0
 for: 1m
 labels:
   severity: "critical"
 annotations:
   summary: "Critical log detected"
   description: "A critical log was detected in the application"
-  description: "A critical log was detected in the application"
 ```
 
-### Demo
-After setting up Prometheus and Grafana with the Python AI-powered alerting system, you’ll be able to:
-### Demo
+### 💡Demo
 After setting up Prometheus and Grafana with the Python AI-powered alerting system, you’ll be able to:
 
 1. **Monitor Logs**:
@@ -505,12 +420,169 @@ After setting up Prometheus and Grafana with the Python AI-powered alerting syst
 * Grafana will trigger alerts based on the **`log_severity`** metric.
 
 * Only logs classified as **`critical`** by the ***BERT*** model will trigger alerts, reducing noise and focusing on important events.
-1. **Monitor Logs**:
 
-* View the log severity metrics in Grafana to monitor the number of critical and non-critical logs processed by the system.
+## ➕📶🔝🆙Additional Improvements:
 
-2. **Trigger Alerts**:
+### ☸️Kubernetes Deployment:
+You can also deploy the system using **Kubernetes**. This section includes the Kubernetes manifests for deploying Prometheus, Grafana, and the Python app.
 
-* Grafana will trigger alerts based on the **`log_severity`** metric.
+### Deployment Steps:
 
-* Only logs classified as **`critical`** by the ***BERT*** model will trigger alerts, reducing noise and focusing on important events.
+1. **Apply the Kubernetes manifests**:
+  ```bash
+  kubectl apply -f k8s/
+  ```
+2. **Scale the Python app**: If you want to scale the Python app deployment, run: 
+  ```bash
+kubectl scale deployment python-app --replicas=3
+  ```
+
+### Kubernetes Deployment Files
+Below are the Kubernetes manifest files located in the k8s/ directory:
+
+### Deployment for Python App (python-app-deployment.yaml):
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: python-app
+  template:
+    metadata:
+      labels:
+        app: python-app
+    spec:
+      containers:
+        - name: python-app
+          image: angel3/ai-powered-alerting-system-python-app:latest
+          ports:
+            - containerPort: 5000
+```
+
+### Service for Python App (python-app-service.yaml):
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-app-service
+spec:
+  type: ClusterIP
+  selector:
+    app: python-app
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+```
+
+### Deployment for Prometheus (prometheus-deployment.yaml):
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+        - name: prometheus
+          image: cgr.dev/chainguard/prometheus:latest
+          ports:
+            - containerPort: 9090
+          volumeMounts:
+            - name: prometheus-config
+              mountPath: /etc/prometheus/prometheus.yml
+              subPath: prometheus.yml
+      volumes:
+        - name: prometheus-config
+          configMap:
+            name: prometheus-config
+```
+
+### Service for Prometheus (prometheus-service.yaml):
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-service
+spec:
+  type: ClusterIP
+  selector:
+    app: prometheus
+  ports:
+    - protocol: TCP
+      port: 9090
+      targetPort: 9090
+```
+
+### Deployment for Grafana (grafana-deployment.yaml):
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+        - name: grafana
+          image: cgr.dev/chainguard/grafana:latest
+          ports:
+            - containerPort: 3000
+```
+
+### Service for Grafana (grafana-service.yaml):
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-service
+spec:
+  type: ClusterIP
+  selector:
+    app: grafana
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+```
+
+> [!NOTE]
+> These manifest files help you set up the **Python app**, **Prometheus**, and **Grafana** in a Kubernetes cluster.
+
+> [!TIP]
+> Handling Gunicorn Worker Timeouts
+If you encounter issues such as worker timeouts in Gunicorn (e.g., **`WORKER TIMEOUT`** errors in the logs), you can adjust the worker timeout directly in the **`start_app.py`** script. The current configuration in **`start_app.py`** sets a timeout of 30 seconds, which can be increased if necessary to prevent premature worker timeouts during long-running processes or slow startup times.
+The configuration looks like this:
+```python
+options = {
+    'bind': '0.0.0.0:5000',
+    'workers': 4,
+    'timeout': 30,  # Default timeout set to 30 seconds
+}
+```
+
+If needed, you can increase the timeout by modifying the timeout value in this script.
+
+
+This configuration ensures that the Gunicorn workers have enough time to handle requests, especially during long-running processes or slow startup times.
+
+[:arrow_up:](#top)
