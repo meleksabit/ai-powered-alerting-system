@@ -54,7 +54,7 @@ def home():
 
 @app.route('/favicon.ico')
 def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico')
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico')    
 
 @app.route('/log/<message>')
 def log_message(message):
