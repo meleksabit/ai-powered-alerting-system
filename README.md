@@ -3,7 +3,7 @@
 
 ![alt text](Prometheus_Grafana_Python_Hugging_Face.png)
  
-## This repository implements an AI-powered alerting system that uses a **Hugging Face BERT model** to classify and prioritize log alerts based on severity, specifically notifying only for **critical alerts**. The system integrates with **Prometheus** for metrics collection and **Grafana** for visualization and alerting, and is built with **Python** for log processing.
+### This repository implements an AI-powered alerting system that uses a **Hugging Face BERT model** to classify and prioritize log alerts based on severity, specifically notifying only for **critical alerts**. The system integrates with **Prometheus** for metrics collection and **Grafana** for visualization and alerting, and is built with **Python** for log processing.
 
 ## Table of Contents
 - [Introduction](#📢introduction)
@@ -63,8 +63,13 @@ You'll need to install the following Python libraries:
 
 - **Gunicorn**: Flask's built-in development server is not suitable for production, as it can only handle a single request at a time and is not designed for high-performance workloads. Gunicorn, a robust WSGI server, is typically used in production environments. It allows Flask to run as a more efficient, multi-threaded, and scalable web application, handling concurrent requests more effectively.
 
-> [!INFO]
-> In short, **Flask** handles the logic of the web application, while **Gunicorn** ensures that the application can serve requests at scale in a production environment.
+<table>
+<tr>
+<td width="33%"">
+In short, **Flask** handles the logic of the web application, while **Gunicorn** ensures that the application can serve requests at scale in a production environment.
+</td>
+</tr>
+</table>
 
 ## 🏗️Project Structure
 
