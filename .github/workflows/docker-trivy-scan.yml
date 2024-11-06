@@ -23,7 +23,7 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
 
       - name: Build Docker Compose app image
-        run: docker-compose -f docker-compose.yml build app
+        run: docker-compose -f docker-compose.yml build python-app
 
       - name: Scan app image for vulnerabilities
         uses: aquasecurity/trivy-action@master
