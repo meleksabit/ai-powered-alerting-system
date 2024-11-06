@@ -65,7 +65,7 @@ You'll need to install the following Python libraries:
 
 <table>
 <tr>
-<th>🗝️ <b>INFO</b></th>
+<th>🗝️ <b>CONCLUSION</b></th>
 </tr>
 <tr>
 <td width="33%"">
