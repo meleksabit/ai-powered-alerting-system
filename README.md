@@ -66,6 +66,7 @@ You'll need to install the following Python libraries:
 <table>
 <tr>
 <td width="33%"">
+🗝️ **INFO**
 In short, **Flask** handles the logic of the web application, while **Gunicorn** ensures that the application can serve requests at scale in a production environment.
 </td>
 </tr>
@@ -78,28 +79,31 @@ Here’s the structure of the project:
 ```bash
 .
 ├── docker-compose.yml
+├── k8s
+│   ├── grafana-deployment.yaml
+│   ├── grafana-service.yaml
+│   ├── prometheus-configmap.yaml
+│   ├── prometheus-deployment.yaml
+│   ├── prometheus-pvc.yaml
+│   ├── prometheus-service.yaml
+│   ├── python-app-deployment.yaml
+│   └── python-app-service.yaml
 ├── LICENSE
 ├── my-app
 │   ├── app.py
 │   ├── Dockerfile.app
 │   ├── requirements.txt
-│   └── static
-│       └── favicon.ico
-│   ├── Dockerfile.app
-│   ├── requirements.txt
+│   ├── start_app.py
 │   └── static
 │       └── favicon.ico
 ├── prometheus-grafana
 │   ├── alert_rules.yml
-│   ├── data
-│   ├── Dockerfile.grafana
-│   ├── alert_rules.yml
-│   ├── data
 │   ├── Dockerfile.grafana
 │   └── prometheus.yml
+├── Prometheus_Grafana_Python_Hugging_Face.png
 └── README.md
 
-5 directories, 10 files
+5 directories, 20 files
 ```	
 
 ## 🧑‍🔧Installation
