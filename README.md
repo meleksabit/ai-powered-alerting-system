@@ -69,7 +69,7 @@ You'll need to install the following Python libraries:
 </tr>
 <tr>
 <td width="33%"">
-In short, <b>Flask</b> handles the logic of the web application, while <b>Gunicorn</b> ensures that the application can serve requests at scale in a production environment.
+In short, <b><i>Flask</i></b> handles the logic of the web application, while <b><i>Gunicorn</i></b> ensures that the application can serve requests at scale in a production environment.
 </td>
 </tr>
 </table>
