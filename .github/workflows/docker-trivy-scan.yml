@@ -1,0 +1,39 @@
+name: Docker Compose Vulnerability Scan
+
+on:
+  push:
+    branches:
+      - main
+      - stage
+      - test
+      - development
+
+jobs:
+  trivy-scan:
+    name: Scan Docker Compose images for vulnerabilities
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker Compose app image
+        run: docker-compose -f docker-compose.yml build app
+
+      - name: Scan app image for vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: python-app:latest  # Image name defined in docker-compose.yml for 'app' service
+
+      - name: Build Docker Compose prometheus image
+        run: docker-compose -f docker-compose.yml build prometheus
+
+      - name: Scan prometheus image for vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: prometheus:latest  # Image name defined in docker-compose.yml for 'prometheus' service
+
+      - name: Scan grafana image for vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: grafana:latest  # Image name defined in docker-compose.yml for 'grafana' service
