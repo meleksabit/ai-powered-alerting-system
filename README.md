@@ -458,7 +458,7 @@ kind: Deployment
 metadata:
   name: python-app
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: python-app
@@ -469,7 +469,14 @@ spec:
     spec:
       containers:
         - name: python-app
-          image: angel3/ai-powered-alerting-system-python-app:latest
+          image: angel3/ai-powered-alerting-system:v1.0.0
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "400m"
+              memory: "512Mi"
           ports:
             - containerPort: 5000
 ```
@@ -481,7 +488,7 @@ kind: Service
 metadata:
   name: python-app-service
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: python-app
   ports:
@@ -496,6 +503,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus
+  labels:
+    app: prometheus
 spec:
   replicas: 1
   selector:
@@ -509,16 +518,24 @@ spec:
       containers:
         - name: prometheus
           image: cgr.dev/chainguard/prometheus:latest
+          args:
+            - "--config.file=/etc/prometheus/prometheus.yml"
           ports:
             - containerPort: 9090
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
           volumeMounts:
-            - name: prometheus-config
-              mountPath: /etc/prometheus/prometheus.yml
-              subPath: prometheus.yml
+            - name: config-volume
+              mountPath: /etc/prometheus/
       volumes:
-        - name: prometheus-config
+        - name: config-volume
           configMap:
-            name: prometheus-config
+            name: prometheus-config  # Reference the ConfigMap
 ```
 
 ### Service for Prometheus (prometheus-service.yaml):
@@ -528,21 +545,71 @@ kind: Service
 metadata:
   name: prometheus-service
 spec:
-  type: ClusterIP
   selector:
     app: prometheus
   ports:
     - protocol: TCP
       port: 9090
       targetPort: 9090
+  type: NodePort
 ```
+### ConfigMap for Prometheus (prometheus-configmap.yaml):
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: default
+data:
+  prometheus.yml: |
+    # Global settings
+    global:
+      scrape_interval: 15s  # Scrape every 15 seconds
+      evaluation_interval: 15s  # Evaluate rules every 15 seconds
 
+    # Alertmanager configuration (if using Alertmanager)
+    alerting:
+      alertmanagers:
+        - static_configs:
+            - targets: ['alertmanager:9093']  # Define Alertmanager target if in use
+
+    # Reference to rule files
+    rule_files:
+      - "/etc/prometheus/alert_rules.yml"  # Points to the alert rules file
+
+    # Scrape configurations
+    scrape_configs:
+      # Scrape Prometheus itself
+      - job_name: "prometheus"
+        static_configs:
+          - targets: ["localhost:9090"]
+
+      # Scrape metrics from the Python AI-powered alerting app via localhost (requires port-forwarding)
+      - job_name: "ai-powered-alerting-app"
+        static_configs:
+          - targets: ["localhost:8000"]  # Python app exposing metrics, accessible on localhost via port-forwarding
+```
+### Persistent Volume Claim for Prometheus (prometheus-pvc.yaml):
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prometheus-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi  # Adjust storage size as needed
+```
 ### Deployment for Grafana (grafana-deployment.yaml):
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: grafana
+  labels:
+    app: grafana
 spec:
   replicas: 1
   selector:
@@ -558,6 +625,13 @@ spec:
           image: cgr.dev/chainguard/grafana:latest
           ports:
             - containerPort: 3000
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
 ```
 
 ### Service for Grafana (grafana-service.yaml):
@@ -567,13 +641,13 @@ kind: Service
 metadata:
   name: grafana-service
 spec:
-  type: ClusterIP
   selector:
     app: grafana
   ports:
     - protocol: TCP
       port: 3000
       targetPort: 3000
+  type: NodePort
 ```
 
 > [!NOTE]
