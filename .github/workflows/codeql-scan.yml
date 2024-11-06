@@ -1,0 +1,50 @@
+name: Python CodeQL Analysis
+
+on:
+  pull_request:
+    branches:
+      - development
+      - test
+      - stage
+      - main
+
+jobs:
+  analyze:
+    name: Analyze Python code with CodeQL
+    runs-on: ubuntu-latest
+    needs: init
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        id: initialize-codeql
+        uses: github/codeql-action/init@v3
+        with:
+          languages: python
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "Python CodeQL Analysis"
+
+  init:
+    name: Initialize CodeQL environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        id: initialize-codeql
+        uses: github/codeql-action/init@v3
+        with:
+          languages: python
+
+    outputs:
+      needs: initialize-codeql
+      codeql-version: ${{ steps.initialize-codeql.outputs.codeql-version }}

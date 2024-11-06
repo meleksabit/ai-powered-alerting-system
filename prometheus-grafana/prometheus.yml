@@ -1,0 +1,26 @@
+# Global settings
+global:
+  scrape_interval: 15s  # Scrape every 15 seconds
+  evaluation_interval: 15s  # Evaluate rules every 15 seconds
+
+# Alertmanager configuration (if using Alertmanager)
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']  # Define Alertmanager target
+
+# Reference to rule files
+rule_files:
+  - "/etc/prometheus/alert_rules.yml"  # Points to your alert rules file
+
+# Scrape configurations
+scrape_configs:
+  # Scrape Prometheus itself
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # Scrape metrics from the Python AI-powered alerting app (now on port 8000)
+  - job_name: "ai-powered-alerting-app"
+    static_configs:
+      - targets: ["python-app:8000"]  # Python app exposing metrics on port 8000

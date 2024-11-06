@@ -1,0 +1,52 @@
+services:
+  # Prometheus service
+  prometheus:
+    image: cgr.dev/chainguard/prometheus:latest
+    volumes:
+      - ./prometheus-grafana/prometheus.yml:/etc/prometheus/prometheus.yml  # Mount config
+      - ./prometheus-grafana/alert_rules.yml:/etc/prometheus/alert_rules.yml  # Mount alert rules
+      - /home/angel3/data/:/etc/prometheus/data  # Data storage
+    user: "65534"  # Run Prometheus as `nobody`
+    ports:
+      - "9090:9090"  # Expose Prometheus on port 9090
+    command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/etc/prometheus/data"]
+    restart: unless-stopped
+    networks:
+      - monitor-net
+
+  # Grafana service
+  grafana:
+    build:
+      context: ./prometheus-grafana
+      dockerfile: Dockerfile.grafana
+    ports:
+      - "3000:3000"  # Expose Grafana on port 3000
+    restart: unless-stopped
+    networks:
+      - monitor-net
+
+  # Python Flask app service
+  python-app:
+    build:
+      context: ./my-app
+      dockerfile: Dockerfile.app
+    ports:
+      - "5000:5000"  # Expose Flask app on port 5000
+      - "8000:8000"  # Expose Prometheus metrics on port 8000
+    volumes:
+      - ./my-app:/app  # Mount app source code
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+      - grafana
+    networks:
+      - monitor-net
+
+# Define a shared network
+networks:
+  monitor-net:
+    driver: bridge
+
+# Define a volume for Prometheus data storage
+volumes:
+  prometheus_data:
