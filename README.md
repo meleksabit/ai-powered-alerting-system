@@ -65,9 +65,11 @@ You'll need to install the following Python libraries:
 
 <table>
 <tr>
+<th>🗝️ <b>INFO</b></th>
+</tr>
+<tr>
 <td width="33%"">
-<th>🗝️ **INFO**</th>
-In short, <b>Flask**</b> handles the logic of the web application, while <b>Gunicorn</b> ensures that the application can serve requests at scale in a production environment.
+In short, <b>Flask</b> handles the logic of the web application, while <b>Gunicorn</b> ensures that the application can serve requests at scale in a production environment.
 </td>
 </tr>
 </table>
