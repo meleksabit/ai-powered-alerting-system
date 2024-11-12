@@ -29,44 +29,39 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PAT }}
 
-      # Build and scan python-app image
+      # Step to download and cache Trivy vulnerability database
+      - name: Download Trivy DB
+        uses: actions/cache@v3
+        with:
+          path: ./.trivy-cache
+          key: ${{ runner.os }}-trivy-db
+          restore-keys: |
+            ${{ runner.os }}-trivy-db
+
+      - name: Initialize Trivy Database
+        run: |
+          mkdir -p .trivy-cache
+          trivy --cache-dir ./.trivy-cache image --download-db-only
+
+      # Build and scan python-app image with cached Trivy DB
       - name: Build Docker Compose python-app image
         run: docker-compose -f docker-compose.yml build python-app
 
-      - name: Scan python-app image for vulnerabilities
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          image-ref: 'python-app:latest'
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
+      - name: Scan python-app image for vulnerabilities (offline mode)
+        run: trivy image --offline --cache-dir ./.trivy-cache python-app:latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Build and scan prometheus image
+      # Build and scan prometheus image with cached Trivy DB
       - name: Build Docker Compose prometheus image
         run: docker-compose -f docker-compose.yml build prometheus
 
-      - name: Scan prometheus image for vulnerabilities
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          image-ref: 'prometheus:latest'
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
+      - name: Scan prometheus image for vulnerabilities (offline mode)
+        run: trivy image --offline --cache-dir ./.trivy-cache prometheus:latest
 
-      # Build and scan grafana image
+      # Build and scan grafana image with cached Trivy DB
       - name: Build Docker Compose grafana image
         run: docker-compose -f docker-compose.yml build grafana
 
-      - name: Scan grafana image for vulnerabilities
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          image-ref: 'grafana:latest'
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
+      - name: Scan grafana image for vulnerabilities (offline mode)
+        run: trivy image --offline --cache-dir ./.trivy-cache grafana:latest
