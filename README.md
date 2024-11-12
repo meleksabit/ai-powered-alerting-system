@@ -185,6 +185,7 @@ CMD ["python", "start_app.py"]
 ```
 
 ### Dockerfile for Grafana
+### Dockerfile for Grafana
 ```dockerfile
 # Use Chainguard's secure Grafana image
 FROM cgr.dev/chainguard/grafana:latest
@@ -194,7 +195,16 @@ ENV GF_SECURITY_ADMIN_PASSWORD=admin
 
 # Expose Grafana port
 EXPOSE 3000
+FROM cgr.dev/chainguard/grafana:latest
 
+# Set environment variables if needed
+ENV GF_SECURITY_ADMIN_PASSWORD=admin
+
+# Expose Grafana port
+EXPOSE 3000
+
+# Set the default command
+CMD ["grafana-server", "--homepath=/usr/share/grafana", "--config=/etc/grafana/grafana.ini"]
 # Set the default command
 CMD ["grafana-server", "--homepath=/usr/share/grafana", "--config=/etc/grafana/grafana.ini"]
 ```
@@ -224,6 +234,7 @@ services:
     build:
       context: ./prometheus-grafana
       dockerfile: Dockerfile.grafana
+      dockerfile: Dockerfile.grafana
     ports:
       - "3000:3000"  # Expose Grafana on port 3000
     restart: unless-stopped
@@ -234,6 +245,7 @@ services:
   python-app:
     build:
       context: ./my-app
+      dockerfile: Dockerfile.app
       dockerfile: Dockerfile.app
     ports:
       - "5000:5000"  # Expose Flask app on port 5000
@@ -262,6 +274,22 @@ volumes:
 Edit the **`prometheus-grafana/prometheus.yml`** file to add a scrape config for your Python app that exposes metrics on **`localhost:8000`**:
 
 ```yaml
+# Global settings
+global:
+  scrape_interval: 15s  # Scrape every 15 seconds
+  evaluation_interval: 15s  # Evaluate rules every 15 seconds
+
+# Alertmanager configuration (if using Alertmanager)
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']  # Define Alertmanager target
+
+# Reference to rule files
+rule_files:
+  - "/etc/prometheus/alert_rules.yml"  # Points to your alert rules file
+
+# Scrape configurations
 # Global settings
 global:
   scrape_interval: 15s  # Scrape every 15 seconds
@@ -374,6 +402,7 @@ Example log classifications:
 curl http://localhost:5000/log/User%20logged%20in%20successfully
 ```
 2. **Test Log 2**: Classifying an SQL injection attempt as ***"critical"***:
+2. **Test Log 2**: Classifying an SQL injection attempt as ***"critical"***:
 ```bash
 curl http://localhost:5000/log/SQL%20injection%20attempt%20detected%20in%20API
 ```
@@ -411,11 +440,14 @@ Example Grafana alert rule:
 ```yaml
 # Condition: Trigger an alert if any critical logs are detected
 expr: log_severity{severity="critical"} > 0
+# Condition: Trigger an alert if any critical logs are detected
+expr: log_severity{severity="critical"} > 0
 for: 1m
 labels:
   severity: "critical"
 annotations:
   summary: "Critical log detected"
+  description: "A critical log was detected in the application"
   description: "A critical log was detected in the application"
 ```
 
