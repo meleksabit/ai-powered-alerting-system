@@ -28,7 +28,7 @@ jobs:
       - name: Scan app image for vulnerabilities
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: python-app:latest  # Image name defined in docker-compose.yml for 'app' service
+          image-ref: python-app:v1.0.0  # Image name defined in docker-compose.yml for 'app' service
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
