@@ -29,6 +29,8 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: python-app:latest  # Image name defined in docker-compose.yml for 'app' service
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Build Docker Compose prometheus image
         run: docker-compose -f docker-compose.yml build prometheus
