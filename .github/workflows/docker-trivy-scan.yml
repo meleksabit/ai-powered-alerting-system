@@ -36,6 +36,8 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
       # Build and scan prometheus image
       - name: Build Docker Compose prometheus image
@@ -50,6 +52,8 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
       # Build and scan grafana image
       - name: Build Docker Compose grafana image
@@ -64,3 +68,5 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
