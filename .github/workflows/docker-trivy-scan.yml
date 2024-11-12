@@ -25,25 +25,20 @@ jobs:
       - name: Build Docker Compose app image
         run: docker-compose -f docker-compose.yml build python-app
 
-      - name: Scan app image for vulnerabilities
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: python-app:v1.0.0  # Image name defined in docker-compose.yml for 'app' service
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Run Trivy in offline mode (cached DB) for python-app
+        run: |
+          trivy image --offline --cache-dir /path/to/trivy/cache python-app:latest
 
       - name: Build Docker Compose prometheus image
         run: docker-compose -f docker-compose.yml build prometheus
 
-      - name: Scan prometheus image for vulnerabilities
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: prometheus:latest  # Image name defined in docker-compose.yml for 'prometheus' service
+      - name: Run Trivy in offline mode (cached DB) for prometheus
+        run: |
+          trivy image --offline --cache-dir /path/to/trivy/cache prometheus:latest
 
       - name: Build Docker Compose grafana image
         run: docker-compose -f docker-compose.yml build grafana
 
-      - name: Scan grafana image for vulnerabilities
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: grafana:latest  # Image name defined in docker-compose.yml for 'grafana' service
+      - name: Run Trivy in offline mode (cached DB) for grafana
+        run: |
+          trivy image --offline --cache-dir /path/to/trivy/cache grafana:latest
