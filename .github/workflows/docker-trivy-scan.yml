@@ -54,7 +54,7 @@ jobs:
         run: docker-compose -f docker-compose.yml build python-app
 
       - name: Scan python-app image for vulnerabilities (offline mode)
-        run: trivy image --skip-db-update --cache-dir ./.trivy-cache python-app:latest
+        run: trivy image --skip-db-update --cache-dir ./.trivy-cache python-app
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
