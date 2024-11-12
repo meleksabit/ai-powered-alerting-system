@@ -6,7 +6,7 @@
 ### This repository implements an AI-powered alerting system that uses a **Hugging Face BERT model** to classify and prioritize log alerts based on severity, specifically notifying only for **critical alerts**. The system integrates with **Prometheus** for metrics collection and **Grafana** for visualization and alerting, and is built with **Python** for log processing.
 
 ## Table of Contents
-- [Introduction](#📢introduction)
+- [Introduction](#introduction)
 - [Features](#🚀features)
 - [Prerequisites](#📜prerequisites)
 - [Project Structure](#🏗️project-structure)
