@@ -7,18 +7,18 @@
 
 ## Table of Contents
 - [Introduction](#introduction)
-- [Features](#🚀features)
-- [Prerequisites](#📜prerequisites)
-- [Project Structure](#🏗️project-structure)
-- [Installation](#🧑‍🔧installation)
-- [Docker-Related Files](#🐋docker-related-files)
-- [Configuration](#🛠️configuration)
-- [Usage](#⚡usage)
-- [Testing and Alerts](#📝testing-and-alerts)
-- [Prometheus and Grafana Setup](#🔥🔅prometheus-and-grafana-setup)
-- [Demo](#💡demo)
-- [Additional Improvements](#➕📶🔝🆙additional-improvements)
-  - [Kubernetes Deployment](#☸️kubernetes-deployment)
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Project Structure](#project-structure)
+- [Installation](#installation)
+- [Docker-Related Files](#docker-related-files)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Testing and Alerts](#testing-and-alerts)
+- [Prometheus and Grafana Setup](#prometheus-and-grafana-setup)
+- [Demo](#demo)
+- [Additional Improvements](#additional-improvements)
+  - [Kubernetes Deployment](#kubernetes-deployment)
 
 ## 📢Introduction
 
