@@ -29,7 +29,7 @@ jobs:
           wget https://github.com/aquasecurity/trivy/releases/download/v0.57.0/trivy_0.57.0_Linux-64bit.deb
           sudo dpkg -i trivy_0.57.0_Linux-64bit.deb
 
-      - name: Docker Login          
+      - name: Docker Login
         uses: docker/login-action@v3.3.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -54,7 +54,7 @@ jobs:
         run: docker-compose -f docker-compose.yml build python-app
 
       - name: Scan python-app image for vulnerabilities (offline mode)
-        run: trivy image --offline --cache-dir ./.trivy-cache python-app:latest
+        run: trivy image --skip-db-update --cache-dir ./.trivy-cache python-app:latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -63,11 +63,11 @@ jobs:
         run: docker-compose -f docker-compose.yml build prometheus
 
       - name: Scan prometheus image for vulnerabilities (offline mode)
-        run: trivy image --offline --cache-dir ./.trivy-cache prometheus:latest
+        run: trivy image --skip-db-update --cache-dir ./.trivy-cache prometheus:latest
 
       # Build and scan grafana image with cached Trivy DB
       - name: Build Docker Compose grafana image
         run: docker-compose -f docker-compose.yml build grafana
 
       - name: Scan grafana image for vulnerabilities (offline mode)
-        run: trivy image --offline --cache-dir ./.trivy-cache grafana:latest
+        run: trivy image --skip-db-update --cache-dir ./.trivy-cache grafana:latest
