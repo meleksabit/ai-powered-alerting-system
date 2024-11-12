@@ -6,19 +6,19 @@
 ### This repository implements an AI-powered alerting system that uses a **Hugging Face BERT model** to classify and prioritize log alerts based on severity, specifically notifying only for **critical alerts**. The system integrates with **Prometheus** for metrics collection and **Grafana** for visualization and alerting, and is built with **Python** for log processing.
 
 ## Table of Contents
-- [Introduction](#📢introduction)
-- [Features](#🚀features)
-- [Prerequisites](#📜prerequisites)
-- [Project Structure](#🏗️project-structure)
-- [Installation](#🧑‍🔧installation)
-- [Docker-Related Files](#🐋docker-related-files)
-- [Configuration](#🛠️configuration)
-- [Usage](#⚡usage)
-- [Testing and Alerts](#📝testing-and-alerts)
-- [Prometheus and Grafana Setup](#🔥🔅prometheus-and-grafana-setup)
-- [Demo](#💡demo)
-- [Additional Improvements](#➕📶🔝🆙additional-improvements)
-  - [Kubernetes Deployment](#☸️kubernetes-deployment)
+- [Introduction](#introduction)
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Project Structure](#%EF%B8%8Fproject-structure)
+- [Installation](#installation)
+- [Docker-Related Files](#docker-related-files)
+- [Configuration](#%EF%B8%8Fconfiguration)
+- [Usage](#usage)
+- [Testing and Alerts](#testing-and-alerts)
+- [Prometheus and Grafana Setup](#prometheus-and-grafana-setup)
+- [Demo](#demo)
+- [Additional Improvements](#additional-improvements)
+  - [Kubernetes Deployment](#%EF%B8%8Fkubernetes-deployment)
 
 ## 📢Introduction
 
