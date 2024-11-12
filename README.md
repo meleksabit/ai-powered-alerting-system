@@ -12,13 +12,13 @@
 - [Project Structure](#%EF%B8%8Fproject-structure)
 - [Installation](#installation)
 - [Docker-Related Files](#docker-related-files)
-- [Configuration](#configuration)
+- [Configuration](#%EF%B8%8Fconfiguration)
 - [Usage](#usage)
 - [Testing and Alerts](#testing-and-alerts)
 - [Prometheus and Grafana Setup](#prometheus-and-grafana-setup)
 - [Demo](#demo)
 - [Additional Improvements](#additional-improvements)
-  - [Kubernetes Deployment](#kubernetes-deployment)
+  - [Kubernetes Deployment](#%EF%B8%8Fkubernetes-deployment)
 
 ## 📢Introduction
 
