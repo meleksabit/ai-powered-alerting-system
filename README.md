@@ -9,7 +9,7 @@
 - [Introduction](#introduction)
 - [Features](#features)
 - [Prerequisites](#prerequisites)
-- [Project Structure](#project-structure)
+- [Project Structure](#%EF%B8%8Fproject-structure)
 - [Installation](#installation)
 - [Docker-Related Files](#docker-related-files)
 - [Configuration](#configuration)
