@@ -49,20 +49,37 @@ jobs:
           mkdir -p .trivy-cache
           trivy --cache-dir ./.trivy-cache image --download-db-only
 
-      # Build and scan python-app image with GitHub SHA as the tag
-      - name: Build Docker Compose python-app image
-        run: docker-compose -f docker-compose.yml build python-app
+      # Build and scan ai-powered-alerting-system-python-app image with GitHub SHA as the tag
+      - name: Build Docker Compose ai-powered-alerting-system-python-app image
+        run: docker-compose -f docker-compose.yml build ai-powered-alerting-system-python-app
+
+      - name: Tag Python App Image with SHA
+        run: docker tag ai-powered-alerting-system-python-app:latest ai-powered-alerting-system-python-app:${{ github.sha }}
 
       - name: Verify Docker images
         run: docker images
 
-      - name: Tag Python App Image with SHA
-        if: success() && contains(steps.verify-docker-images.outputs, 'python-app')
-        run: docker tag python-app:latest python-app:${{ github.sha }}
-
-      - name: Scan python-app image for vulnerabilities (offline mode)
-        if: success() && contains(steps.verify-docker-images.outputs, 'python-app')
-        run: trivy image --skip-db-update --cache-dir ./.trivy-cache python-app:${{ github.sha }}
+      - name: Scan ai-powered-alerting-system-python-app image for vulnerabilities (offline mode)
+        run: trivy image --skip-db-update --cache-dir ./.trivy-cache ai-powered-alerting-system-python-app:${{ github.sha }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
+      # Build, tag, and scan prometheus image
+      - name: Build Docker Compose prometheus image
+        run: docker-compose -f docker-compose.yml build prometheus
+
+      - name: Tag Prometheus Image with SHA
+        run: docker tag prometheus:latest prometheus:${{ github.sha }}
+
+      - name: Scan prometheus image for vulnerabilities (offline mode)
+        run: trivy image --skip-db-update --cache-dir ./.trivy-cache prometheus:${{ github.sha }}
+
+      # Build, tag, and scan grafana image
+      - name: Build Docker Compose grafana image
+        run: docker-compose -f docker-compose.yml build grafana
+
+      - name: Tag Grafana Image with SHA
+        run: docker tag grafana:latest grafana:${{ github.sha }}
+
+      - name: Scan grafana image for vulnerabilities (offline mode)
+        run: trivy image --skip-db-update --cache-dir ./.trivy-cache grafana:${{ github.sha }}
