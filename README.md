@@ -364,7 +364,8 @@ def classify_log_event(log_message):
     result = classifier(log_message)
 
     # Determine severity based on sentiment
-    if result[0]['label'] == 'POSITIVE':
+    if result[0]['label'] 
+       'POSITIVE':
         severity = 'not_critical'
     else:
         severity = 'critical'
