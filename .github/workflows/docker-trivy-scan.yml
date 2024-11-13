@@ -54,7 +54,7 @@ jobs:
         run: docker-compose -f docker-compose.yml build python-app
 
       - name: Tag Python App Image with SHA
-        run: docker tag python-app:latest ai-powered-alerting-system-python-app:${{ github.sha }}
+        run: docker tag ai-powered-alerting-system-python-app:latest ai-powered-alerting-system-python-app:${{ github.sha }}
 
       - name: Verify Docker images
         run: docker images
