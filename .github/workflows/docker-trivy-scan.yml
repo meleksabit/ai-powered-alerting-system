@@ -49,25 +49,37 @@ jobs:
           mkdir -p .trivy-cache
           trivy --cache-dir ./.trivy-cache image --download-db-only
 
-      # Build and scan python-app image with cached Trivy DB
+      # Build and scan python-app image with GitHub SHA as the tag
       - name: Build Docker Compose python-app image
         run: docker-compose -f docker-compose.yml build python-app
 
+      - name: Tag Python App Image with SHA
+        run: docker tag python-app:latest python-app:${{ github.sha }}
+
+      - name: Verify Docker images
+        run: docker images
+
       - name: Scan python-app image for vulnerabilities (offline mode)
-        run: trivy image --skip-db-update --cache-dir ./.trivy-cache python-app:<SHA>
+        run: trivy image --skip-db-update --cache-dir ./.trivy-cache python-app:${{ github.sha }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Build and scan prometheus image with cached Trivy DB
+      # Build, tag, and scan prometheus image
       - name: Build Docker Compose prometheus image
         run: docker-compose -f docker-compose.yml build prometheus
 
-      - name: Scan prometheus image for vulnerabilities (offline mode)
-        run: trivy image --skip-db-update --cache-dir ./.trivy-cache prometheus:latest
+      - name: Tag Prometheus Image with SHA
+        run: docker tag prometheus:latest prometheus:${{ github.sha }}
 
-      # Build and scan grafana image with cached Trivy DB
+      - name: Scan prometheus image for vulnerabilities (offline mode)
+        run: trivy image --skip-db-update --cache-dir ./.trivy-cache prometheus:${{ github.sha }}
+
+      # Build, tag, and scan grafana image
       - name: Build Docker Compose grafana image
         run: docker-compose -f docker-compose.yml build grafana
 
+      - name: Tag Grafana Image with SHA
+        run: docker tag grafana:latest grafana:${{ github.sha }}
+
       - name: Scan grafana image for vulnerabilities (offline mode)
-        run: trivy image --skip-db-update --cache-dir ./.trivy-cache grafana:latest
+        run: trivy image --skip-db-update --cache-dir ./.trivy-cache grafana:${{ github.sha }}
