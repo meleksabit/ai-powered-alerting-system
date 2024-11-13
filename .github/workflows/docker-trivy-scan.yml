@@ -49,12 +49,12 @@ jobs:
           mkdir -p .trivy-cache
           trivy --cache-dir ./.trivy-cache image --download-db-only
 
-      # Build and scan ai-powered-alerting-system-python-app image with GitHub SHA as the tag
-      - name: Build Docker Compose ai-powered-alerting-system-python-app image
-        run: docker-compose -f docker-compose.yml build ai-powered-alerting-system-python-app
+      # Build and scan python-app image with GitHub SHA as the tag
+      - name: Build Docker Compose python-app image
+        run: docker-compose -f docker-compose.yml build python-app
 
       - name: Tag Python App Image with SHA
-        run: docker tag ai-powered-alerting-system-python-app:latest ai-powered-alerting-system-python-app:${{ github.sha }}
+        run: docker tag python-app:latest ai-powered-alerting-system-python-app:${{ github.sha }}
 
       - name: Verify Docker images
         run: docker images
