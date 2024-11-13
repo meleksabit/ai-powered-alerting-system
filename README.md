@@ -1,4 +1,6 @@
 <a name="top"></a>
+[![Python CodeQL Analysis](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/codeql-scan.yml/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/codeql-scan.yml) [![Docker Compose Vulnerability Scan](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/docker-trivy-scan.yml/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/docker-trivy-scan.yml)
+
 # $\color{SeaGreen}{AI-Powered\ Alerting\ System:}$ $\color{OrangeRed}{Critical\ Alerts\ Only}$
 
 ![alt text](Prometheus_Grafana_Python_Hugging_Face.png)

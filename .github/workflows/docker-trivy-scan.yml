@@ -68,4 +68,3 @@ jobs:
         run: trivy image ai-powered-alerting-system-python-app:${{ github.sha }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
