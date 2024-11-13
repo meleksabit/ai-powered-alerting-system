@@ -64,22 +64,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Build, tag, and scan prometheus image
-      - name: Build Docker Compose prometheus image
-        run: docker-compose -f docker-compose.yml build prometheus
-
-      - name: Tag Prometheus Image with SHA
-        run: docker tag prometheus:latest prometheus:${{ github.sha }}
-
-      - name: Scan prometheus image for vulnerabilities (offline mode)
-        run: trivy image --skip-db-update --cache-dir ./.trivy-cache prometheus:${{ github.sha }}
-
-      # Build, tag, and scan grafana image
-      - name: Build Docker Compose grafana image
-        run: docker-compose -f docker-compose.yml build grafana
-
-      - name: Tag Grafana Image with SHA
-        run: docker tag grafana:latest grafana:${{ github.sha }}
-
-      - name: Scan grafana image for vulnerabilities (offline mode)
-        run: trivy image --skip-db-update --cache-dir ./.trivy-cache grafana:${{ github.sha }}
+      - name: Scan ai-powered-alerting-system-python-app image for vulnerabilities (online mode)
+        run: trivy image ai-powered-alerting-system-python-app:${{ github.sha }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
