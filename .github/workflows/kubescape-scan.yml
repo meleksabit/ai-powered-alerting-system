@@ -36,7 +36,7 @@ jobs:
 
       # Upload the Kubescape scan results as GitHub Code Scanning results
       - name: Upload Kubescape scan results to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: kubescape-report.sarif
 
