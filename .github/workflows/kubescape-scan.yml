@@ -27,8 +27,7 @@ jobs:
 
       - name: Run Kubescape scan
         run: |
-          kubescape scan k8s/
-            --framework nsa,mitre \
+          kubescape scan k8s/ framework nsa,mitre \
             --format json \
             --output kubescape-report.json \
             --fail-threshold critical \
