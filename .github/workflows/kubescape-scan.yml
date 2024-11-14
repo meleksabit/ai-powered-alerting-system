@@ -1,0 +1,34 @@
+name: Kubernetes Security Scan
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - stage
+      - test
+      - development
+
+jobs:
+  kubescape-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.2.2
+
+      # Install Kubescape (version 3.0.5)
+      - name: Install Kubescape
+        run: |
+          curl -s https://api.github.com/repos/kubescape/kubescape/releases/latest \
+          | grep "browser_download_url.*kubescape-linux-latest" \
+          | cut -d : -f 2,3 | tr -d \" | wget -qi - -O kubescape
+          chmod +x kubescape
+          sudo mv kubescape /usr/local/bin/kubescape
+
+      - name: Run Kubescape scan
+        run: |
+          kubescape scan framework nsa,mitre \
+            --format json \
+            --output kubescape-report.json \
+            --fail-threshold critical \
+            --verbose
