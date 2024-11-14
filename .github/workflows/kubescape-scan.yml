@@ -46,7 +46,7 @@ jobs:
         with:
           format: json
           outputFile: kubescape-report.json
-          fail-threshold: critical
+          failedThreshold: critical
           verbose: true
 
       # Upload Kubescape JSON report as an artifact
