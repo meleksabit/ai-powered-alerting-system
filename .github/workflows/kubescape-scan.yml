@@ -22,7 +22,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
 
-      # Run Kubescape scan using the GitHub Action (SARIF format)
+      # Run Kubescape scan using the GitHub Action for SARIF output
       - name: Run Kubescape scan (SARIF output)
         uses: kubescape/github-action@main
         continue-on-error: true
@@ -40,9 +40,9 @@ jobs:
         with:
           sarif_file: kubescape-report.sarif
 
-      # Run Kubescape scan again for JSON output using the GHCR container action
+      # Run Kubescape scan again for JSON output using kubescape-action for JSON
       - name: Run Kubescape scan (JSON output)
-        uses: ghcr.io/kubescape/kubescape-action@latest
+        uses: kubescape/github-action@main
         with:
           format: json
           outputFile: kubescape-report.json
