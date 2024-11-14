@@ -1,4 +1,4 @@
-name: Docker Compose Vulnerability Scan
+name: Docker Vulnerability Scan
 
 on:
   push:
