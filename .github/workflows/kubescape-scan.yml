@@ -22,34 +22,34 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
 
-      # Run Kubescape scan using the GitHub action and generate both SARIF and JSON
-      - name: Run Kubescape scan
+      # Run Kubescape scan using the GitHub Action (SARIF format)
+      - name: Run Kubescape scan (SARIF output)
         uses: kubescape/github-action@main
         continue-on-error: true
         with:
           format: sarif
           outputFile: kubescape-report.sarif
-          # Optional: You can uncomment and provide Kubescape Portal credentials if needed
+          # Optional: Uncomment and provide Kubescape Portal credentials if needed
           # account: ${{secrets.KUBESCAPE_ACCOUNT}}
           # accessKey: ${{secrets.KUBESCAPE_ACCESS_KEY}}
           # server: ${{ vars.KUBESCAPE_SERVER }}
 
-      # Upload Kubescape scan results to GitHub Code Scanning (SARIF format)
-      - name: Upload Kubescape scan results to GitHub Code Scanning
+      # Upload Kubescape SARIF results to GitHub Code Scanning
+      - name: Upload Kubescape SARIF results to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: kubescape-report.sarif
 
-      # Run Kubescape scan again for JSON output and upload it as an artifact
-      - name: Run Kubescape scan for JSON output
-        run: |
-          kubescape scan k8s/ framework nsa,mitre \
-            --format json \
-            --output kubescape-report.json \
-            --fail-threshold critical \
-            --verbose
+      # Run Kubescape scan again for JSON output using the GHCR container action
+      - name: Run Kubescape scan (JSON output)
+        uses: ghcr.io/kubescape/kubescape-action@latest
+        with:
+          format: json
+          outputFile: kubescape-report.json
+          fail-threshold: critical
+          verbose: true
 
-      # Upload Kubescape JSON report as an artifact for further inspection
+      # Upload Kubescape JSON report as an artifact
       - name: Upload Kubescape JSON Report as Artifact
         uses: actions/upload-artifact@v4
         with:
