@@ -37,4 +37,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: kubescape-report
-          path: kubescape-report.json
+          path: ./k8s/reports/kubescape-report.json
