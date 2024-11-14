@@ -1,4 +1,4 @@
-name: Kubernetes Security Scan
+name: Kubernetes Security Scan for Misconfigurations
 
 on:
   pull_request:
@@ -12,29 +12,37 @@ on:
 jobs:
   kubescape-scan:
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write  # Required for Code Scanning
+
     steps:
+      # Checkout the code from the repository
       - name: Checkout code
         uses: actions/checkout@v4.2.2
 
-      # Install Kubescape (version 3.0.5)
-      - name: Install Kubescape
-        run: |
-          curl -s https://api.github.com/repos/kubescape/kubescape/releases/latest \
-          | grep "browser_download_url.*kubescape-linux-latest" \
-          | cut -d : -f 2,3 | tr -d \" | wget -qi - -O kubescape
-          chmod +x kubescape
-          sudo mv kubescape /usr/local/bin/kubescape
-
+      # Run Kubescape scan using the GitHub action
       - name: Run Kubescape scan
-        run: |
-          kubescape scan k8s/ framework nsa,mitre \
-            --format json \
-            --output kubescape-report.json \
-            --fail-threshold critical \
-            --verbose
-            
-      - name: Upload Kubescape Report
+        uses: kubescape/github-action@main
+        continue-on-error: true
+        with:
+          format: sarif
+          outputFile: kubescape-report.sarif
+          # Optional: You can uncomment and provide Kubescape Portal credentials if needed
+          # account: ${{secrets.KUBESCAPE_ACCOUNT}}
+          # accessKey: ${{secrets.KUBESCAPE_ACCESS_KEY}}
+          # server: ${{ vars.KUBESCAPE_SERVER }}
+
+      # Upload the Kubescape scan results as GitHub Code Scanning results
+      - name: Upload Kubescape scan results to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: kubescape-report.sarif
+
+      # Optional: Upload Kubescape report as an artifact for further inspection
+      - name: Upload Kubescape Report as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: kubescape-report
-          path: ./k8s/reports/kubescape-report.json
+          path: kubescape-report.sarif
