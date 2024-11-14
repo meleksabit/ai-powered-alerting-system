@@ -22,7 +22,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
 
-      # Run Kubescape scan using the GitHub action
+      # Run Kubescape scan using the GitHub action and generate both SARIF and JSON
       - name: Run Kubescape scan
         uses: kubescape/github-action@main
         continue-on-error: true
@@ -34,15 +34,24 @@ jobs:
           # accessKey: ${{secrets.KUBESCAPE_ACCESS_KEY}}
           # server: ${{ vars.KUBESCAPE_SERVER }}
 
-      # Upload the Kubescape scan results as GitHub Code Scanning results
+      # Upload Kubescape scan results to GitHub Code Scanning (SARIF format)
       - name: Upload Kubescape scan results to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: kubescape-report.sarif
 
-      # Optional: Upload Kubescape report as an artifact for further inspection
-      - name: Upload Kubescape Report as Artifact
+      # Run Kubescape scan again for JSON output and upload it as an artifact
+      - name: Run Kubescape scan for JSON output
+        run: |
+          kubescape scan k8s/ framework nsa,mitre \
+            --format json \
+            --output kubescape-report.json \
+            --fail-threshold critical \
+            --verbose
+
+      # Upload Kubescape JSON report as an artifact for further inspection
+      - name: Upload Kubescape JSON Report as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: kubescape-report
-          path: kubescape-report.sarif
+          name: kubescape-json-report
+          path: kubescape-report.json
