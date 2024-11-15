@@ -28,6 +28,7 @@ jobs:
         with:
           format: sarif
           outputFile: kubescape-report.sarif
+          severityThreshold: "critical"
           # Optional: Uncomment and provide Kubescape Portal credentials if needed
           # account: ${{secrets.KUBESCAPE_ACCOUNT}}
           # accessKey: ${{secrets.KUBESCAPE_ACCESS_KEY}}
