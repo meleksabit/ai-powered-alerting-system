@@ -1,0 +1,57 @@
+name: Kubernetes Security Scan for Misconfigurations
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - stage
+      - test
+      - development
+
+jobs:
+  kubescape-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write  # Required for Code Scanning
+
+    steps:
+      # Checkout the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v4.2.2
+
+      # Run Kubescape scan using the GitHub Action for SARIF output
+      - name: Run Kubescape scan (SARIF output)
+        uses: kubescape/github-action@main
+        with:
+          format: sarif
+          outputFile: kubescape-report.sarif
+          severityThreshold: "critical"
+          # Optional: Uncomment and provide Kubescape Portal credentials if needed
+          # account: ${{secrets.KUBESCAPE_ACCOUNT}}
+          # accessKey: ${{secrets.KUBESCAPE_ACCESS_KEY}}
+          # server: ${{ vars.KUBESCAPE_SERVER }}
+
+      # Upload Kubescape SARIF results to GitHub Code Scanning
+      - name: Upload Kubescape SARIF results to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: kubescape-report.sarif
+
+      # Run Kubescape scan again for JSON output using kubescape-action for JSON
+      - name: Run Kubescape scan (JSON output)
+        uses: kubescape/github-action@main
+        continue-on-error: true
+        with:
+          format: json
+          outputFile: kubescape-report.json
+          verbose: true
+
+      # Upload Kubescape JSON report as an artifact
+      - name: Upload Kubescape JSON Report as Artifact
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: kubescape-json-report
+          path: kubescape-report.json
