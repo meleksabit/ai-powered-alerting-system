@@ -708,10 +708,9 @@ This configuration ensures that the Gunicorn workers have enough time to handle 
 
 ### This section outlines potential improvements and enhancements for the **AI-Powered Alerting System** to make it more robust, scalable, and feature-rich:
 
-## 🔔 Notification System
+### 🔔 Notification System
 ### :white_large_square: Implement Email Notifications
-#### Integrate email notifications (e.g., using SMTP libraries like smtplib or third-party APIs like SendGrid) to send alerts for critical logs detected by the system.
-#### **Why?** Provides real-time updates to stakeholders.
+#### Integrate email notifications (e.g., using SMTP libraries like smtplib or third-party APIs like SendGrid) to send alerts for critical logs detected by the system. \ **Why?** Provides real-time updates to stakeholders.
 
 ### :white_large_square: Integrate Slack Notifications
 #### Use Slack webhooks to send log classifications and critical alerts directly to dedicated Slack channels.
