@@ -718,55 +718,55 @@ This configuration ensures that the Gunicorn workers have enough time to handle 
 #### **Why?** Improves communication within teams and ensures swift responses to critical events.
 
 ## 🧠 Enhanced AI/ML Capabilities
-### - [ ] Experiment with Alternative Language Models (LLMs)
-### Test with other transformer-based models like **`GPT`**, **`T5`**, or fine-tuned versions of **`BERT`** specific to log analysis or sentiment classification (e.g., **Hugging Face's** **`bert-for-log-analysis`** models).
+### :white_large_square: Experiment with Alternative Language Models (LLMs)
+#### Test with other transformer-based models like **`GPT`**, **`T5`**, or fine-tuned versions of **`BERT`** specific to log analysis or sentiment classification (e.g., **Hugging Face's** **`bert-for-log-analysis`** models).
 
-### - [ ] Implement Model Monitoring and Retraining Pipelines
-### Automate periodic retraining of the ML model using up-to-date logs to improve accuracy. Tools like **MLflow** or **TensorFlow Serving** can be helpful.
-### **Why?** Maintains the model's effectiveness as log patterns evolve over time.
+### :white_large_square: Implement Model Monitoring and Retraining Pipelines
+#### Automate periodic retraining of the ML model using up-to-date logs to improve accuracy. Tools like **MLflow** or **TensorFlow Serving** can be helpful.
+#### **Why?** Maintains the model's effectiveness as log patterns evolve over time.
 
 ## 📈 Scalability Enhancements
-### - [ ] NGINX Integration
-### Add NGINX as a reverse proxy to improve load balancing and handle multiple simultaneous requests efficiently.
-### **Why?** Enhances performance and security, especially under heavy traffic.
+### :white_large_square: NGINX Integration
+#### Add NGINX as a reverse proxy to improve load balancing and handle multiple simultaneous requests efficiently.
+#### **Why?** Enhances performance and security, especially under heavy traffic.
 
-### - [ ] Service Mesh with Istio
-### Use Istio to manage service-to-service communication, observability, and security within your Kubernetes cluster.
-### **Why?** Simplifies networking, provides traffic encryption, and facilitates microservice observability.
+### :white_large_square: Service Mesh with Istio
+#### Use Istio to manage service-to-service communication, observability, and security within your Kubernetes cluster.
+#### **Why?** Simplifies networking, provides traffic encryption, and facilitates microservice observability.
 
-### - [ ] Adopt Horizontal Pod Autoscaling
-### Enable Kubernetes Horizontal Pod Autoscaling (HPA) for the Python app to dynamically scale based on CPU or memory utilization.
-### **Why?** Ensures that the system can handle varying workloads efficiently.
+### :white_large_square: Adopt Horizontal Pod Autoscaling
+#### Enable Kubernetes Horizontal Pod Autoscaling (HPA) for the Python app to dynamically scale based on CPU or memory utilization.
+#### **Why?** Ensures that the system can handle varying workloads efficiently.
 
 ## 🚀 Deployment & CI/CD
-### - [ ] ArgoCD for GitOps Deployment
-### Implement ArgoCD to manage Kubernetes deployments via GitOps principles.
-### **Why?** Automates and synchronizes deployment workflows, reducing manual intervention and ensuring consistency.
+### :white_large_square: ArgoCD for GitOps Deployment
+#### Implement ArgoCD to manage Kubernetes deployments via GitOps principles.
+#### **Why?** Automates and synchronizes deployment workflows, reducing manual intervention and ensuring consistency.
 
-### - [ ] Add Integration Testing to CI/CD Pipelines
-### Include integration tests for end-to-end system verification in the GitHub Actions pipeline.
-### **Why?** Ensures that new code changes don’t break interdependent components.
+### :white_large_square: Add Integration Testing to CI/CD Pipelines
+#### Include integration tests for end-to-end system verification in the GitHub Actions pipeline.
+#### **Why?** Ensures that new code changes don’t break interdependent components.
 
 ## 🔒 Security Improvements
-### - [ ] Enforce HTTPS with Cert-Manager
-### Use Cert-Manager in Kubernetes to automatically issue and renew TLS certificates for secure communication.
-### **Why?** Protects sensitive data and avoids exposing the application over HTTP.
+### :white_large_square: Enforce HTTPS with Cert-Manager
+#### Use Cert-Manager in Kubernetes to automatically issue and renew TLS certificates for secure communication.
+#### **Why?** Protects sensitive data and avoids exposing the application over HTTP.
 
-### - [ ] Implement Role-Based Access Control (RBAC)
-### Define and enforce fine-grained access permissions within the Kubernetes cluster.
-### **Why?** Enhances security by limiting access to resources based on user roles.
+### :white_large_square: Implement Role-Based Access Control (RBAC)
+#### Define and enforce fine-grained access permissions within the Kubernetes cluster.
+#### **Why?** Enhances security by limiting access to resources based on user roles.
 
 ## 🛠 Additional Improvements
-### - [ ] Centralized Logging with ELK Stack
-### Integrate **Elasticsearch**, **Logstash**, and **Kibana** to provide powerful log aggregation and analysis capabilities.
-### **Why?** Enables deeper insights into logs and simplifies debugging.
+### :white_large_square: Centralized Logging with ELK Stack
+#### Integrate **Elasticsearch**, **Logstash**, and **Kibana** to provide powerful log aggregation and analysis capabilities.
+#### **Why?** Enables deeper insights into logs and simplifies debugging.
 
-### - [ ] Performance Benchmarking
-### Conduct stress testing and performance benchmarking (e.g., with **k6**, **Apache JMeter**) to identify bottlenecks.
-### **Why?** Helps optimize the system for high availability.
+### :white_large_square: Performance Benchmarking
+#### Conduct stress testing and performance benchmarking (e.g., with **k6**, **Apache JMeter**) to identify bottlenecks.
+#### **Why?** Helps optimize the system for high availability.
 
-### - [ ] Support Multiple Alert Channels
-### Extend the alerting framework to integrate with additional tools like **PagerDuty**, **Microsoft Teams**, or **Opsgenie**.
-### **Why?** Provides flexibility for different organizations.
+### :white_large_square: Support Multiple Alert Channels
+#### Extend the alerting framework to integrate with additional tools like **PagerDuty**, **Microsoft Teams**, or **Opsgenie**.
+#### **Why?** Provides flexibility for different organizations.
 
 [:arrow_up:](#top)
