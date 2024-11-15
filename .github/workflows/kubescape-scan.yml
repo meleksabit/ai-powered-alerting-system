@@ -25,7 +25,6 @@ jobs:
       # Run Kubescape scan using the GitHub Action for SARIF output
       - name: Run Kubescape scan (SARIF output)
         uses: kubescape/github-action@main
-        continue-on-error: true
         with:
           format: sarif
           outputFile: kubescape-report.sarif
