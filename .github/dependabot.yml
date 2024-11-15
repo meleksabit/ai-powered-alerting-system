@@ -1,0 +1,174 @@
+version: 2
+updates:
+  # Define update settings for GitHub Actions dependencies
+  # Configure for main branch
+  - package-ecosystem: "github-actions" # Checks for updates to GitHub Actions in workflows
+    directory: ".github/workflows"      # Root directory for GitHub Actions workflows
+    schedule:
+      interval: "weekly"                # Choose the update frequency: daily, weekly, or monthly
+      labels:
+      - "dependencies"
+    reviewers:
+      - "meleksabit"
+    commit-message:
+      prefix: "chore"
+    automerge: true
+    target-branch: "main"               
+
+  # Define update settings for Docker dependencies
+  - package-ecosystem: "docker"         # Checks for updates to Docker images
+    directory: "/"                      # Location of Dockerfile or directory to monitor
+    schedule:                           
+      interval: "weekly"                # Set frequency for Docker image updates
+      labels:
+      - "dependencies"
+    reviewers:
+      - "meleksabit"
+    commit-message:
+      prefix: "chore"
+    automerge: true
+    target-branch: "main"                
+
+  # Define update settings for Python dependencies
+  - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
+    directory: "my-app/"                # Location of the requirements.txt file
+    schedule:
+      interval: "weekly"                # Choose the frequency for Python dependency updates
+      labels:
+      - "dependencies"
+    reviewers:
+      - "meleksabit"
+    commit-message:
+      prefix: "chore"
+    automerge: true
+    target-branch: "main"                
+    open-pull-requests-limit: 5         # Limits the number of open Dependabot PRs
+
+    # Configure for stage branch
+  - package-ecosystem: "github-actions" # Checks for updates to GitHub Actions in workflows
+    directory: ".github/workflows"      # Root directory for GitHub Actions workflows
+    schedule:
+      interval: "weekly"                # Choose the update frequency: daily, weekly, or monthly
+      labels:
+      - "dependencies"
+    reviewers:
+      - "meleksabit"
+    commit-message:
+      prefix: "chore"
+    automerge: true
+    target-branch: "stage"               
+
+  # Define update settings for Docker dependencies
+  - package-ecosystem: "docker"         # Checks for updates to Docker images
+    directory: "/"                      # Location of Dockerfile or directory to monitor
+    schedule:                           
+      interval: "weekly"                # Set frequency for Docker image updates
+      labels:
+      - "dependencies"
+    reviewers:
+      - "meleksabit"
+    commit-message:
+      prefix: "chore"
+    automerge: true
+    target-branch: "stage"                
+
+  # Define update settings for Python dependencies
+  - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
+    directory: "my-app/"                # Location of the requirements.txt file
+    schedule:
+      interval: "weekly"                # Choose the frequency for Python dependency updates
+      labels:
+      - "dependencies"
+    reviewers:
+      - "meleksabit"
+    commit-message:
+      prefix: "chore"
+    automerge: true
+    target-branch: "stage"                
+    open-pull-requests-limit: 5         # Limits the number of open Dependabot PRs
+
+    # Configure for test branch
+  - package-ecosystem: "github-actions" # Checks for updates to GitHub Actions in workflows
+    directory: ".github/workflows"      # Root directory for GitHub Actions workflows
+    schedule:
+      interval: "weekly"                # Choose the update frequency: daily, weekly, or monthly
+      labels:
+      - "dependencies"
+    reviewers:
+      - "meleksabit"
+    commit-message:
+      prefix: "chore"
+    automerge: true
+    target-branch: "test"               
+
+  # Define update settings for Docker dependencies
+  - package-ecosystem: "docker"         # Checks for updates to Docker images
+    directory: "/"                      # Location of Dockerfile or directory to monitor
+    schedule:                           
+      interval: "weekly"                # Set frequency for Docker image updates
+      labels:
+      - "dependencies"
+    reviewers:
+      - "meleksabit"
+    commit-message:
+      prefix: "chore"
+    automerge: true
+    target-branch: "test"                
+
+  # Define update settings for Python dependencies
+  - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
+    directory: "my-app/"                # Location of the requirements.txt file
+    schedule:
+      interval: "weekly"                # Choose the frequency for Python dependency updates
+      labels:
+      - "dependencies"
+    reviewers:
+      - "meleksabit"
+    commit-message:
+      prefix: "chore"
+    automerge: true
+    target-branch: "test"                
+    open-pull-requests-limit: 5         # Limits the number of open Dependabot PRs
+
+    # Configure for development branch
+  - package-ecosystem: "github-actions" # Checks for updates to GitHub Actions in workflows
+    directory: ".github/workflows"      # Root directory for GitHub Actions workflows
+    schedule:
+      interval: "weekly"                # Choose the update frequency: daily, weekly, or monthly
+      labels:
+      - "dependencies"
+    reviewers:
+      - "meleksabit"
+    commit-message:
+      prefix: "chore"
+    automerge: true
+    target-branch: "development"               
+
+  # Define update settings for Docker dependencies
+  - package-ecosystem: "docker"         # Checks for updates to Docker images
+    directory: "/"                      # Location of Dockerfile or directory to monitor
+    schedule:                           
+      interval: "weekly"                # Set frequency for Docker image updates
+      labels:
+      - "dependencies"
+    reviewers:
+      - "meleksabit"
+    commit-message:
+      prefix: "chore"
+    automerge: true
+    target-branch: "development"                
+
+  # Define update settings for Python dependencies
+  - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
+    directory: "my-app/"                # Location of the requirements.txt file
+    schedule:
+      interval: "weekly"                # Choose the frequency for Python dependency updates
+      labels:
+      - "dependencies"
+    reviewers:
+      - "meleksabit"
+    commit-message:
+      prefix: "chore"
+    automerge: true
+    target-branch: "development"                
+    open-pull-requests-limit: 5         # Limits the number of open Dependabot PRs
