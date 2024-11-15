@@ -1,5 +1,5 @@
 # requirements.txt
-transformers==4.45.2
+transformers==4.46.2
 prometheus-client==0.21.0
 requests==2.32.3
 torch==2.5.1
