@@ -152,8 +152,6 @@ updates:
     directory: "my-app/"                # Location of the requirements.txt file
     schedule:
       interval: "weekly"                # Choose the frequency for Python dependency updates
-      labels:
-      - "dependencies"
     reviewers:
       - "meleksabit"
     commit-message:
