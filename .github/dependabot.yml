@@ -15,7 +15,7 @@ updates:
 
   # Define update settings for Docker dependencies
   - package-ecosystem: "docker"         # Checks for updates to Docker images
-    directory: "/"                      # Location of Dockerfile or directory to monitor
+    directory: "/my-app"                # Path to the first Dockerfile's directory
     schedule:                           
       interval: "weekly"                # Set frequency for Docker image updates
     reviewers:
@@ -23,7 +23,18 @@ updates:
     commit-message:
       prefix: "chore"
     target-branch: "main"
-    labels: ["dependencies", "weekly-update"]                
+    labels: ["dependencies", "weekly-update"]
+
+  - package-ecosystem: "docker"         # Checks for updates to Docker images
+    directory: "/prometheus-grafana"    # Path to the second Dockerfile's directory
+    schedule:                           
+      interval: "weekly"                # Set frequency for Docker image updates
+    reviewers:
+      - "meleksabit"
+    commit-message:
+      prefix: "chore"
+    target-branch: "main"
+    labels: ["dependencies", "weekly-update"]                 
 
   # Define update settings for Python dependencies
   - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
@@ -52,7 +63,7 @@ updates:
 
   # Define update settings for Docker dependencies
   - package-ecosystem: "docker"         # Checks for updates to Docker images
-    directory: "/"                      # Location of Dockerfile or directory to monitor
+    directory: "/my-app"                # Path to the first Dockerfile's directory
     schedule:                           
       interval: "weekly"                # Set frequency for Docker image updates
     reviewers:
@@ -60,7 +71,18 @@ updates:
     commit-message:
       prefix: "chore"
     target-branch: "stage"
-    labels: ["dependencies", "stage-update"]                
+    labels: ["dependencies", "weekly-update"]
+
+  - package-ecosystem: "docker"         # Checks for updates to Docker images
+    directory: "/prometheus-grafana"    # Path to the second Dockerfile's directory
+    schedule:                           
+      interval: "weekly"                # Set frequency for Docker image updates
+    reviewers:
+      - "meleksabit"
+    commit-message:
+      prefix: "chore"
+    target-branch: "stage"
+    labels: ["dependencies", "weekly-update"]                
 
   # Define update settings for Python dependencies
   - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
@@ -89,7 +111,7 @@ updates:
 
   # Define update settings for Docker dependencies
   - package-ecosystem: "docker"         # Checks for updates to Docker images
-    directory: "/"                      # Location of Dockerfile or directory to monitor
+    directory: "/my-app"                # Path to the first Dockerfile's directory
     schedule:                           
       interval: "weekly"                # Set frequency for Docker image updates
     reviewers:
@@ -97,7 +119,18 @@ updates:
     commit-message:
       prefix: "chore"
     target-branch: "test"
-    labels: ["dependencies", "test-update"]                
+    labels: ["dependencies", "weekly-update"]
+
+  - package-ecosystem: "docker"         # Checks for updates to Docker images
+    directory: "/prometheus-grafana"    # Path to the second Dockerfile's directory
+    schedule:                           
+      interval: "weekly"                # Set frequency for Docker image updates
+    reviewers:
+      - "meleksabit"
+    commit-message:
+      prefix: "chore"
+    target-branch: "test"
+    labels: ["dependencies", "weekly-update"]                
 
   # Define update settings for Python dependencies
   - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
@@ -126,7 +159,7 @@ updates:
 
   # Define update settings for Docker dependencies
   - package-ecosystem: "docker"         # Checks for updates to Docker images
-    directory: "/"                      # Location of Dockerfile or directory to monitor
+    directory: "/my-app"                # Path to the first Dockerfile's directory
     schedule:                           
       interval: "weekly"                # Set frequency for Docker image updates
     reviewers:
@@ -134,7 +167,18 @@ updates:
     commit-message:
       prefix: "chore"
     target-branch: "development"
-    labels: ["dependencies", "development-update"]                
+    labels: ["dependencies", "weekly-update"]
+
+  - package-ecosystem: "docker"         # Checks for updates to Docker images
+    directory: "/prometheus-grafana"    # Path to the second Dockerfile's directory
+    schedule:                           
+      interval: "weekly"                # Set frequency for Docker image updates
+    reviewers:
+      - "meleksabit"
+    commit-message:
+      prefix: "chore"
+    target-branch: "development"
+    labels: ["dependencies", "weekly-update"]                
 
   # Define update settings for Python dependencies
   - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
