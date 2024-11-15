@@ -43,6 +43,7 @@ jobs:
       # Run Kubescape scan again for JSON output using kubescape-action for JSON
       - name: Run Kubescape scan (JSON output)
         uses: kubescape/github-action@main
+        continue-on-error: true
         with:
           format: json
           outputFile: kubescape-report.json
