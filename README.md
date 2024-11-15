@@ -711,28 +711,28 @@ This configuration ensures that the Gunicorn workers have enough time to handle 
 
 ## 🔔 Notification System
 ### :white_large_square: Implement Email Notifications
-#### Integrate email notifications (e.g., using **SMTP** libraries like **`smtplib`** or third-party **APIs** like **SendGrid**) to send alerts for critical logs detected by the system.
+#### Integrate email notifications (e.g., using **_SMTP_** libraries like **`smtplib`** or third-party **_APIs_** like **_SendGrid_**) to send alerts for critical logs detected by the system.
 #### **_Why?_** Provides real-time updates to stakeholders.
 
 ### :white_large_square: Integrate Slack Notifications
-#### Use **Slack** webhooks to send log classifications and critical alerts directly to dedicated Slack channels.
+#### Use **_Slack_** webhooks to send log classifications and critical alerts directly to dedicated Slack channels.
 #### **_Why?_** Improves communication within teams and ensures swift responses to critical events.
 
 ## 🧠 Enhanced AI/ML Capabilities
 ### :white_large_square: Experiment with Alternative Language Models (LLMs)
-#### Test with other transformer-based models like **`GPT`**, **`T5`**, or fine-tuned versions of **`BERT`** specific to log analysis or sentiment classification (e.g., **Hugging Face's** **`bert-for-log-analysis`** models).
+#### Test with other transformer-based models like **`GPT`**, **`T5`**, or fine-tuned versions of **`BERT`** specific to log analysis or sentiment classification (e.g., **_Hugging Face's_** **`bert-for-log-analysis`** models).
 
 ### :white_large_square: Implement Model Monitoring and Retraining Pipelines
-#### Automate periodic retraining of the ML model using up-to-date logs to improve accuracy. Tools like **MLflow** or **TensorFlow Serving** can be helpful.
+#### Automate periodic retraining of the ML model using up-to-date logs to improve accuracy. Tools like **_MLflow_** or **_TensorFlow Serving_** can be helpful.
 #### **_Why?_** Maintains the model's effectiveness as log patterns evolve over time.
 
 ## 📈 Scalability Enhancements
 ### :white_large_square: NGINX Integration
-#### Add **NGINX** as a reverse proxy to improve load balancing and handle multiple simultaneous requests efficiently.
+#### Add **_NGINX_** as a reverse proxy to improve load balancing and handle multiple simultaneous requests efficiently.
 #### **_Why?_** Enhances performance and security, especially under heavy traffic.
 
 ### :white_large_square: Service Mesh with Istio
-#### Use **Istio** to manage service-to-service communication, observability, and security within your Kubernetes cluster.
+#### Use **_Istio_** to manage service-to-service communication, observability, and security within your Kubernetes cluster.
 #### **_Why?_** Simplifies networking, provides traffic encryption, and facilitates microservice observability.
 
 ### :white_large_square: Adopt Horizontal Pod Autoscaling
@@ -741,7 +741,7 @@ This configuration ensures that the Gunicorn workers have enough time to handle 
 
 ## 🚀 Deployment & CI/CD
 ### :white_large_square: ArgoCD for GitOps Deployment
-#### Implement **ArgoCD** to manage Kubernetes deployments via GitOps principles.
+#### Implement **_ArgoCD_** to manage Kubernetes deployments via GitOps principles.
 #### **_Why?_** Automates and synchronizes deployment workflows, reducing manual intervention and ensuring consistency.
 
 ### :white_large_square: Add Integration Testing to CI/CD Pipelines
@@ -750,7 +750,7 @@ This configuration ensures that the Gunicorn workers have enough time to handle 
 
 ## 🔒 Security Improvements
 ### :white_large_square: Enforce HTTPS with Cert-Manager
-#### Use **Cert-Manager** in Kubernetes to automatically issue and renew **TLS** certificates for secure communication.
+#### Use **_Cert-Manager_** in Kubernetes to automatically issue and renew **_TLS_** certificates for secure communication.
 #### **_Why?_** Protects sensitive data and avoids exposing the application over HTTP.
 
 ### :white_large_square: Implement Role-Based Access Control (RBAC)
@@ -759,15 +759,15 @@ This configuration ensures that the Gunicorn workers have enough time to handle 
 
 ## 🛠 Additional Improvements
 ### :white_large_square: Centralized Logging with ELK Stack
-#### Integrate **Elasticsearch**, **Logstash**, and **Kibana** to provide powerful log aggregation and analysis capabilities.
+#### Integrate **_Elasticsearch_**, **_Logstash_**, and **_Kibana_** to provide powerful log aggregation and analysis capabilities.
 #### **_Why?_** Enables deeper insights into logs and simplifies debugging.
 
 ### :white_large_square: Performance Benchmarking
-#### Conduct stress testing and performance benchmarking (e.g., with **k6**, **Apache JMeter**) to identify bottlenecks.
+#### Conduct stress testing and performance benchmarking (e.g., with **_k6_**, **_Apache JMeter_**) to identify bottlenecks.
 #### **_Why?_** Helps optimize the system for high availability.
 
 ### :white_large_square: Support Multiple Alert Channels
-#### Extend the alerting framework to integrate with additional tools like **PagerDuty**, **Microsoft Teams**, or **Opsgenie**.
+#### Extend the alerting framework to integrate with additional tools like **_PagerDuty_**, **_Microsoft Teams_**, or **_Opsgenie_**.
 #### **_Why?_** Provides flexibility for different organizations.
 
 [:arrow_up:](#top)
