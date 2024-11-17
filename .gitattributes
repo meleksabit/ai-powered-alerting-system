@@ -4,7 +4,7 @@ prometheus-grafana/Dockerfile.grafana linguist-language=Dockerfile
 
 # Treat Kubernetes manifests as YAML
 k8s/*.yaml linguist-language=YAML
-k8s/**/*.yml linguist-language=YAML
+k8s/*.yml linguist-language=YAML
 
 # General YAML files
 **/*.yaml linguist-language=YAML
