@@ -1,0 +1,14 @@
+name: PR Title Linter
+
+on:
+  pull_request:
+    types: [opened, edited]
+
+jobs:
+  pr-title-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title
+        uses: kentaro-m/pull-request-title-linter-action@v2
+        with:
+          configuration-path: '.github/pr-title-linter.yml'
