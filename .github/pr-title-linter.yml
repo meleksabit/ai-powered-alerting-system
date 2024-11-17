@@ -1,4 +1,0 @@
-patterns:
-  - "^feat: .+" # Feature
-  - "^fix: .+"  # Bug fix
-  - "^docs: .+" # Documentation
