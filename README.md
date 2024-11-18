@@ -31,7 +31,7 @@ This project demonstrates how to classify log events using **Hugging Face's BERT
 * **`AI-Based Log Classification`**: Uses machine learning to classify log messages based on severity.
 * **`Critical Alerts`**: Alerts are triggered only for critical logs, reducing noise and improving response time.
 * **`Prometheus & Grafana Integration`**: Real-time metrics collection and visualization.
-* **`Production-Ready Deployment`**: Now uses **Gunicorn** to run the Flask app in a production environment.
+* **`Production-Ready Deployment`**: Uses **Gunicorn** to run the Flask app in a production environment.
 * **`Kubernetes Support`**: Kubernetes manifests for deploying the system in a scalable environment.
 * **`Lazy Loading`**: The system optimizes resource usage with lazy loading of machine learning models.
 
