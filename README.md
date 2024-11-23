@@ -715,7 +715,7 @@ This configuration ensures that the Gunicorn workers have enough time to handle 
 ### This section outlines potential improvements and enhancements for the **_AI-Powered Alerting System_** to make it more robust, scalable, and feature-rich:
 
 ## 🔔 Notification System
-### :white_large_square: Implement Email Notifications
+### :white_check_mark: Implement Email Notifications --> implemented via **`yagmail`** library
 #### Integrate email notifications (e.g., using **_SMTP_** libraries like **`smtplib`** or third-party **_APIs_** like **_SendGrid_**) to send alerts for critical logs detected by the system.
 #### **_Why?_** Provides real-time updates to stakeholders.
 
