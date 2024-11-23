@@ -5,3 +5,4 @@ requests==2.32.3
 torch==2.5.1
 flask==3.1.0
 gunicorn==23.0.0
+yagmail==0.15.293
