@@ -30,9 +30,6 @@ services:
     build:
       context: ./my-app
       dockerfile: Dockerfile.app
-      secrets:
-      - email_address
-      - notification_receiver
     ports:
       - "5000:5000"  # Expose Flask app on port 5000
       - "8000:8000"  # Expose Prometheus metrics on port 8000
