@@ -1,16 +1,6 @@
 name: SonarCloud Analysis
 
-on:
-  # Trigger analysis when pushing to your main branches, and when creating a pull request.
-  push:
-    branches:
-      - main
-      - stage
-      - test
-      - development
-      - feature/*
-  pull_request:
-    types: [opened, synchronize, reopened]
+on: [push]
 
 jobs:
   sonar-scan:
