@@ -45,12 +45,6 @@ services:
     networks:
       - monitor-net
 
-secrets:
-  email_address:
-    file: ~/secrets/email_address
-  notification_receiver:
-    file: ~/secrets/notification_receiver
-
 # Define a shared network
 networks:
   monitor-net:
