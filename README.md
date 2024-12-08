@@ -719,7 +719,7 @@ This configuration ensures that the Gunicorn workers have enough time to handle 
 #### Integrate email notifications (e.g., using **_SMTP_** libraries like **`smtplib`** or third-party **_APIs_** like **_SendGrid_**) to send alerts for critical logs detected by the system.
 #### **_Why?_** Provides real-time updates to stakeholders.
 
-### :white_large_square: Integrate Slack Notifications
+### :white_check_mark: Integrate Slack Notifications --> implemented via **`slack_bolt`** library
 #### Use **_Slack_** webhooks to send log classifications and critical alerts directly to dedicated Slack channels.
 #### **_Why?_** Improves communication within teams and ensures swift responses to critical events.
 
