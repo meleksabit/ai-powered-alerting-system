@@ -1,6 +1,14 @@
 name: SonarCloud Analysis
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+      - stage
+      - test
+  pull_request:
+    branches:
+      - '**'
 
 jobs:
   sonar-scan:
@@ -9,6 +17,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all branches and commits, not just the latest commit
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
