@@ -30,8 +30,11 @@ jobs:
           pip install -r my-app/requirements.txt
 
       - name: Run tests with coverage
+        env:
+          FLASK_ENV: testing
         run: |
           pytest --cov=my-app --cov-report=xml
+
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@v4

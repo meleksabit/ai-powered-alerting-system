@@ -10,14 +10,23 @@ import yagmail
 # Enable logging
 logging.basicConfig(filename='app.log', level=logging.INFO)
 
+# Check if the app is running in test mode
+IS_TESTING = os.getenv("FLASK_ENV") == "testing"
+
+# Initialize Slack credentials
+if not IS_TESTING:
+    SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN")
+    SLACK_SIGNING_SECRET = os.getenv("SLACK_SIGNING_SECRET")
+    if not SLACK_BOT_TOKEN or not SLACK_SIGNING_SECRET:
+        raise EnvironmentError("Slack credentials are missing. Please set them as environment variables.")
+else:
+    SLACK_BOT_TOKEN = "mock-token"
+    SLACK_SIGNING_SECRET = "mock-signing-secret"
+
 # Initialize Flask app
 app = Flask(__name__)
 
 # Initialize Slack Bolt app
-SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN")
-SLACK_SIGNING_SECRET = os.getenv("SLACK_SIGNING_SECRET")
-if not SLACK_BOT_TOKEN or not SLACK_SIGNING_SECRET:
-    raise EnvironmentError("Slack credentials are missing. Please set them as environment variables.")
 slack_app = SlackApp(token=SLACK_BOT_TOKEN, signing_secret=SLACK_SIGNING_SECRET)
 slack_handler = SlackRequestHandler(slack_app)
 
@@ -28,6 +37,7 @@ email_sending_status = Counter('email_sending_status', 'Status of email sending'
 # Load email credentials from environment variables
 SENDER_EMAIL = os.getenv("SENDER_EMAIL")
 RECIPIENT_EMAIL = os.getenv("RECIPIENT_EMAIL")
+
 if not SENDER_EMAIL or not RECIPIENT_EMAIL:
     raise EnvironmentError("Email credentials are missing. Please set them as environment variables.")
 
@@ -95,9 +105,6 @@ def alert_command(ack, respond, command):
     respond(f"Log message classified as {severity}: {log_message}")
 
 if __name__ == '__main__':
-    # Start Prometheus metrics server on port 8000
     logging.info("Starting Prometheus metrics server on port 8000...")
     start_http_server(8000)
-
-    # Run the Flask app on port 5000
     app.run(host='0.0.0.0', port=5000)
