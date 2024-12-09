@@ -37,7 +37,7 @@ jobs:
 
       # Step to download and cache Trivy vulnerability database
       - name: Download Trivy DB
-        uses: actions/cache@v4.1.2
+        uses: actions/cache@v4.2.0
         with:
           path: ./.trivy-cache
           key: ${{ runner.os }}-trivy-db
