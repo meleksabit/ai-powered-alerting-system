@@ -7,3 +7,5 @@ gunicorn==23.0.0
 yagmail==0.15.293
 slack-bolt==1.21.2
 slack-sdk==3.33.5
+pytest==8.3.4
+pytest-cov==6.0.0

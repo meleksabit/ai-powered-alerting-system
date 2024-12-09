@@ -6,6 +6,7 @@ on:
       - main
       - stage
       - test
+      - development
   pull_request:
     branches:
       - '**'
@@ -18,7 +19,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0  # Shallow clones should be disabled for better analysis relevancy
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13' 
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests and generate coverage report
+        run: |
+          pytest --cov=app --cov-report=xml
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -28,7 +43,7 @@ jobs:
             java-package: 'jdk'
 
       - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@v4 # Ex: v2.1.0, See the latest version at https://github.com/marketplace/actions/sonarcloud-scan
+        uses: sonarsource/sonarcloud-github-action@v4
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
