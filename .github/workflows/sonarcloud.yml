@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Set PYTHONPATH
-        run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/my-app" >> $GITHUB_ENV
+        run: echo "PYTHONPATH=${{ github.workspace }}/my-app" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: |
