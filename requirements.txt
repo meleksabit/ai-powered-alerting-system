@@ -9,3 +9,4 @@ slack-bolt==1.21.2
 slack-sdk==3.33.5
 pytest==8.3.4
 pytest-cov==6.0.0
+Flask-WTF==1.2.2

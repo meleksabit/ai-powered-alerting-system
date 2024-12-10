@@ -7,12 +7,14 @@ import yagmail
 from slack_bolt import App as SlackApp
 from slack_bolt.adapter.flask import SlackRequestHandler
 from unittest.mock import MagicMock
+from flask_wtf.csrf import CSRFProtect
 
 # Enable logging
 logging.basicConfig(filename='app.log', level=logging.INFO)
 
 # Initialize Flask app
 app = Flask(__name__)
+csrf = CSRFProtect(app)
 
 # Check if the app is running in test mode
 IS_TESTING = os.getenv("FLASK_ENV") == "testing"
