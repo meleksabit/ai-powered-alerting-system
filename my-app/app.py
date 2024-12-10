@@ -6,6 +6,7 @@ import os
 import yagmail
 from slack_bolt import App as SlackApp
 from slack_bolt.adapter.flask import SlackRequestHandler
+from unittest.mock import MagicMock
 
 # Enable logging
 logging.basicConfig(filename='app.log', level=logging.INFO)
@@ -26,7 +27,6 @@ if not IS_TESTING:
     slack_handler = SlackRequestHandler(slack_app)
 else:
     # Mock SlackApp and SlackRequestHandler for testing
-    from unittest.mock import MagicMock
     slack_app = MagicMock()
     slack_handler = MagicMock()
 
