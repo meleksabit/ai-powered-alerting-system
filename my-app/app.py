@@ -1,11 +1,19 @@
 import logging
 from prometheus_client import start_http_server, Counter, generate_latest
 from flask import Flask, Response, jsonify, request
-from slack_bolt import App as SlackApp
-from slack_bolt.adapter.flask import SlackRequestHandler
 from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
 import os
 import yagmail
+
+# Add Mock for Slack (in case of testing)
+try:
+    from slack_bolt import App as SlackApp
+    from slack_bolt.adapter.flask import SlackRequestHandler
+    from unittest.mock import MagicMock
+except ImportError:
+    SlackApp = None
+    SlackRequestHandler = None
+    MagicMock = None
 
 # Enable logging
 logging.basicConfig(filename='app.log', level=logging.INFO)
@@ -13,22 +21,25 @@ logging.basicConfig(filename='app.log', level=logging.INFO)
 # Check if the app is running in test mode
 IS_TESTING = os.getenv("FLASK_ENV") == "testing"
 
-# Initialize Slack credentials
-if not IS_TESTING:
+# Slack app initialization
+if IS_TESTING:
+    SLACK_BOT_TOKEN = "mock-token"
+    SLACK_SIGNING_SECRET = "mock-signing-secret"
+
+    # Mock SlackApp and SlackRequestHandler during tests
+    slack_app = MagicMock()
+    slack_handler = MagicMock()
+else:
     SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN")
     SLACK_SIGNING_SECRET = os.getenv("SLACK_SIGNING_SECRET")
     if not SLACK_BOT_TOKEN or not SLACK_SIGNING_SECRET:
         raise EnvironmentError("Slack credentials are missing. Please set them as environment variables.")
-else:
-    SLACK_BOT_TOKEN = "mock-token"
-    SLACK_SIGNING_SECRET = "mock-signing-secret"
+
+    slack_app = SlackApp(token=SLACK_BOT_TOKEN, signing_secret=SLACK_SIGNING_SECRET)
+    slack_handler = SlackRequestHandler(slack_app)
 
 # Initialize Flask app
 app = Flask(__name__)
-
-# Initialize Slack Bolt app
-slack_app = SlackApp(token=SLACK_BOT_TOKEN, signing_secret=SLACK_SIGNING_SECRET)
-slack_handler = SlackRequestHandler(slack_app)
 
 # Define Prometheus Counters
 log_severity = Counter('log_severity', 'Count of log severities', ['severity'])
@@ -85,6 +96,8 @@ def send_email_endpoint(log_message):
 @app.route('/slack/events', methods=['POST'])
 def slack_events():
     """Handle Slack events."""
+    if IS_TESTING:
+        return jsonify({"message": "Slack events are mocked in test mode."}), 200
     return slack_handler.handle(request)
 
 @app.route('/')
