@@ -28,28 +28,19 @@ services:
   # Python Flask app service
   python-app:
     build:
-      context: ./my-app
+      context: ./my_app
       dockerfile: Dockerfile.app
-      secrets:
-      - email_address
-      - notification_receiver
     ports:
       - "5000:5000"  # Expose Flask app on port 5000
       - "8000:8000"  # Expose Prometheus metrics on port 8000
     volumes:
-      - ./my-app:/app  # Mount app source code
+      - ./my_app:/app  # Mount app source code
     restart: unless-stopped
     depends_on:
       - prometheus
       - grafana
     networks:
       - monitor-net
-
-secrets:
-  email_address:
-    file: ~/secrets/email_address
-  notification_receiver:
-    file: ~/secrets/notification_receiver
 
 # Define a shared network
 networks:

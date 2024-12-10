@@ -1,5 +1,5 @@
 # Mark Dockerfiles as Docker
-my-app/Dockerfile.app linguist-language=Dockerfile
+my_app/Dockerfile.app linguist-language=Dockerfile
 prometheus-grafana/Dockerfile.grafana linguist-language=Dockerfile
 
 # Treat Kubernetes manifests as YAML

@@ -15,7 +15,7 @@ updates:
 
   # Define update settings for Docker dependencies
   - package-ecosystem: "docker"         # Checks for updates to Docker images
-    directory: "/my-app"                # Path to the first Dockerfile's directory
+    directory: "/my_app"                # Path to the first Dockerfile's directory
     schedule:                           
       interval: "weekly"                # Set frequency for Docker image updates
     reviewers:
@@ -38,7 +38,7 @@ updates:
 
   # Define update settings for Python dependencies
   - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
-    directory: "my-app/"                # Location of the requirements.txt file
+    directory: "my_app/"                # Location of the requirements.txt file
     schedule:
       interval: "weekly"                # Choose the frequency for Python dependency updates
     reviewers:
@@ -63,7 +63,7 @@ updates:
 
   # Define update settings for Docker dependencies
   - package-ecosystem: "docker"         # Checks for updates to Docker images
-    directory: "/my-app"                # Path to the first Dockerfile's directory
+    directory: "/my_app"                # Path to the first Dockerfile's directory
     schedule:                           
       interval: "weekly"                # Set frequency for Docker image updates
     reviewers:
@@ -86,7 +86,7 @@ updates:
 
   # Define update settings for Python dependencies
   - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
-    directory: "my-app/"                # Location of the requirements.txt file
+    directory: "my_app/"                # Location of the requirements.txt file
     schedule:
       interval: "weekly"                # Choose the frequency for Python dependency updates
     reviewers:
@@ -111,7 +111,7 @@ updates:
 
   # Define update settings for Docker dependencies
   - package-ecosystem: "docker"         # Checks for updates to Docker images
-    directory: "/my-app"                # Path to the first Dockerfile's directory
+    directory: "/my_app"                # Path to the first Dockerfile's directory
     schedule:                           
       interval: "weekly"                # Set frequency for Docker image updates
     reviewers:
@@ -134,7 +134,7 @@ updates:
 
   # Define update settings for Python dependencies
   - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
-    directory: "my-app/"                # Location of the requirements.txt file
+    directory: "my_app/"                # Location of the requirements.txt file
     schedule:
       interval: "weekly"                # Choose the frequency for Python dependency updates
     reviewers:
@@ -159,7 +159,7 @@ updates:
 
   # Define update settings for Docker dependencies
   - package-ecosystem: "docker"         # Checks for updates to Docker images
-    directory: "/my-app"                # Path to the first Dockerfile's directory
+    directory: "/my_app"                # Path to the first Dockerfile's directory
     schedule:                           
       interval: "weekly"                # Set frequency for Docker image updates
     reviewers:
@@ -182,7 +182,7 @@ updates:
 
   # Define update settings for Python dependencies
   - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
-    directory: "my-app/"                # Location of the requirements.txt file
+    directory: "my_app/"                # Location of the requirements.txt file
     schedule:
       interval: "weekly"                # Choose the frequency for Python dependency updates
     reviewers:

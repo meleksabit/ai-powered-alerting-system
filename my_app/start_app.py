@@ -4,7 +4,7 @@ from prometheus_client import start_http_server
 import gunicorn.app.base
 
 # Define the Flask app entry point (import from your Flask app)
-from app import app
+from my_app.app import app
 
 # Start Prometheus metrics server before starting Gunicorn
 def start_prometheus():
