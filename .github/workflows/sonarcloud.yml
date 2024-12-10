@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Set PYTHONPATH
-        run: echo "PYTHONPATH=${{ github.workspace }}/my-app" >> $GITHUB_ENV
+        run: echo "PYTHONPATH=${{ github.workspace }}/my_app" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: |
@@ -33,7 +33,7 @@ jobs:
         env:
           FLASK_ENV: testing
         run: |
-          pytest --cov=my-app --cov=my-app/start_app --cov-report=xml
+          pytest --cov=my_app --cov=my_app/start_app --cov-report=xml
 
 
 

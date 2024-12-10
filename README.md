@@ -94,7 +94,7 @@ Here’s the structure of the project:
 │   ├── python-app-deployment.yaml
 │   └── python-app-service.yaml
 ├── LICENSE
-├── my-app
+├── my_app
 │   ├── app.py
 │   ├── Dockerfile.app
 │   ├── requirements.txt
@@ -127,7 +127,7 @@ cd ai-powered-alerting-system
 Install the required Python libraries using pip:
 
 ```bash
-pip install -r my-app/requirements.txt
+pip install -r my_app/requirements.txt
 ```
 
 ### Step 3: Install and set up Prometheus and Grafana
@@ -251,14 +251,14 @@ services:
   # Python Flask app service
   python-app:
     build:
-      context: ./my-app
+      context: ./my_app
       dockerfile: Dockerfile.app
       dockerfile: Dockerfile.app
     ports:
       - "5000:5000"  # Expose Flask app on port 5000
       - "8000:8000"  # Expose Prometheus metrics on port 8000
     volumes:
-      - ./my-app:/app  # Mount app source code
+      - ./my_app:/app  # Mount app source code
     restart: unless-stopped
     depends_on:
       - prometheus
@@ -351,7 +351,7 @@ groups:
 * **`alert_rules.yml`**: This file defines alerting rules that notify you when a critical log event is detected (based on the **`log_severity`** metric exposed by the Python app).
 
 ### 🤗Step 6: Hugging Face BERT Model Setup
-In the **`my-app/app.py file`**, we’ll load the **BERT** model from **Hugging Face** and classify log messages.
+In the **`my_app/app.py file`**, we’ll load the **BERT** model from **Hugging Face** and classify log messages.
 
 ```python
 from transformers import pipeline
