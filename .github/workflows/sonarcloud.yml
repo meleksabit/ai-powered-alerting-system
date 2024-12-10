@@ -33,7 +33,8 @@ jobs:
         env:
           FLASK_ENV: testing
         run: |
-          pytest --cov=my-app --cov-report=xml
+          pytest --cov=my-app --cov=my-app/start_app --cov-report=xml
+
 
 
       - name: SonarQube Scan

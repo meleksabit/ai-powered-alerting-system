@@ -1,5 +1,5 @@
 from unittest.mock import patch, MagicMock
-from app import app
+from my_app.app import app
 
 def test_home_page():
     """Test the home page endpoint."""
@@ -13,42 +13,33 @@ def test_metrics_endpoint():
     client = app.test_client()
     response = client.get('/metrics')
     assert response.status_code == 200
-    assert b"# HELP" in response.data  # Basic check for Prometheus format output
+    assert b"# HELP" in response.data
 
-def test_email_endpoint():
-    """Test the send_email endpoint with mocked environment variables and Yagmail."""
-    with patch('os.getenv') as mock_env:
-        # Mock environment variables
-        mock_env.side_effect = lambda key: {
-            "SENDER_EMAIL": "mock-sender@example.com",
-            "RECIPIENT_EMAIL": "mock-recipient@example.com"
-        }.get(key)
+@patch("yagmail.SMTP")
+def test_email_sending(mock_smtp):
+    mock_yag = mock_smtp.return_value
+    mock_yag.send.return_value = None
+    client = app.test_client()
+    response = client.get('/send_email/test_message')
+    assert response.status_code == 200
+    assert b"Email sent successfully." in response.data
 
-        # Mock the Yagmail.SMTP object
-        with patch('yagmail.SMTP') as mock_yagmail:
-            mock_yag = mock_yagmail.return_value
-            mock_yag.send.return_value = None  # Mock sending email as successful
-            
-            client = app.test_client()
-            response = client.get('/send_email/test_log_message')
-            
-            assert response.status_code == 200
-            assert b"Email sent successfully." in response.data
+@patch("yagmail.SMTP")
+def test_email_sending_failure(mock_smtp):
+    mock_smtp.return_value.send.side_effect = Exception("SMTP error")
+    client = app.test_client()
+    response = client.get('/send_email/test_message')
+    assert response.status_code == 500
+    assert b"Failed to send email." in response.data
 
-def test_slack_command():
-    """Test the Slack command endpoint with mocked Slack credentials."""
-    with patch('os.getenv') as mock_env:
-        # Mock environment variables
-        mock_env.side_effect = lambda key: {
-            "SLACK_BOT_TOKEN": "mock-slack-token",
-            "SLACK_SIGNING_SECRET": "mock-signing-secret"
-        }.get(key)
+@patch("prometheus_client.start_http_server")
+def test_start_prometheus(mock_start_http):
+    from my_app.start_app import start_prometheus
+    start_prometheus()
+    mock_start_http.assert_called_once_with(8000)
 
-        # Mock Slack handler
-        with patch('app.slack_handler') as mock_handler:
-            mock_handler.handle.return_value = "Mocked Slack response"
-
-            client = app.test_client()
-            # Simulate a POST request to Slack events endpoint
-            response = client.post('/slack/events', json={})
-            assert response.status_code == 200
+@patch("gunicorn.app.base.BaseApplication.run")
+def test_start_gunicorn(mock_run):
+    from my_app.start_app import start_gunicorn
+    start_gunicorn()
+    mock_run.assert_called_once()
