@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from app import app
 
 def test_home_page():
@@ -44,7 +44,11 @@ def test_slack_command():
             "SLACK_SIGNING_SECRET": "mock-signing-secret"
         }.get(key)
 
-        client = app.test_client()
-        # Simulate a POST request to Slack events endpoint
-        response = client.post('/slack/events', json={})
-        assert response.status_code == 200  # Expect a 200 even if the mock doesn't process events
+        # Mock Slack handler
+        with patch('app.slack_handler') as mock_handler:
+            mock_handler.handle.return_value = "Mocked Slack response"
+
+            client = app.test_client()
+            # Simulate a POST request to Slack events endpoint
+            response = client.post('/slack/events', json={})
+            assert response.status_code == 200

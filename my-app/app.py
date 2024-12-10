@@ -1,11 +1,11 @@
 import logging
 from prometheus_client import start_http_server, Counter, generate_latest
 from flask import Flask, Response, jsonify, request
-from slack_bolt import App as SlackApp
-from slack_bolt.adapter.flask import SlackRequestHandler
 from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
 import os
 import yagmail
+from slack_bolt import App as SlackApp
+from slack_bolt.adapter.flask import SlackRequestHandler
 
 # Enable logging
 logging.basicConfig(filename='app.log', level=logging.INFO)
@@ -16,33 +16,34 @@ app = Flask(__name__)
 # Check if the app is running in test mode
 IS_TESTING = os.getenv("FLASK_ENV") == "testing"
 
-# Slack credentials initialization
-if IS_TESTING:
-    SLACK_BOT_TOKEN = "mock-slack-token"
-    SLACK_SIGNING_SECRET = "mock-signing-secret"
-else:
+# Conditional Slack integration
+if not IS_TESTING:
     SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN")
     SLACK_SIGNING_SECRET = os.getenv("SLACK_SIGNING_SECRET")
     if not SLACK_BOT_TOKEN or not SLACK_SIGNING_SECRET:
         raise EnvironmentError("Slack credentials are missing. Please set them as environment variables.")
-
-# Initialize Slack Bolt app
-slack_app = SlackApp(token=SLACK_BOT_TOKEN, signing_secret=SLACK_SIGNING_SECRET)
-slack_handler = SlackRequestHandler(slack_app)
-
-# Email credentials initialization
-if IS_TESTING:
-    SENDER_EMAIL = "mock-sender@example.com"
-    RECIPIENT_EMAIL = "mock-recipient@example.com"
+    slack_app = SlackApp(token=SLACK_BOT_TOKEN, signing_secret=SLACK_SIGNING_SECRET)
+    slack_handler = SlackRequestHandler(slack_app)
 else:
-    SENDER_EMAIL = os.getenv("SENDER_EMAIL")
-    RECIPIENT_EMAIL = os.getenv("RECIPIENT_EMAIL")
-    if not SENDER_EMAIL or not RECIPIENT_EMAIL:
-        raise EnvironmentError("Email credentials are missing. Please set them as environment variables.")
+    # Mock SlackApp and SlackRequestHandler for testing
+    from unittest.mock import MagicMock
+    slack_app = MagicMock()
+    slack_handler = MagicMock()
 
 # Define Prometheus Counters
 log_severity = Counter('log_severity', 'Count of log severities', ['severity'])
 email_sending_status = Counter('email_sending_status', 'Status of email sending', ['status'])
+
+# Conditional Email integration
+if not IS_TESTING:
+    SENDER_EMAIL = os.getenv("SENDER_EMAIL")
+    RECIPIENT_EMAIL = os.getenv("RECIPIENT_EMAIL")
+    if not SENDER_EMAIL or not RECIPIENT_EMAIL:
+        raise EnvironmentError("Email credentials are missing. Please set them as environment variables.")
+else:
+    # Mock email credentials for testing
+    SENDER_EMAIL = "mock-sender@example.com"
+    RECIPIENT_EMAIL = "mock-recipient@example.com"
 
 # Variables to hold the model and tokenizer, initialized as None
 model = None
@@ -108,6 +109,8 @@ def alert_command(ack, respond, command):
     respond(f"Log message classified as {severity}: {log_message}")
 
 if __name__ == '__main__':
+    # Start Prometheus metrics server on port 8000
     logging.info("Starting Prometheus metrics server on port 8000...")
     start_http_server(8000)
+    # Run the Flask app on port 5000
     app.run(host='0.0.0.0', port=5000)
