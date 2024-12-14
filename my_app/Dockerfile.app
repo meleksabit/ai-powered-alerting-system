@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # Copy requirements file and install dependencies
-COPY requirements.txt . 
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt --upgrade pip
 
 # Preload Hugging Face models to avoid downloading on startup
@@ -18,12 +18,12 @@ RUN python -c "from transformers import AutoModelForSequenceClassification, Auto
     AutoModelForSequenceClassification.from_pretrained('distilbert-base-uncased-finetuned-sst-2-english'); \
     AutoTokenizer.from_pretrained('distilbert-base-uncased-finetuned-sst-2-english')"
 
-# Copy the rest of the application code
-COPY . .
+# Copy only the application code explicitly
+COPY my_app/ ./my_app/
 
 # Expose necessary ports for Flask (5000) and Prometheus metrics (8000)
 EXPOSE 5000
 EXPOSE 8000
 
 # Run the application (starting both Prometheus and Gunicorn from Python)
-CMD ["python", "start_app.py"]
+CMD ["python", "my_app/start_app.py"]

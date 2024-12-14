@@ -749,6 +749,10 @@ This configuration ensures that the Gunicorn workers have enough time to handle 
 #### Implement **_ArgoCD_** to manage Kubernetes deployments via GitOps principles.
 #### **_Why?_** Automates and synchronizes deployment workflows, reducing manual intervention and ensuring consistency.
 
+### :white_check_mark: Add Unit Testing to CI/CD Pipelines
+#### Include unit tests in the GitHub Actions pipeline for verifying individual components in isolation.
+#### **_Why?_** Ensures the correctness of each function or module, catching bugs early in development.
+
 ### :white_large_square: Add Integration Testing to CI/CD Pipelines
 #### Include integration tests for end-to-end system verification in the GitHub Actions pipeline.
 #### **_Why?_** Ensures that new code changes don’t break interdependent components.
