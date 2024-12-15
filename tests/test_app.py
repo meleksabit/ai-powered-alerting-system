@@ -17,6 +17,7 @@ def test_metrics_endpoint():
 
 @patch("yagmail.SMTP")
 def test_email_sending(mock_smtp):
+    """Test successful email sending."""
     mock_yag = mock_smtp.return_value
     mock_yag.send.return_value = None
     client = app.test_client()
@@ -26,6 +27,7 @@ def test_email_sending(mock_smtp):
 
 @patch("yagmail.SMTP")
 def test_email_sending_failure(mock_smtp):
+    """Test email sending failure."""
     mock_smtp.return_value.send.side_effect = Exception("SMTP error")
     client = app.test_client()
     response = client.get('/send_email/test_message')
@@ -34,12 +36,14 @@ def test_email_sending_failure(mock_smtp):
 
 @patch("prometheus_client.start_http_server")
 def test_start_prometheus(mock_start_http):
+    """Test Prometheus server start."""
     from my_app.start_app import start_prometheus
     start_prometheus()
     mock_start_http.assert_called_once_with(8000)
 
 @patch("gunicorn.app.base.BaseApplication.run")
 def test_start_gunicorn(mock_run):
+    """Test Gunicorn server start."""
     from my_app.start_app import start_gunicorn
     start_gunicorn()
     mock_run.assert_called_once()
