@@ -33,12 +33,16 @@ jobs:
         env:
           FLASK_ENV: testing
         run: |
-          pytest --cov=my_app --cov=my_app/start_app --cov-report=xml
+          pytest --cov=my_app --cov=my_app/start_app --cov-report=xml  # Generate coverage report
 
-
+      - name: Upload coverage to SonarCloud
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          args: |
+            -Dsonar.coverageReportPaths=coverage-report.xml  # Point to the generated coverage report
 
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@v4.1.0 # Ex: v4.1.0, See the latest version at
+        uses: sonarsource/sonarqube-scan-action@v4.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
