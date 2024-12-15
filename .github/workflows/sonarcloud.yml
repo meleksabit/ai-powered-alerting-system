@@ -33,7 +33,7 @@ jobs:
         env:
           FLASK_ENV: testing
         run: |
-          pytest --cov=my_app --cov=my_app/start_app --cov=my_app/start_app --cov-report=xml
+          pytest --cov=my_app --cov=my_app/start_app --cov-report=xml
 
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@v4.1.0 # Ex: v4.1.0, See the latest version at
