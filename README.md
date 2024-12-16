@@ -1,7 +1,7 @@
 <a name="top"></a>
 # $\color{SeaGreen}{AI-Powered\ Alerting\ System:}$ $\color{OrangeRed}{Critical\ Alerts\ Only}$
 
-[![SonarCloud Analysis](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/sonarcloud.yml) [![Python CodeQL Analysis](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/codeql-scan.yml/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/codeql-scan.yml) [![Docker Vulnerability Scan](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/docker-trivy-scan.yml/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/docker-trivy-scan.yml) [![Kubernetes Security Scan for Misconfigurations](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/kubescape-scan.yml/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/kubescape-scan.yml) [![Dependabot Updates](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/dependabot/dependabot-updates) [![PR Title Check](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/pr-title-linter.yml/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/pr-title-linter.yml) [![GitHub Release](https://img.shields.io/github/v/release/meleksabit/ai-powered-alerting-system)](https://github.com/meleksabit/ai-powered-alerting-system/releases)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=meleksabit_ai-powered-alerting-system&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=meleksabit_ai-powered-alerting-system) [![Python CodeQL Analysis](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/codeql-scan.yml/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/codeql-scan.yml) [![Docker Vulnerability Scan](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/docker-trivy-scan.yml/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/docker-trivy-scan.yml) [![Kubernetes Security Scan for Misconfigurations](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/kubescape-scan.yml/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/kubescape-scan.yml) [![Dependabot Updates](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/dependabot/dependabot-updates) [![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg)](https://opensource.org/licenses/MIT) [![PR Title Check](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/pr-title-linter.yml/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/pr-title-linter.yml) [![GitHub Release](https://img.shields.io/github/v/release/meleksabit/ai-powered-alerting-system)](https://github.com/meleksabit/ai-powered-alerting-system/releases)
 
 ![alt text](Prometheus_Grafana_Python_Hugging_Face.png)
  
@@ -94,7 +94,7 @@ Here’s the structure of the project:
 │   ├── python-app-deployment.yaml
 │   └── python-app-service.yaml
 ├── LICENSE
-├── my-app
+├── my_app
 │   ├── app.py
 │   ├── Dockerfile.app
 │   ├── requirements.txt
@@ -127,7 +127,7 @@ cd ai-powered-alerting-system
 Install the required Python libraries using pip:
 
 ```bash
-pip install -r my-app/requirements.txt
+pip install -r my_app/requirements.txt
 ```
 
 ### Step 3: Install and set up Prometheus and Grafana
@@ -251,14 +251,14 @@ services:
   # Python Flask app service
   python-app:
     build:
-      context: ./my-app
+      context: ./my_app
       dockerfile: Dockerfile.app
       dockerfile: Dockerfile.app
     ports:
       - "5000:5000"  # Expose Flask app on port 5000
       - "8000:8000"  # Expose Prometheus metrics on port 8000
     volumes:
-      - ./my-app:/app  # Mount app source code
+      - ./my_app:/app  # Mount app source code
     restart: unless-stopped
     depends_on:
       - prometheus
@@ -351,7 +351,7 @@ groups:
 * **`alert_rules.yml`**: This file defines alerting rules that notify you when a critical log event is detected (based on the **`log_severity`** metric exposed by the Python app).
 
 ### 🤗Step 6: Hugging Face BERT Model Setup
-In the **`my-app/app.py file`**, we’ll load the **BERT** model from **Hugging Face** and classify log messages.
+In the **`my_app/app.py file`**, we’ll load the **BERT** model from **Hugging Face** and classify log messages.
 
 ```python
 from transformers import pipeline
@@ -719,7 +719,7 @@ This configuration ensures that the Gunicorn workers have enough time to handle 
 #### Integrate email notifications (e.g., using **_SMTP_** libraries like **`smtplib`** or third-party **_APIs_** like **_SendGrid_**) to send alerts for critical logs detected by the system.
 #### **_Why?_** Provides real-time updates to stakeholders.
 
-### :white_large_square: Integrate Slack Notifications
+### :white_check_mark: Integrate Slack Notifications --> implemented via **`slack_bolt`** library
 #### Use **_Slack_** webhooks to send log classifications and critical alerts directly to dedicated Slack channels.
 #### **_Why?_** Improves communication within teams and ensures swift responses to critical events.
 
@@ -748,6 +748,10 @@ This configuration ensures that the Gunicorn workers have enough time to handle 
 ### :white_large_square: ArgoCD for GitOps Deployment
 #### Implement **_ArgoCD_** to manage Kubernetes deployments via GitOps principles.
 #### **_Why?_** Automates and synchronizes deployment workflows, reducing manual intervention and ensuring consistency.
+
+### :white_check_mark: Add Unit Testing to CI/CD Pipelines
+#### Include unit tests in the GitHub Actions pipeline for verifying individual components in isolation.
+#### **_Why?_** Ensures the correctness of each function or module, catching bugs early in development.
 
 ### :white_large_square: Add Integration Testing to CI/CD Pipelines
 #### Include integration tests for end-to-end system verification in the GitHub Actions pipeline.
