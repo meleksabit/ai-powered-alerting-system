@@ -38,7 +38,7 @@ updates:
 
   # Define update settings for Python dependencies
   - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
-    directory: "my_app/"                # Location of the requirements.txt file
+    directory: "/"                # Location of the requirements.txt file
     schedule:
       interval: "weekly"                # Choose the frequency for Python dependency updates
     reviewers:
@@ -86,7 +86,7 @@ updates:
 
   # Define update settings for Python dependencies
   - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
-    directory: "my_app/"                # Location of the requirements.txt file
+    directory: "/"                # Location of the requirements.txt file
     schedule:
       interval: "weekly"                # Choose the frequency for Python dependency updates
     reviewers:
@@ -134,7 +134,7 @@ updates:
 
   # Define update settings for Python dependencies
   - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
-    directory: "my_app/"                # Location of the requirements.txt file
+    directory: "/"                # Location of the requirements.txt file
     schedule:
       interval: "weekly"                # Choose the frequency for Python dependency updates
     reviewers:
@@ -182,7 +182,7 @@ updates:
 
   # Define update settings for Python dependencies
   - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
-    directory: "my_app/"                # Location of the requirements.txt file
+    directory: "/"                # Location of the requirements.txt file
     schedule:
       interval: "weekly"                # Choose the frequency for Python dependency updates
     reviewers:
