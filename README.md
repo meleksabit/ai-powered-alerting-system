@@ -780,3 +780,4 @@ This configuration ensures that the Gunicorn workers have enough time to handle 
 #### **_Why?_** Provides flexibility for different organizations.
 
 [:arrow_up:](#top)
+
