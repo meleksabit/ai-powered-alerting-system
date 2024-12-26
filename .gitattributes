@@ -1,0 +1,22 @@
+# Mark Dockerfiles as Docker
+my_app/Dockerfile.app linguist-language=Dockerfile
+prometheus-grafana/Dockerfile.grafana linguist-language=Dockerfile
+
+# Treat Kubernetes manifests as YAML
+k8s/*.yaml linguist-language=YAML
+k8s/*.yml linguist-language=YAML
+
+# General YAML files
+**/*.yaml linguist-language=YAML
+**/*.yml linguist-language=YAML
+
+# GitHub Actions workflow files
+.github/workflows/*.yaml linguist-language=GitHub Actions
+.github/workflows/*.yml linguist-language=GitHub Actions
+
+# Docker Compose files
+docker-compose.yml linguist-language=Docker Compose
+docker-compose.override.yml linguist-language=Docker Compose
+
+# Treat shell scripts
+*.sh linguist-language=Shell

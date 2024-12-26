@@ -1,7 +1,7 @@
 version: 2
 updates:
   # Define update settings for GitHub Actions dependencies
-  # Configure for main branch
+  # Configure for development branch
   - package-ecosystem: "github-actions" # Checks for updates to GitHub Actions in workflows
     directory: ".github/workflows"      # Root directory for GitHub Actions workflows
     schedule:
@@ -9,163 +9,19 @@ updates:
     reviewers:
       - "meleksabit"
     commit-message:
-      prefix: "chore"
-    target-branch: "main"
-    labels: ["dependencies", "weekly-update"]               
-
-  # Define update settings for Docker dependencies
-  - package-ecosystem: "docker"         # Checks for updates to Docker images
-    directory: "/my-app"                # Path to the first Dockerfile's directory
-    schedule:                           
-      interval: "weekly"                # Set frequency for Docker image updates
-    reviewers:
-      - "meleksabit"
-    commit-message:
-      prefix: "chore"
-    target-branch: "main"
-    labels: ["dependencies", "weekly-update"]
-
-  - package-ecosystem: "docker"         # Checks for updates to Docker images
-    directory: "/prometheus-grafana"    # Path to the second Dockerfile's directory
-    schedule:                           
-      interval: "weekly"                # Set frequency for Docker image updates
-    reviewers:
-      - "meleksabit"
-    commit-message:
-      prefix: "chore"
-    target-branch: "main"
-    labels: ["dependencies", "weekly-update"]                 
-
-  # Define update settings for Python dependencies
-  - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
-    directory: "my-app/"                # Location of the requirements.txt file
-    schedule:
-      interval: "weekly"                # Choose the frequency for Python dependency updates
-    reviewers:
-      - "meleksabit"
-    commit-message:
-      prefix: "chore"
-    target-branch: "main"
-    labels: ["dependencies", "weekly-update"]                
-    open-pull-requests-limit: 5         # Limits the number of open Dependabot PRs
-
-    # Configure for stage branch
-  - package-ecosystem: "github-actions" # Checks for updates to GitHub Actions in workflows
-    directory: ".github/workflows"      # Root directory for GitHub Actions workflows
-    schedule:
-      interval: "weekly"                # Choose the update frequency: daily, weekly, or monthly
-    reviewers:
-      - "meleksabit"
-    commit-message:
-      prefix: "chore"
-    target-branch: "stage"
-    labels: ["dependencies", "stage-update"]               
-
-  # Define update settings for Docker dependencies
-  - package-ecosystem: "docker"         # Checks for updates to Docker images
-    directory: "/my-app"                # Path to the first Dockerfile's directory
-    schedule:                           
-      interval: "weekly"                # Set frequency for Docker image updates
-    reviewers:
-      - "meleksabit"
-    commit-message:
-      prefix: "chore"
-    target-branch: "stage"
-    labels: ["dependencies", "weekly-update"]
-
-  - package-ecosystem: "docker"         # Checks for updates to Docker images
-    directory: "/prometheus-grafana"    # Path to the second Dockerfile's directory
-    schedule:                           
-      interval: "weekly"                # Set frequency for Docker image updates
-    reviewers:
-      - "meleksabit"
-    commit-message:
-      prefix: "chore"
-    target-branch: "stage"
-    labels: ["dependencies", "weekly-update"]                
-
-  # Define update settings for Python dependencies
-  - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
-    directory: "my-app/"                # Location of the requirements.txt file
-    schedule:
-      interval: "weekly"                # Choose the frequency for Python dependency updates
-    reviewers:
-      - "meleksabit"
-    commit-message:
-      prefix: "chore"
-    target-branch: "stage"
-    labels: ["dependencies", "stage-update"]                
-    open-pull-requests-limit: 5         # Limits the number of open Dependabot PRs
-
-    # Configure for test branch
-  - package-ecosystem: "github-actions" # Checks for updates to GitHub Actions in workflows
-    directory: ".github/workflows"      # Root directory for GitHub Actions workflows
-    schedule:
-      interval: "weekly"                # Choose the update frequency: daily, weekly, or monthly
-    reviewers:
-      - "meleksabit"
-    commit-message:
-      prefix: "chore"
-    target-branch: "test"
-    labels: ["dependencies", "test-update"]               
-
-  # Define update settings for Docker dependencies
-  - package-ecosystem: "docker"         # Checks for updates to Docker images
-    directory: "/my-app"                # Path to the first Dockerfile's directory
-    schedule:                           
-      interval: "weekly"                # Set frequency for Docker image updates
-    reviewers:
-      - "meleksabit"
-    commit-message:
-      prefix: "chore"
-    target-branch: "test"
-    labels: ["dependencies", "weekly-update"]
-
-  - package-ecosystem: "docker"         # Checks for updates to Docker images
-    directory: "/prometheus-grafana"    # Path to the second Dockerfile's directory
-    schedule:                           
-      interval: "weekly"                # Set frequency for Docker image updates
-    reviewers:
-      - "meleksabit"
-    commit-message:
-      prefix: "chore"
-    target-branch: "test"
-    labels: ["dependencies", "weekly-update"]                
-
-  # Define update settings for Python dependencies
-  - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
-    directory: "my-app/"                # Location of the requirements.txt file
-    schedule:
-      interval: "weekly"                # Choose the frequency for Python dependency updates
-    reviewers:
-      - "meleksabit"
-    commit-message:
-      prefix: "chore"
-    target-branch: "test"
-    labels: ["dependencies", "test-update"]                
-    open-pull-requests-limit: 5         # Limits the number of open Dependabot PRs
-
-    # Configure for development branch
-  - package-ecosystem: "github-actions" # Checks for updates to GitHub Actions in workflows
-    directory: ".github/workflows"      # Root directory for GitHub Actions workflows
-    schedule:
-      interval: "weekly"                # Choose the update frequency: daily, weekly, or monthly
-    reviewers:
-      - "meleksabit"
-    commit-message:
-      prefix: "chore"
+      prefix: "deps"
     target-branch: "development"
     labels: ["dependencies", "development-update"]               
 
   # Define update settings for Docker dependencies
   - package-ecosystem: "docker"         # Checks for updates to Docker images
-    directory: "/my-app"                # Path to the first Dockerfile's directory
+    directory: "/my_app"                # Path to the first Dockerfile's directory
     schedule:                           
       interval: "weekly"                # Set frequency for Docker image updates
     reviewers:
       - "meleksabit"
     commit-message:
-      prefix: "chore"
+      prefix: "deps"
     target-branch: "development"
     labels: ["dependencies", "weekly-update"]
 
@@ -176,19 +32,18 @@ updates:
     reviewers:
       - "meleksabit"
     commit-message:
-      prefix: "chore"
+      prefix: "deps"
     target-branch: "development"
     labels: ["dependencies", "weekly-update"]                
 
   # Define update settings for Python dependencies
   - package-ecosystem: "pip"            # Checks for updates to Python packages in requirements.txt
-    directory: "my-app/"                # Location of the requirements.txt file
+    directory: "/"                # Location of the requirements.txt file
     schedule:
       interval: "weekly"                # Choose the frequency for Python dependency updates
     reviewers:
       - "meleksabit"
     commit-message:
-      prefix: "chore"
+      prefix: "deps"
     target-branch: "development"
     labels: ["dependencies", "development-update"]                
-    open-pull-requests-limit: 5         # Limits the number of open Dependabot PRs

@@ -1,7 +1,13 @@
 <a name="top"></a>
 # $\color{SeaGreen}{AI-Powered\ Alerting\ System:}$ $\color{OrangeRed}{Critical\ Alerts\ Only}$
 
-[![Python CodeQL Analysis](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/codeql-scan.yml/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/codeql-scan.yml) [![Docker Vulnerability Scan](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/docker-trivy-scan.yml/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/docker-trivy-scan.yml) [![Kubernetes Security Scan for Misconfigurations](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/kubescape-scan.yml/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/kubescape-scan.yml) [![Dependabot Updates](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/dependabot/dependabot-updates)
+<div align="center">
+  <a href="https://sonarcloud.io/summary/new_code?id=meleksabit_ai-powered-alerting-system">
+    <img src="https://sonarcloud.io/images/project_badges/sonarcloud-light.svg" alt="SonarQube Cloud">
+    </a>
+</div> 
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=meleksabit_ai-powered-alerting-system&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=meleksabit_ai-powered-alerting-system) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=meleksabit_ai-powered-alerting-system&metric=coverage)](https://sonarcloud.io/summary/new_code?id=meleksabit_ai-powered-alerting-system) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=meleksabit_ai-powered-alerting-system&metric=bugs)](https://sonarcloud.io/summary/new_code?id=meleksabit_ai-powered-alerting-system) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=meleksabit_ai-powered-alerting-system&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=meleksabit_ai-powered-alerting-system) [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=meleksabit_ai-powered-alerting-system&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=meleksabit_ai-powered-alerting-system) [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=meleksabit_ai-powered-alerting-system&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=meleksabit_ai-powered-alerting-system) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=meleksabit_ai-powered-alerting-system&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=meleksabit_ai-powered-alerting-system) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=meleksabit_ai-powered-alerting-system&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=meleksabit_ai-powered-alerting-system) [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=meleksabit_ai-powered-alerting-system&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=meleksabit_ai-powered-alerting-system) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=meleksabit_ai-powered-alerting-system&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=meleksabit_ai-powered-alerting-system)  [![Python CodeQL Analysis](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/codeql-scan.yml/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/codeql-scan.yml) [![Docker Vulnerability Scan](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/docker-trivy-scan.yml/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/docker-trivy-scan.yml) [![Kubernetes Security Scan for Misconfigurations](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/kubescape-scan.yml/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/kubescape-scan.yml) [![Dependabot Updates](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/dependabot/dependabot-updates) [![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg)](https://opensource.org/licenses/MIT) [![PR Title Check](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/pr-title-linter.yml/badge.svg)](https://github.com/meleksabit/ai-powered-alerting-system/actions/workflows/pr-title-linter.yml) [![GitHub Release](https://img.shields.io/github/v/release/meleksabit/ai-powered-alerting-system)](https://github.com/meleksabit/ai-powered-alerting-system/releases)
 
 ![alt text](Prometheus_Grafana_Python_Hugging_Face.png)
  
@@ -21,6 +27,7 @@
 - [Demo](#demo)
 - [Additional Improvements](#additional-improvements)
   - [Kubernetes Deployment](#%EF%B8%8Fkubernetes-deployment)
+- [Roadmap: Next Steps for Improvements](#-roadmap-next-steps-for-improvements)
 
 ## 📢Introduction
 
@@ -30,7 +37,7 @@ This project demonstrates how to classify log events using **Hugging Face's BERT
 * **`AI-Based Log Classification`**: Uses machine learning to classify log messages based on severity.
 * **`Critical Alerts`**: Alerts are triggered only for critical logs, reducing noise and improving response time.
 * **`Prometheus & Grafana Integration`**: Real-time metrics collection and visualization.
-* **`Production-Ready Deployment`**: Now uses **Gunicorn** to run the Flask app in a production environment.
+* **`Production-Ready Deployment`**: Uses **Gunicorn** to run the Flask app in a production environment.
 * **`Kubernetes Support`**: Kubernetes manifests for deploying the system in a scalable environment.
 * **`Lazy Loading`**: The system optimizes resource usage with lazy loading of machine learning models.
 
@@ -93,7 +100,7 @@ Here’s the structure of the project:
 │   ├── python-app-deployment.yaml
 │   └── python-app-service.yaml
 ├── LICENSE
-├── my-app
+├── my_app
 │   ├── app.py
 │   ├── Dockerfile.app
 │   ├── requirements.txt
@@ -109,6 +116,10 @@ Here’s the structure of the project:
 
 5 directories, 20 files
 ```	
+#### - **_Python_**: Core application code.
+#### - **_Docker Compose_**: Multi-container setup in `docker-compose.yml`.
+#### - **_Kubernetes_**: Deployment manifests in `k8s/`.
+#### - **_GitHub Actions_**: CI/CD workflows in `.github/workflows/`.
 
 ## 🧑‍🔧Installation
 
@@ -122,7 +133,7 @@ cd ai-powered-alerting-system
 Install the required Python libraries using pip:
 
 ```bash
-pip install -r my-app/requirements.txt
+pip install -r my_app/requirements.txt
 ```
 
 ### Step 3: Install and set up Prometheus and Grafana
@@ -246,14 +257,14 @@ services:
   # Python Flask app service
   python-app:
     build:
-      context: ./my-app
+      context: ./my_app
       dockerfile: Dockerfile.app
       dockerfile: Dockerfile.app
     ports:
       - "5000:5000"  # Expose Flask app on port 5000
       - "8000:8000"  # Expose Prometheus metrics on port 8000
     volumes:
-      - ./my-app:/app  # Mount app source code
+      - ./my_app:/app  # Mount app source code
     restart: unless-stopped
     depends_on:
       - prometheus
@@ -346,7 +357,7 @@ groups:
 * **`alert_rules.yml`**: This file defines alerting rules that notify you when a critical log event is detected (based on the **`log_severity`** metric exposed by the Python app).
 
 ### 🤗Step 6: Hugging Face BERT Model Setup
-In the **`my-app/app.py file`**, we’ll load the **BERT** model from **Hugging Face** and classify log messages.
+In the **`my_app/app.py file`**, we’ll load the **BERT** model from **Hugging Face** and classify log messages.
 
 ```python
 from transformers import pipeline
@@ -364,7 +375,8 @@ def classify_log_event(log_message):
     result = classifier(log_message)
 
     # Determine severity based on sentiment
-    if result[0]['label'] == 'POSITIVE':
+    if result[0]['label'] 
+       'POSITIVE':
         severity = 'not_critical'
     else:
         severity = 'critical'
@@ -703,5 +715,74 @@ If needed, you can increase the timeout by modifying the timeout value in this s
 
 
 This configuration ensures that the Gunicorn workers have enough time to handle requests, especially during long-running processes or slow startup times.
+
+## 📌 Roadmap: Next Steps for Improvements
+
+### This section outlines potential improvements and enhancements for the **_AI-Powered Alerting System_** to make it more robust, scalable, and feature-rich:
+
+## 🔔 Notification System
+### :white_check_mark: Implement Email Notifications --> implemented via **`yagmail`** library
+#### Integrate email notifications (e.g., using **_SMTP_** libraries like **`smtplib`** or third-party **_APIs_** like **_SendGrid_**) to send alerts for critical logs detected by the system.
+#### **_Why?_** Provides real-time updates to stakeholders.
+
+### :white_check_mark: Integrate Slack Notifications --> implemented via **`slack_bolt`** library
+#### Use **_Slack_** webhooks to send log classifications and critical alerts directly to dedicated Slack channels.
+#### **_Why?_** Improves communication within teams and ensures swift responses to critical events.
+
+## 🧠 Enhanced AI/ML Capabilities
+### :white_large_square: Experiment with Alternative Language Models (LLMs)
+#### Test with other transformer-based models like **`GPT`**, **`T5`**, or fine-tuned versions of **`BERT`** specific to log analysis or sentiment classification (e.g., **_Hugging Face's_** **`bert-for-log-analysis`** models).
+
+### :white_large_square: Implement Model Monitoring and Retraining Pipelines
+#### Automate periodic retraining of the ML model using up-to-date logs to improve accuracy. Tools like **_MLflow_** or **_TensorFlow Serving_** can be helpful.
+#### **_Why?_** Maintains the model's effectiveness as log patterns evolve over time.
+
+## 📈 Scalability Enhancements
+### :white_large_square: NGINX Integration
+#### Add **_NGINX_** as a reverse proxy to improve load balancing and handle multiple simultaneous requests efficiently.
+#### **_Why?_** Enhances performance and security, especially under heavy traffic.
+
+### :white_large_square: Service Mesh with Istio
+#### Use **_Istio_** to manage service-to-service communication, observability, and security within your Kubernetes cluster.
+#### **_Why?_** Simplifies networking, provides traffic encryption, and facilitates microservice observability.
+
+### :white_large_square: Adopt Horizontal Pod Autoscaling
+#### Enable Kubernetes Horizontal Pod Autoscaling (HPA) for the Python app to dynamically scale based on CPU or memory utilization.
+#### **_Why?_** Ensures that the system can handle varying workloads efficiently.
+
+## 🚀 Deployment & CI/CD
+### :white_large_square: ArgoCD for GitOps Deployment
+#### Implement **_ArgoCD_** to manage Kubernetes deployments via GitOps principles.
+#### **_Why?_** Automates and synchronizes deployment workflows, reducing manual intervention and ensuring consistency.
+
+### :white_check_mark: Add Unit Testing to CI/CD Pipelines
+#### Include unit tests in the GitHub Actions pipeline for verifying individual components in isolation.
+#### **_Why?_** Ensures the correctness of each function or module, catching bugs early in development.
+
+### :white_large_square: Add Integration Testing to CI/CD Pipelines
+#### Include integration tests for end-to-end system verification in the GitHub Actions pipeline.
+#### **_Why?_** Ensures that new code changes don’t break interdependent components.
+
+## 🔒 Security Improvements
+### :white_large_square: Enforce HTTPS with Cert-Manager
+#### Use **_Cert-Manager_** in Kubernetes to automatically issue and renew **_TLS_** certificates for secure communication.
+#### **_Why?_** Protects sensitive data and avoids exposing the application over HTTP.
+
+### :white_large_square: Implement Role-Based Access Control (RBAC)
+#### Define and enforce fine-grained access permissions within the Kubernetes cluster.
+#### **_Why?_** Enhances security by limiting access to resources based on user roles.
+
+## 🛠 Additional Improvements
+### :white_large_square: Centralized Logging with ELK Stack
+#### Integrate **_Elasticsearch_**, **_Logstash_**, and **_Kibana_** to provide powerful log aggregation and analysis capabilities.
+#### **_Why?_** Enables deeper insights into logs and simplifies debugging.
+
+### :white_large_square: Performance Benchmarking
+#### Conduct stress testing and performance benchmarking (e.g., with **_k6_**, **_Apache JMeter_**) to identify bottlenecks.
+#### **_Why?_** Helps optimize the system for high availability.
+
+### :white_large_square: Support Multiple Alert Channels
+#### Extend the alerting framework to integrate with additional tools like **_PagerDuty_**, **_Microsoft Teams_**, or **_Opsgenie_**.
+#### **_Why?_** Provides flexibility for different organizations.
 
 [:arrow_up:](#top)

@@ -22,5 +22,26 @@ spec:
             limits:
               cpu: "400m"
               memory: "512Mi"
+          env:
+            - name: SENDER_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: email-secrets
+                  key: sender-email
+            - name: NOTIFICATION_RECEIVER
+              valueFrom:
+                secretKeyRef:
+                  name: email-secrets
+                  key: notification-receiver
+            - name: SLACK_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: email-secrets
+                  key: SLACK_BOT_TOKEN
+            - name: SLACK_SIGNING_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: email-secrets
+                  key: SLACK_SIGNING_SECRET
           ports:
             - containerPort: 5000

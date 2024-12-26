@@ -28,13 +28,13 @@ services:
   # Python Flask app service
   python-app:
     build:
-      context: ./my-app
+      context: ./my_app
       dockerfile: Dockerfile.app
     ports:
       - "5000:5000"  # Expose Flask app on port 5000
       - "8000:8000"  # Expose Prometheus metrics on port 8000
     volumes:
-      - ./my-app:/app  # Mount app source code
+      - ./my_app:/app  # Mount app source code
     restart: unless-stopped
     depends_on:
       - prometheus
