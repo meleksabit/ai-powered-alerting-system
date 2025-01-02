@@ -1,5 +1,5 @@
-# Use Chainguard's secure Grafana image
-FROM cgr.dev/chainguard/grafana:latest
+# Use Official Grafana image
+FROM grafana/grafana:latest
 
 # Set environment variables if needed
 ENV GF_SECURITY_ADMIN_PASSWORD=admin

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: prometheus
-          image: cgr.dev/chainguard/prometheus:latest
+          image: prom/prometheus:latest
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
           ports:

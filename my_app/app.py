@@ -16,6 +16,10 @@ logging.basicConfig(filename='app.log', level=logging.INFO)
 app = Flask(__name__)
 csrf = CSRFProtect(app)
 
+# Health check flags
+app_startup_completed = False
+app_ready = False
+
 # Check if the app is running in test mode
 IS_TESTING = os.getenv("FLASK_ENV") == "testing"
 
@@ -54,22 +58,33 @@ classifier = None
 
 def lazy_load_model():
     """Lazy load the model and tokenizer for text classification."""
-    global model, tokenizer, classifier
+    global model, tokenizer, classifier, app_ready
     if model is None or tokenizer is None or classifier is None:
         logging.info("Loading model and tokenizer lazily...")
         tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
         model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
         classifier = pipeline("text-classification", model=model, tokenizer=tokenizer)
         logging.info("Model and tokenizer loaded.")
+    app_ready = True
 
-def classify_log_event(log_message):
-    """Classify log messages using Hugging Face DistilBERT model."""
-    lazy_load_model()
-    result = classifier(log_message)
-    severity = 'not_critical' if result[0]['label'] == 'POSITIVE' else 'critical'
-    log_severity.labels(severity=severity).inc()
-    logging.info(f"Classified log '{log_message}' as {severity}")
-    return severity
+@app.route('/health', methods=['GET'])
+def health():
+    """Liveness Probe: Check if the app is running."""
+    return "OK", 200
+
+@app.route('/readiness', methods=['GET'])
+def readiness():
+    """Readiness Probe: Check if the app is ready to handle requests."""
+    if app_ready:
+        return "READY", 200
+    return "NOT READY", 503
+
+@app.route('/startup', methods=['GET'])
+def startup():
+    """Startup Probe: Check if the app has completed initialization."""
+    if app_startup_completed:
+        return "STARTUP COMPLETE", 200
+    return "STARTING UP", 503
 
 @app.route('/send_email/<log_message>')
 def send_email_endpoint(log_message):
@@ -114,5 +129,9 @@ if __name__ == '__main__':
     # Start Prometheus metrics server on port 8000
     logging.info("Starting Prometheus metrics server on port 8000...")
     start_http_server(8000)
+
+    # Mark startup as complete before running the Flask app
+    app_startup_completed = True
+
     # Run the Flask app on port 5000
     app.run(host='0.0.0.0', port=5000)
