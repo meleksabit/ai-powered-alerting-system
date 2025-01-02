@@ -1,7 +1,7 @@
 services:
   # Prometheus service
   prometheus:
-    image: cgr.dev/chainguard/prometheus:latest
+    image: prom/prometheus:latest
     volumes:
       - ./prometheus-grafana/prometheus.yml:/etc/prometheus/prometheus.yml  # Mount config
       - ./prometheus-grafana/alert_rules.yml:/etc/prometheus/alert_rules.yml  # Mount alert rules

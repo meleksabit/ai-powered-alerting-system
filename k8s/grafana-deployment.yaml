@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: grafana
-          image: cgr.dev/chainguard/grafana:latest
+          image: grafana/grafana:latest
           ports:
             - containerPort: 3000
           resources:
