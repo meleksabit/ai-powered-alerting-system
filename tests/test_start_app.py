@@ -1,4 +1,5 @@
 from unittest.mock import patch, MagicMock
+from my_app.app import app
 import my_app.start_app
 import pytest
 
