@@ -67,6 +67,17 @@ def lazy_load_model():
         logging.info("Model and tokenizer loaded.")
     app_ready = True
 
+def classify_log_event(log_message):
+    """Classify log messages using Hugging Face DistilBERT model."""
+    lazy_load_model()  # Ensure the model and tokenizer are loaded
+    result = classifier(log_message)  # Use the classifier pipeline
+
+    # Determine severity based on sentiment analysis result
+    severity = 'not_critical' if result[0]['label'] == 'POSITIVE' else 'critical'
+    log_severity.labels(severity=severity).inc()  # Update Prometheus metric
+    logging.info(f"Classified log '{log_message}' as {severity}")
+    return severity
+
 @app.route('/health', methods=['GET'])
 def health():
     """Liveness Probe: Check if the app is running."""
