@@ -1,5 +1,5 @@
 from unittest.mock import patch, MagicMock
-import my_app.start_app
+from my_app import start_app
 import pytest
 
 @patch("prometheus_client.start_http_server")
