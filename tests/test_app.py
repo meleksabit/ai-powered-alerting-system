@@ -13,26 +13,38 @@ def test_metrics_endpoint():
     client = app.test_client()
     response = client.get('/metrics')
     assert response.status_code == 200
-    assert b"# HELP" in response.data
+    assert b"# HELP" in response.data  # Verify Prometheus format output
 
+@patch("my_app.app.classify_log_event", return_value="critical")
 @patch("yagmail.SMTP")
-def test_email_sending(mock_smtp):
+def test_email_sending(mock_smtp, mock_classify):
     """Test successful email sending."""
     mock_yag = mock_smtp.return_value
     mock_yag.send.return_value = None
+
     client = app.test_client()
     response = client.get('/send_email/test_message')
+
     assert response.status_code == 200
     assert b"Email sent successfully." in response.data
 
+    # Assert classify_log_event was called with the correct arguments
+    mock_classify.assert_called_once_with("test_message")
+
+@patch("my_app.app.classify_log_event", return_value="critical")
 @patch("yagmail.SMTP")
-def test_email_sending_failure(mock_smtp):
+def test_email_sending_failure(mock_smtp, mock_classify):
     """Test email sending failure."""
     mock_smtp.return_value.send.side_effect = Exception("SMTP error")
+
     client = app.test_client()
     response = client.get('/send_email/test_message')
+
     assert response.status_code == 500
     assert b"Failed to send email." in response.data
+
+    # Assert classify_log_event was called even in case of email failure
+    mock_classify.assert_called_once_with("test_message")
 
 @patch("prometheus_client.start_http_server")
 def test_start_prometheus(mock_start_http):
