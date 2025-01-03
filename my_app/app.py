@@ -6,7 +6,7 @@ import os
 import yagmail
 from slack_bolt import App as SlackApp
 from slack_bolt.adapter.flask import SlackRequestHandler
-from unittest.mock import MagicMock
+from unittest.mock import patch, MagicMock
 from flask_wtf.csrf import CSRFProtect
 
 # Enable logging
@@ -146,3 +146,4 @@ if __name__ == '__main__':
 
     # Run the Flask app on port 5000
     app.run(host='0.0.0.0', port=5000)
+    
