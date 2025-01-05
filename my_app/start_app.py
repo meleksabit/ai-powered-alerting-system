@@ -10,6 +10,7 @@ from my_app.app import app
 def start_prometheus():
     """Start Prometheus metrics server on port 8000."""
     logging.info("Starting Prometheus metrics server on port 8000...")
+    print("DEBUG: start_prometheus called")
     start_http_server(8000)
 
 # Class to start Gunicorn within Python

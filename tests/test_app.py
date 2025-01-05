@@ -50,7 +50,7 @@ def test_email_sending_failure(mock_smtp, mock_classify):
 
 @patch("prometheus_client.start_http_server")
 def test_start_prometheus(mock_start_http):
-    """Test Prometheus server start."""
+    assert mock_start_http is not None, "Mocking failed for prometheus_client.start_http_server"
     from my_app.start_app import start_prometheus
     start_prometheus()
     mock_start_http.assert_called_once_with(8000)
