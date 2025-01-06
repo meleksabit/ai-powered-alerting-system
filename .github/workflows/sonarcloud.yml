@@ -55,7 +55,7 @@ jobs:
       # ✅ Step 7: Build and Push Docker Image
       - name: Build Docker image
         run: |
-          docker build -t ai-powered-alerting-system:v2.0.0 .
+          docker build -t ai-powered-alerting-system:v2.0.0 /
 
       # ✅ Step 8: Kubernetes Lint Check
       - name: Run kube-linter
