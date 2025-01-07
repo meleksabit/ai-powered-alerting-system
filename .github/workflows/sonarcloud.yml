@@ -52,18 +52,13 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      # ✅ Step 7: Build and Push Docker Image
-      - name: Build Docker Images using Compose
-        run: |
-          docker compose -f docker-compose.yml up --build -d
-
-      # ✅ Step 8: Kubernetes Lint Check
+      # ✅ Step 7: Kubernetes Lint Check
       - name: Run kube-linter
         uses: stackrox/kube-linter-action@v1.0.5
         with:
           directory: ./k8s
 
-      # ✅ Step 9: Archive Test Results
+      # ✅ Step 8: Archive Test Results
       - name: Archive test results
         uses: actions/upload-artifact@v4.5.0
         with:
