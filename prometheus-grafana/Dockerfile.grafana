@@ -1,8 +1,8 @@
 # Use the official Grafana image as a base
 FROM grafana/grafana:latest
 
-# Copy custom configuration files if needed
-COPY ./prometheus-grafana/grafana/provisioning /etc/grafana/provisioning
+# Copy only the Grafana configuration file
+COPY ./prometheus-grafana/grafana.ini /etc/grafana/grafana.ini
 
 # Expose Grafana web port
 EXPOSE 3000
