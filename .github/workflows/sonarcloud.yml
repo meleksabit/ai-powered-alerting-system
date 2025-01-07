@@ -55,7 +55,7 @@ jobs:
       # ✅ Step 7: Build and Push Docker Image
       - name: Build Docker Images using Compose
         run: |
-          docker-compose -f docker-compose.yml up --build -d
+          docker compose -f docker-compose.yml up --build -d
 
       # ✅ Step 8: Kubernetes Lint Check
       - name: Run kube-linter
