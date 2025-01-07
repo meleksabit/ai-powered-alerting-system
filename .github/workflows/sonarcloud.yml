@@ -53,9 +53,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       # ✅ Step 7: Build and Push Docker Image
-      - name: Build Docker image
+      - name: Build Docker Images using Compose
         run: |
-          docker build -t ai-powered-alerting-system:v2.0.0 /
+          docker-compose -f docker-compose.yml up --build -d
 
       # ✅ Step 8: Kubernetes Lint Check
       - name: Run kube-linter

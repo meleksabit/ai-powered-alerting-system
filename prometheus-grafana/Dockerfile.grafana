@@ -1,11 +1,11 @@
-# Use Official Grafana image
+# Use the official Grafana image as a base
 FROM grafana/grafana:latest
 
-# Set environment variables if needed
-ENV GF_SECURITY_ADMIN_PASSWORD=admin
+# Copy custom configuration files if needed
+COPY ./grafana/provisioning /etc/grafana/provisioning
 
-# Expose Grafana port
+# Expose Grafana web port
 EXPOSE 3000
 
-# Set the default command
-CMD ["grafana-server", "--homepath=/usr/share/grafana", "--config=/etc/grafana/grafana.ini"]
+# Use the default entry point for the Grafana image
+CMD ["/run.sh"]
