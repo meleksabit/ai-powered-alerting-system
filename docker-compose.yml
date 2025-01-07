@@ -22,7 +22,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./prometheus-grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./prometheus-grafana/grafana/provisioning:/etc/grafana/provisioning
       - grafana_data:/var/lib/grafana
     secrets:
       - grafana_admin_user

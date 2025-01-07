@@ -2,7 +2,7 @@
 FROM grafana/grafana:latest
 
 # Copy custom configuration files if needed
-COPY ./grafana/provisioning /etc/grafana/provisioning
+COPY ./prometheus-grafana/grafana/provisioning /etc/grafana/provisioning
 
 # Expose Grafana web port
 EXPOSE 3000
