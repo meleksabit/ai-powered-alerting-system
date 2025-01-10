@@ -1,0 +1,49 @@
+name: Docker Build and Push to DockerHub
+
+on:
+  push:
+    branches:
+      - main
+      - stage
+      - test
+      - development
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ✅ Step 1: Check out the code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ✅ Step 2: Set up Docker Buildx (for better caching and cross-platform builds)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.8.0
+
+      # ✅ Step 3: Log in to DockerHub using secrets
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3.3.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PAT }}
+
+      # ✅ Step 4: Set Docker image version (optional)
+      - name: Set Docker image tag
+        run: echo "IMAGE_TAG=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
+      # ✅ Step 5: Build and Push the Image
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v6.10.0
+        with:
+          context: ./my_app
+          file: ./my_app/Dockerfile.app
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:latest
+            ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${{ env.IMAGE_TAG }}
+
+      # ✅ Step 6: Verify Image Digest (optional for debugging)
+      - name: Show Image Digest
+        run: |  
+          echo "Image pushed successfully with tag: ${{ env.IMAGE_TAG }}"

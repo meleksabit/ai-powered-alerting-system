@@ -1,5 +1,5 @@
 # Use the official Grafana image as a base
-FROM grafana/grafana:latest
+FROM grafana/grafana:main-ubuntu
 
 # Copy only the Grafana configuration file
 COPY ./prometheus-grafana/grafana.ini /etc/grafana/grafana.ini
