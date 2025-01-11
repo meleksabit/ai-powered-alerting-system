@@ -2,7 +2,7 @@ name: Docker Build and Push to DockerHub
 
 on:
   workflow_run:
-    workflows: ["AI-Powered Alerting System CI"]
+    workflows: ["SonarCloud Analysis"]
     types:
       - completed
 
