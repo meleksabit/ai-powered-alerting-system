@@ -1,12 +1,10 @@
 name: Docker Build and Push to DockerHub
 
 on:
-  push:
-    branches:
-      - main
-      - stage
-      - test
-      - development
+  workflow_run:
+    workflows: ["AI-Powered Alerting System CI"]
+    types:
+      - completed
 
 jobs:
   build-and-push:
@@ -17,7 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ✅ Step 2: Set up Docker Buildx (for better caching and cross-platform builds)
+      # ✅ Step 2: Set up Docker Buildx for better caching and multi-arch support
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.8.0
 
@@ -28,11 +26,19 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PAT }}
 
-      # ✅ Step 4: Set Docker image version (optional)
-      - name: Set Docker image tag
-        run: echo "IMAGE_TAG=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+      # ✅ Step 4: Download Version Tag from CI Workflow
+      - name: Download Version Tag
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: coverage-report
 
-      # ✅ Step 5: Build and Push the Image
+      # ✅ Step 5: Extract Version from .bumpversion.cfg
+      - name: Extract Image Tag from Version
+        run: |
+          IMAGE_TAG=$(grep -oP '(?<=current_version = )\d+\.\d+\.\d+' .bumpversion.cfg)
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      # ✅ Step 6: Build and Push Docker Image with Version Tag
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6.10.0
         with:
@@ -43,7 +49,7 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:latest
             ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${{ env.IMAGE_TAG }}
 
-      # ✅ Step 6: Verify Image Digest (optional for debugging)
+      # ✅ Step 7: Confirm Image Pushed
       - name: Show Image Digest
-        run: |  
-          echo "Image pushed successfully with tag: ${{ env.IMAGE_TAG }}"
+        run: |
+          echo "Docker Image Pushed with Tag: ${{ env.IMAGE_TAG }}"
