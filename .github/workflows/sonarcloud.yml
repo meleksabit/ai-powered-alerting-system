@@ -74,11 +74,11 @@ jobs:
         id: set_version_tag
 
       # ✅ Step 9: Upload Version Artifact
-      - name: Upload Version Artifact
+      - name: Upload Version for Docker Build Workflow
         uses: actions/upload-artifact@v4.5.0
         with:
           name: version
-          path: version.txt
+          path: .bumpversion.cfg
 
       # ✅ Step 10: Kubernetes Lint Check
       - name: Run kube-linter
