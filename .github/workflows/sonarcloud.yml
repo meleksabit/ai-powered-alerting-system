@@ -39,10 +39,16 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov bump2version
 
-       # ✅ Step 5: Bump Version Automatically (Patch by default)
-      - name: Bump Version
+      # ✅ Step 5: Configure Git with GitHub Actions bot identity
+      - name: Configure Git
         run: |
-          bump2version patch
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      # ✅ Step 6: Bump Version and Push Changes in One Step
+      - name: Bump Version and Push Changes
+        run: |
+          bump2version patch --verbose
           git push --follow-tags
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -56,7 +62,7 @@ jobs:
 
       # ✅ Step 7: SonarCloud Scan
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@v4.2.1 # Ex: v4.1.0, See the latest version at
+        uses: sonarsource/sonarqube-scan-action@v4.2.1 # Ex: v4.1.0, See the latest version at https://github.com/marketplace/actions/official-sonarqube-scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
