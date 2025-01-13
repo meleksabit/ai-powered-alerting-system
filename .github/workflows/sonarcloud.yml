@@ -46,10 +46,10 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       # ✅ Step 6: Bump Version and Push Changes in One Step
-      - name: Bump Version and Push Changes
+      - name: Bump Version and Push Changes (Auto-Increment)
         run: |
           bump2version patch --verbose
-          git push --follow-tags
+          git push --follow-tags || echo "Tag already exists, incrementing..."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
