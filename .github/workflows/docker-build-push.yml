@@ -23,8 +23,10 @@ jobs:
           path: .       # Download the version.txt file to the root of the repository
 
       # ✅ Step 3: List all available artifacts
-      - name: List all available artifacts
-        run: ls -R ${{ github.workspace }}
+      - name: Debug - List All Artifacts from Previous Run
+        run: gh run view --log --json artifacts --jq '.artifacts'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # ✅ Step 4: Load Version Tag from Artifact
       - name: Load Version Tag
