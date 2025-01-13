@@ -12,9 +12,14 @@ spec:
       labels:
         app: python-app
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 3000
+        runAsNonRoot: true
+        fsGroup: 2000
       containers:
         - name: python-app
-          image: angel3/ai-powered-alerting-system:v1.0.0
+          image: angel3/ai-powered-alerting-system:${IMAGE_TAG}
           resources:
             requests:
               cpu: "200m"
@@ -22,6 +27,12 @@ spec:
             limits:
               cpu: "400m"
               memory: "512Mi"
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: SENDER_EMAIL
               valueFrom:
@@ -45,3 +56,22 @@ spec:
                   key: SLACK_SIGNING_SECRET
           ports:
             - containerPort: 5000
+          startupProbe:
+            httpGet:
+              path: /startup
+              port: 5000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5
