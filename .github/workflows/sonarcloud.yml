@@ -66,20 +66,27 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-       # ✅ Step 8: Upload Version for Docker Workflow
-      - name: Upload Version for Docker Build Workflow
+      # ✅ Step 8: Save Version for Docker Workflow
+      - name: Save Version for Docker Workflow
         run: |
           IMAGE_TAG=$(grep -oP '(?<=current_version = )\d+\.\d+\.\d+' .bumpversion.cfg)
-          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-        id: set_image_tag
+          echo $IMAGE_TAG > version.txt
+        id: set_version_tag
 
-      # ✅ Step 8: Kubernetes Lint Check
+      # ✅ Step 9: Upload Version Artifact
+      - name: Upload Version Artifact
+        uses: actions/upload-artifact@v4.5.0
+        with:
+          name: version
+          path: version.txt
+
+      # ✅ Step 10: Kubernetes Lint Check
       - name: Run kube-linter
         uses: stackrox/kube-linter-action@v1.0.5
         with:
           directory: ./k8s
 
-      # ✅ Step 9: Archive Test Results
+      # ✅ Step 11: Archive Test Results
       - name: Archive test results
         uses: actions/upload-artifact@v4.6.0
         with:
