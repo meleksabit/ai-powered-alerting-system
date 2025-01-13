@@ -1,7 +1,7 @@
 services:
   # Prometheus service
   prometheus:
-    image: cgr.dev/chainguard/prometheus:latest
+    image: prom/prometheus:main
     volumes:
       - ./prometheus-grafana/prometheus.yml:/etc/prometheus/prometheus.yml  # Mount config
       - ./prometheus-grafana/alert_rules.yml:/etc/prometheus/alert_rules.yml  # Mount alert rules
@@ -20,7 +20,16 @@ services:
       context: ./prometheus-grafana
       dockerfile: Dockerfile.grafana
     ports:
-      - "3000:3000"  # Expose Grafana on port 3000
+      - "3000:3000"
+    volumes:
+      - ./prometheus-grafana/grafana.ini:/etc/grafana/grafana.ini
+      - grafana_data:/var/lib/grafana
+    secrets:
+      - grafana_admin_user
+      - grafana_admin_password
+    environment:
+      - GF_SECURITY_ADMIN_USER_FILE=/run/secrets/grafana_admin_user
+      - GF_SECURITY_ADMIN_PASSWORD_FILE=/run/secrets/grafana_admin_password  # Expose Grafana on port 3000
     restart: unless-stopped
     networks:
       - monitor-net
@@ -28,8 +37,8 @@ services:
   # Python Flask app service
   python-app:
     build:
-      context: ./my_app
-      dockerfile: Dockerfile.app
+      context: .
+      dockerfile: my_app/Dockerfile.app
     ports:
       - "5000:5000"  # Expose Flask app on port 5000
       - "8000:8000"  # Expose Prometheus metrics on port 8000
@@ -42,6 +51,13 @@ services:
     networks:
       - monitor-net
 
+# Define secrets for Grafana
+secrets:
+  grafana_admin_user:
+    file: ${HOME}/secrets/grafana_admin_user.txt
+  grafana_admin_password:
+    file: ${HOME}/secrets/grafana_admin_password.txt
+
 # Define a shared network
 networks:
   monitor-net:
@@ -50,3 +66,4 @@ networks:
 # Define a volume for Prometheus data storage
 volumes:
   prometheus_data:
+  grafana_data:
