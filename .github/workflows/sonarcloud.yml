@@ -16,26 +16,72 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # ✅ Step 1: Check out the code
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
+      # ✅ Step 2: Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # ✅ Step 3: Set PYTHONPATH for testing and coverage
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
 
-      - name: Install dependencies
+      # ✅ Step 4: Install dependencies
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pytest pytest-cov bump2version
 
+      # ✅ Step 5: Configure Git with GitHub Actions bot identity
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      # ✅ Step 6: Bump Version and Push Changes in One Step
+      - name: Bump Version and Push Changes (Auto-Increment)
+        run: |
+          bump2version patch --verbose
+          git push --follow-tags || echo "Tag already exists, incrementing..."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ✅ Step 6: Run Unit Tests with Coverage
       - name: Run tests with coverage
         env:
           FLASK_ENV: testing
         run: |
-          pytest --cov=my_app --cov=my_app/start_app --cov-report=xml
+          pytest --cov=my_app --cov=my_app/start_app --cov-report=xml --durations=3
 
+      # ✅ Step 7: SonarCloud Scan
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@v4.2.1 # Ex: v4.1.0, See the latest version at
+        uses: sonarsource/sonarqube-scan-action@v4.2.1 # Ex: v4.1.0, See the latest version at https://github.com/marketplace/actions/official-sonarqube-scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+       # ✅ Step 8: Upload Version for Docker Workflow
+      - name: Upload Version for Docker Build Workflow
+        run: |
+          IMAGE_TAG=$(grep -oP '(?<=current_version = )\d+\.\d+\.\d+' .bumpversion.cfg)
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+        id: set_image_tag
+
+      # ✅ Step 8: Kubernetes Lint Check
+      - name: Run kube-linter
+        uses: stackrox/kube-linter-action@v1.0.5
+        with:
+          directory: ./k8s
+
+      # ✅ Step 9: Archive Test Results
+      - name: Archive test results
+        uses: actions/upload-artifact@v4.5.0
+        with:
+          name: test-results
+          path: coverage.xml          

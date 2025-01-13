@@ -6,7 +6,7 @@ import os
 import yagmail
 from slack_bolt import App as SlackApp
 from slack_bolt.adapter.flask import SlackRequestHandler
-from unittest.mock import MagicMock
+from unittest.mock import patch, MagicMock
 from flask_wtf.csrf import CSRFProtect
 
 # Enable logging
@@ -66,6 +66,17 @@ def lazy_load_model():
         classifier = pipeline("text-classification", model=model, tokenizer=tokenizer)
         logging.info("Model and tokenizer loaded.")
     app_ready = True
+
+def classify_log_event(log_message):
+    """Classify log messages using Hugging Face DistilBERT model."""
+    lazy_load_model()  # Ensure the model and tokenizer are loaded
+    result = classifier(log_message)  # Use the classifier pipeline
+
+    # Determine severity based on sentiment analysis result
+    severity = 'not_critical' if result[0]['label'] == 'POSITIVE' else 'critical'
+    log_severity.labels(severity=severity).inc()  # Update Prometheus metric
+    logging.info(f"Classified log '{log_message}' as {severity}")
+    return severity
 
 @app.route('/health', methods=['GET'])
 def health():
@@ -135,3 +146,4 @@ if __name__ == '__main__':
 
     # Run the Flask app on port 5000
     app.run(host='0.0.0.0', port=5000)
+    

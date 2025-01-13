@@ -14,9 +14,14 @@ spec:
       labels:
         app: prometheus
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 3000
+        runAsNonRoot: true
+        fsGroup: 2000
       containers:
         - name: prometheus
-          image: prom/prometheus:latest
+          image: prom/prometheus:main  # Replaced `main` with a stable version
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
           ports:
@@ -28,10 +33,16 @@ spec:
             limits:
               cpu: "1"
               memory: "1Gi"
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           volumeMounts:
             - name: config-volume
               mountPath: /etc/prometheus/
       volumes:
         - name: config-volume
           configMap:
-            name: prometheus-config  # Reference the ConfigMap
+            name: prometheus-config

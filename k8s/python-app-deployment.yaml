@@ -12,9 +12,14 @@ spec:
       labels:
         app: python-app
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 3000
+        runAsNonRoot: true
+        fsGroup: 2000
       containers:
         - name: python-app
-          image: angel3/ai-powered-alerting-system:v1.0.0
+          image: angel3/ai-powered-alerting-system:${IMAGE_TAG}
           resources:
             requests:
               cpu: "200m"
@@ -22,6 +27,12 @@ spec:
             limits:
               cpu: "400m"
               memory: "512Mi"
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: SENDER_EMAIL
               valueFrom:

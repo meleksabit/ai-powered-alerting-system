@@ -1,11 +1,11 @@
-# Use Official Grafana image
-FROM grafana/grafana:latest
+# Use the official Grafana image as a base
+FROM grafana/grafana:main-ubuntu
 
-# Set environment variables if needed
-ENV GF_SECURITY_ADMIN_PASSWORD=admin
+# Copy only the Grafana configuration file
+COPY ./prometheus-grafana/grafana.ini /etc/grafana/grafana.ini
 
-# Expose Grafana port
+# Expose Grafana web port
 EXPOSE 3000
 
-# Set the default command
-CMD ["grafana-server", "--homepath=/usr/share/grafana", "--config=/etc/grafana/grafana.ini"]
+# Use the default entry point for the Grafana image
+CMD ["/run.sh"]
