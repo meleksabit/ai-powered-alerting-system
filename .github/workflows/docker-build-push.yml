@@ -1,0 +1,55 @@
+name: Docker Build and Push to DockerHub
+
+on:
+  workflow_run:
+    workflows: ["SonarCloud Analysis"]
+    types:
+      - completed
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ✅ Step 1: Check out the Code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ✅ Step 2: Set up Docker Buildx for better caching and multi-arch support
+      - name: Download Version Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: version
+
+      # ✅ Step 3: Load Version Tag from Artifact
+      - name: Load Version Tag
+        run: |
+          IMAGE_TAG=$(cat version.txt)
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      # ✅ Step 4: Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.8.0
+
+      # ✅ Step 5: Log in to DockerHub
+      - name: Log in to DockerHub using secrets
+        uses: docker/login-action@v3.3.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PAT }}
+
+      # ✅ Step 6: Build and Push Docker Image
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v6.10.0
+        with:
+          context: ./my_app
+          file: ./my_app/Dockerfile.app
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:latest
+            ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${{ env.IMAGE_TAG }}
+
+      # ✅ Step 7: Confirm Image Pushed
+      - name: Confirm Image Push
+        run: |
+          echo "Docker image pushed with tag: ${{ env.IMAGE_TAG }}"

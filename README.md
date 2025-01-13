@@ -198,17 +198,9 @@ CMD ["python", "start_app.py"]
 ```
 
 ### Dockerfile for Grafana
-### Dockerfile for Grafana
 ```dockerfile
-# Use Chainguard's secure Grafana image
-FROM cgr.dev/chainguard/grafana:latest
-
-# Set environment variables if needed
-ENV GF_SECURITY_ADMIN_PASSWORD=admin
-
-# Expose Grafana port
-EXPOSE 3000
-FROM cgr.dev/chainguard/grafana:latest
+# Use Official Grafana image
+FROM grafana/grafana:latest
 
 # Set environment variables if needed
 ENV GF_SECURITY_ADMIN_PASSWORD=admin
@@ -216,8 +208,6 @@ ENV GF_SECURITY_ADMIN_PASSWORD=admin
 # Expose Grafana port
 EXPOSE 3000
 
-# Set the default command
-CMD ["grafana-server", "--homepath=/usr/share/grafana", "--config=/etc/grafana/grafana.ini"]
 # Set the default command
 CMD ["grafana-server", "--homepath=/usr/share/grafana", "--config=/etc/grafana/grafana.ini"]
 ```
@@ -229,7 +219,7 @@ Here’s the **`docker-compose.yml`** that sets up both **Prometheus**, **Grafan
 services:
   # Prometheus service
   prometheus:
-    image: cgr.dev/chainguard/prometheus:latest
+    image: prom/prometheus:latest
     volumes:
       - ./prometheus-grafana/prometheus.yml:/etc/prometheus/prometheus.yml  # Mount config
       - ./prometheus-grafana/alert_rules.yml:/etc/prometheus/alert_rules.yml  # Mount alert rules
@@ -247,7 +237,6 @@ services:
     build:
       context: ./prometheus-grafana
       dockerfile: Dockerfile.grafana
-      dockerfile: Dockerfile.grafana
     ports:
       - "3000:3000"  # Expose Grafana on port 3000
     restart: unless-stopped
@@ -258,7 +247,6 @@ services:
   python-app:
     build:
       context: ./my_app
-      dockerfile: Dockerfile.app
       dockerfile: Dockerfile.app
     ports:
       - "5000:5000"  # Expose Flask app on port 5000
@@ -416,7 +404,6 @@ Example log classifications:
 curl http://localhost:5000/log/User%20logged%20in%20successfully
 ```
 2. **Test Log 2**: Classifying an SQL injection attempt as ***"critical"***:
-2. **Test Log 2**: Classifying an SQL injection attempt as ***"critical"***:
 ```bash
 curl http://localhost:5000/log/SQL%20injection%20attempt%20detected%20in%20API
 ```
@@ -461,7 +448,6 @@ labels:
   severity: "critical"
 annotations:
   summary: "Critical log detected"
-  description: "A critical log was detected in the application"
   description: "A critical log was detected in the application"
 ```
 
@@ -523,8 +509,48 @@ spec:
             limits:
               cpu: "400m"
               memory: "512Mi"
+          env:
+            - name: SENDER_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: email-secrets
+                  key: sender-email
+            - name: NOTIFICATION_RECEIVER
+              valueFrom:
+                secretKeyRef:
+                  name: email-secrets
+                  key: notification-receiver
+            - name: SLACK_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: email-secrets
+                  key: SLACK_BOT_TOKEN
+            - name: SLACK_SIGNING_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: email-secrets
+                  key: SLACK_SIGNING_SECRET
           ports:
             - containerPort: 5000
+          startupProbe:
+            httpGet:
+              path: /startup
+              port: 5000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5
 ```
 
 ### Service for Python App (python-app-service.yaml):
@@ -563,7 +589,7 @@ spec:
     spec:
       containers:
         - name: prometheus
-          image: cgr.dev/chainguard/prometheus:latest
+          image: prom/prometheus:latest
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
           ports:
@@ -668,7 +694,7 @@ spec:
     spec:
       containers:
         - name: grafana
-          image: cgr.dev/chainguard/grafana:latest
+          image: grafana/grafana:latest
           ports:
             - containerPort: 3000
           resources:
