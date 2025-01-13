@@ -1,6 +1,9 @@
 # Use a slim version of Python to reduce image size
 FROM python:3.11-slim-buster
 
+# App version
+LABEL version="1.0.0"
+
 # Install necessary system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
