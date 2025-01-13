@@ -73,20 +73,24 @@ jobs:
           echo $IMAGE_TAG > version.txt
         id: set_version_tag
 
-      # ✅ Step 9: Upload Version Artifact
-      - name: Upload Version Artifact
+      # ✅ Step 9: List all available artifacts
+      - name: List all available artifacts
+        run: ls -R ${{ github.workspace }}
+
+      # ✅ Step 10: Upload Version Artifact
+      - name: Upload Version for Docker Build Workflow
         uses: actions/upload-artifact@v4.5.0
         with:
           name: version
-          path: version.txt
+          path: .bumpversion.cfg
 
-      # ✅ Step 10: Kubernetes Lint Check
+      # ✅ Step 11: Kubernetes Lint Check
       - name: Run kube-linter
         uses: stackrox/kube-linter-action@v1.0.5
         with:
           directory: ./k8s
 
-      # ✅ Step 11: Archive Test Results
+      # ✅ Step 12: Archive Test Results
       - name: Archive test results
         uses: actions/upload-artifact@v4.6.0
         with:
