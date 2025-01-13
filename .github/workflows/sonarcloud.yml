@@ -49,6 +49,8 @@ jobs:
       - name: Bump Version and Push Changes (Auto-Increment)
         run: |
           bump2version patch --verbose || echo "Version already bumped, skipping."
+          ls -l .bumpversion.cfg || echo ".bumpversion.cfg NOT FOUND!"
+          grep 'current_version' .bumpversion.cfg
           git push --follow-tags || echo "Tag already exists, skipping push."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -82,7 +84,7 @@ jobs:
         uses: actions/upload-artifact@v4.5.0
         with:
           name: version
-          path: .bumpversion.cfg
+          path: /.bumpversion.cfg
 
       # ✅ Step 11: Kubernetes Lint Check
       - name: Run kube-linter
