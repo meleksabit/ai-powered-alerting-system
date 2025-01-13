@@ -2,7 +2,7 @@
 FROM python:3.11-slim-buster
 
 # App version
-LABEL version="1.0.0"
+LABEL version="2.0.2"
 
 # Install necessary system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
