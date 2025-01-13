@@ -48,8 +48,8 @@ jobs:
       # ✅ Step 6: Bump Version and Push Changes in One Step
       - name: Bump Version and Push Changes (Auto-Increment)
         run: |
-          bump2version patch --verbose
-          git push --follow-tags || echo "Tag already exists, incrementing..."
+          bump2version patch --verbose || echo "Version already bumped, skipping."
+          git push --follow-tags || echo "Tag already exists, skipping push."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
