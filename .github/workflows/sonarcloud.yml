@@ -83,8 +83,8 @@ jobs:
       - name: Upload Version for Docker Build Workflow
         uses: actions/upload-artifact@v4.5.0
         with:
-          name: version
-          path: .bumpversion.cfg
+          name: version-${{ github.run_id }}
+          path: version.txt
           if-no-files-found: error  # Fail if the file is not found
           compression-level: 6
           overwrite: false           # Do not overwrite existing files
