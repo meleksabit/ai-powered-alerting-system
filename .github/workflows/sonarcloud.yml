@@ -75,15 +75,20 @@ jobs:
           echo $IMAGE_TAG > version.txt
         id: set_version_tag
 
-      # ✅ Step 9: List all available artifacts
-      - name: List all available artifacts
-        run: ls -R ${{ github.workspace }}
+      # ✅ Step 9: Ensure the version file exists before uploading
+      - name: Verify Version File Exists Before Upload
+        run: |
+          if [ -f "version.txt" ]; then
+            echo "Version file found!"
+          else
+            echo "Version file NOT found!" && exit 1
+          fi
 
       # ✅ Step 10: Upload Version Artifact
       - name: Upload Version File with Run ID
         uses: actions/upload-artifact@v4.6.0
         with:
-          name: version-test
+          name: version
           path: version.txt
           if-no-files-found: error  # Fail if the file is not found
           compression-level: 6

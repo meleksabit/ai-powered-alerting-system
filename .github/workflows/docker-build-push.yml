@@ -15,18 +15,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ✅ Debug Step: List Available Artifacts Before Download
+      - name: List Available Artifacts (Debugging)
+        run: |
+          gh run view ${{ github.event.workflow_run.id }} --json artifacts
+          ls -R
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       # ✅ Step 2: Set up Docker Buildx for better caching and multi-arch support
       - name: Download Version Tag from CI Workflow
         uses: actions/download-artifact@v4.1.8
         with:
-          name: version-test  # Pulls the triggering workflow's run ID
-          path: .       # Download the version.txt file to the root of the repository
-
-      # ✅ Step 3: List all available artifacts
-      - name: Debug - List All Artifacts from Previous Run
-        run: gh run view --log --json artifacts --jq '.artifacts'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: version  # Pulls the triggering workflow's run ID
+          path: .   # Download the version.txt file to the root of the repository
+          merge-multiple: false  
 
       # ✅ Step 4: Load Version Tag from Artifact
       - name: Load Version Tag
