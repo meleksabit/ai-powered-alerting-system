@@ -80,10 +80,10 @@ jobs:
         run: ls -R ${{ github.workspace }}
 
       # ✅ Step 10: Upload Version Artifact
-      - name: Upload Version for Docker Build Workflow
+      - name: Upload Version File with Run ID
         uses: actions/upload-artifact@v4.5.0
         with:
-          name: version-${{ github.run_id }}
+          name: version-${{ github.run_id }}  # Run ID included for uniqueness
           path: version.txt
           if-no-files-found: error  # Fail if the file is not found
           compression-level: 6
