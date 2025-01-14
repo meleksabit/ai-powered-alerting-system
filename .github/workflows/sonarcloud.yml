@@ -84,7 +84,11 @@ jobs:
         uses: actions/upload-artifact@v4.5.0
         with:
           name: version
-          path: /.bumpversion.cfg
+          path: .bumpversion.cfg
+          if-no-files-found: error  # Fail if the file is not found
+          compression-level: 6
+          overwrite: false           # Do not overwrite existing files
+          include-hidden-files: true  # Ensure hidden files are included
 
       # ✅ Step 11: Kubernetes Lint Check
       - name: Run kube-linter
