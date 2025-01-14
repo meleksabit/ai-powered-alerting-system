@@ -81,7 +81,7 @@ jobs:
 
       # ✅ Step 10: Upload Version Artifact
       - name: Upload Version File with Run ID
-        uses: actions/upload-artifact@v4.5.0
+        uses: actions/upload-artifact@v4
         with:
           name: version
           path: version.txt
