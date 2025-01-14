@@ -87,7 +87,7 @@ jobs:
           path: version.txt
           if-no-files-found: error  # Fail if the file is not found
           compression-level: 6
-          overwrite: false           # Do not overwrite existing files
+          overwrite: true           # Do not overwrite existing files
           include-hidden-files: true  # Ensure hidden files are included
 
       # ✅ Step 11: Kubernetes Lint Check
