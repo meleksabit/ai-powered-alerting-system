@@ -19,8 +19,8 @@ jobs:
       - name: Download Version Tag from CI Workflow
         uses: actions/download-artifact@v4
         with:
-          name: version  # Pulls the triggering workflow's run ID
-          path: .       # Download the version.txt file to the root of the repository
+          name: version-${{ github.event.workflow_run.id }}  # Pulls the triggering workflow's run ID
+          path: version.txt       # Download the version.txt file to the root of the repository
 
       # ✅ Step 3: List all available artifacts
       - name: Debug - List All Artifacts from Previous Run
