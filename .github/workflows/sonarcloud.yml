@@ -84,7 +84,7 @@ jobs:
         uses: actions/upload-artifact@v4.5.0
         with:
           name: version-${{ github.run_id }}  # Run ID included for uniqueness
-          path: version.txt
+          path: .bumpversion.cfg
           if-no-files-found: error  # Fail if the file is not found
           compression-level: 6
           overwrite: false           # Do not overwrite existing files
