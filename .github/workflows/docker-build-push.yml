@@ -23,14 +23,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # ✅ Step 2: Download Artifact
-      - name: Download Artifact Using Run ID
-        uses: actions/download-artifact@v4
+      - name: Download Version Tag from Sonar Workflow
+        uses: dawidd6/action-download-artifact@v3
         with:
+          run_id: ${{ github.event.workflow_run.id }}
           name: version
           path: .
-          merge-multiple: false
-          repository: ${{ github.repository }}
-          run-id: ${{ github.event.workflow_run.id }} 
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       # ✅ Step 4: Load Version Tag from Artifact
       - name: Load Version Tag
