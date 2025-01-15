@@ -94,6 +94,7 @@ jobs:
           compression-level: 6
           overwrite: true           # Do not overwrite existing files
           include-hidden-files: true  # Ensure hidden files are included
+          retention-days: 90  # Extend retention period if necessary
 
       # ✅ Step 11: Kubernetes Lint Check
       - name: Run kube-linter
