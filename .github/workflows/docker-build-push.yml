@@ -18,18 +18,19 @@ jobs:
       # ✅ Debug Step: List Available Artifacts Before Download
       - name: List Available Artifacts (Debugging)
         run: |
-          gh run view ${{ github.event.workflow_run.id }} --json artifacts
-          ls -R
+          ls -R | grep 'version.txt'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # ✅ Step 2: Set up Docker Buildx for better caching and multi-arch support
-      - name: Download Version Tag from CI Workflow
-        uses: actions/download-artifact@v4.1.8
+      # ✅ Step 2: Download Artifact
+      - name: Download Artifact Using Run ID
+        uses: actions/download-artifact@v4
         with:
-          name: version  # Pulls the triggering workflow's run ID
-          path: .   # Download the version.txt file to the root of the repository
-          merge-multiple: false  
+          name: version
+          path: .
+          merge-multiple: false
+          repository: ${{ github.repository }}
+          run-id: ${{ github.event.workflow_run.id }} 
 
       # ✅ Step 4: Load Version Tag from Artifact
       - name: Load Version Tag
@@ -58,7 +59,6 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:latest
             ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${{ env.IMAGE_TAG }}
-
       # ✅ Step 8: Confirm Image Pushed
       - name: Confirm Image Push
         run: |
