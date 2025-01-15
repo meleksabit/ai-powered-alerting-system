@@ -18,7 +18,7 @@ jobs:
       # ✅ Debug Step: List Available Artifacts Before Download
       - name: List Available Artifacts (Debugging)
         run: |
-          ls -R | grep 'version.txt'
+          ls -R | find . -name "version.txt"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
