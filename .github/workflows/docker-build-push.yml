@@ -24,7 +24,7 @@ jobs:
 
       # ✅ Step 2: Download Artifact
       - name: Download Version Tag from Sonar Workflow
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v7
         with:
           run_id: ${{ github.event.workflow_run.id }}
           name: version
