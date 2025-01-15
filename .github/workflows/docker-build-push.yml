@@ -18,7 +18,6 @@ jobs:
       # ✅ Debug Step: List Available Artifacts Before Download
       - name: List Available Artifacts (Debugging)
         run: |
-          gh run view ${{ github.event.workflow_run.id }} --json artifacts
           ls -R
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
