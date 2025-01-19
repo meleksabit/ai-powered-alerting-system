@@ -21,7 +21,7 @@ spec:
         fsGroup: 2000
       containers:
         - name: grafana
-          image: grafana/grafana:main-ubuntu  # Specific version instead of 'main-ubuntu'
+          image: grafana/grafana:main-ubuntu
           ports:
             - containerPort: 3000
           resources:

@@ -39,6 +39,7 @@ services:
     build:
       context: .
       dockerfile: my_app/Dockerfile.app
+    image: ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${TAG}
     ports:
       - "5000:5000"  # Expose Flask app on port 5000
       - "8000:8000"  # Expose Prometheus metrics on port 8000
