@@ -59,12 +59,20 @@ jobs:
       # ✅ Step 7: Build and Push Docker Image
       - name: Build and Push All Services Using Docker Compose
         run: |
+          # Generate a unique timestamp for tagging
           TIMESTAMP=$(date +%Y%m%d%H%M%S)
           echo "Using TIMESTAMP: $TIMESTAMP"
-          docker compose build --build-arg TAG=$TIMESTAMP
+
+          # Export environment variables for Docker Compose
+          export TAG=$TIMESTAMP
+          export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+
+          # Build and push images
+          docker compose build --build-arg TAG=$TAG
           docker compose push
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+
+          # Output the tag for debugging
+          echo "Images built and pushed with tag: $TAG"
 
       # ✅ Step 8: Confirm Image Pushed
       - name: Confirm Image Push
