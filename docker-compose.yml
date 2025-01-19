@@ -19,6 +19,9 @@ services:
     build:
       context: ./prometheus-grafana
       dockerfile: Dockerfile.grafana
+      args:
+        TAG: ${TAG}
+    image: ${{ secrets.DOCKER_USERNAME }}/grafana:${TAG}
     ports:
       - "3000:3000"
     volumes:
@@ -38,7 +41,9 @@ services:
   python-app:
     build:
       context: .
-      dockerfile: my_app/Dockerfile.app
+      dockerfile: ./my_app/Dockerfile.app
+      args:
+          TAG: ${TAG}
     image: ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${TAG}
     ports:
       - "5000:5000"  # Expose Flask app on port 5000
