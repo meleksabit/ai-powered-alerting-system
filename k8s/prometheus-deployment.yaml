@@ -21,7 +21,7 @@ spec:
         fsGroup: 2000
       containers:
         - name: prometheus
-          image: prom/prometheus:main  # Replaced `main` with a stable version
+          image: prom/prometheus:main
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
           ports:

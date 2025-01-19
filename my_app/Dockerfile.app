@@ -2,7 +2,7 @@
 FROM python:3.11-slim-buster
 
 # App version
-LABEL version="2.0.2"
+LABEL version="2.0.3"
 
 # Install necessary system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -16,8 +16,10 @@ WORKDIR /app
 RUN groupadd -g 1000 appgroup && \
     useradd -u 1000 -g appgroup -m appuser
 
-# Copy requirements file and install dependencies
+# Copy requirements.txt from root
 COPY requirements.txt ./
+
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt --upgrade pip
 
 # Preload Hugging Face models to avoid downloading on startup
@@ -25,7 +27,7 @@ RUN python -c "from transformers import AutoModelForSequenceClassification, Auto
     AutoModelForSequenceClassification.from_pretrained('distilbert-base-uncased-finetuned-sst-2-english'); \
     AutoTokenizer.from_pretrained('distilbert-base-uncased-finetuned-sst-2-english')"
 
-# Copy only the application code explicitly
+# Copy application code from the root directory
 COPY my_app/ ./my_app/
 
 # Change ownership of the /app directory to the non-root user
