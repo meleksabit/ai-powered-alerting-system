@@ -15,6 +15,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ✅ Step 2: Set up Docker Buildx in Rootless Mode (No Insecure Entitlement)
+      - name: Set up Docker Buildx (Rootless)
+        uses: docker/setup-buildx-action@v3.8.0
+        with:
+          driver: docker-container  # Enables rootless mode
+          driver-opts: network=host  # Optional, ensure host networking if needed
+          buildkitd-flags: --debug  # No insecure entitlements added
+
+      # ✅ Step 3: Verify Buildx Configuration
+      - name: Verify Buildx Setup
+        run: docker buildx inspect --bootstrap
+
       # ✅ Debug Step: List Available Artifacts Before Download
       - name: List Available Artifacts (Debugging)
         run: |
@@ -22,7 +34,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # ✅ Step 2: Download Artifact
+      # ✅ Step 4: Download Artifact
       - name: Download Version Tag from Sonar Workflow
         uses: dawidd6/action-download-artifact@v7
         with:
@@ -31,15 +43,11 @@ jobs:
           path: .
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      # ✅ Step 4: Load Version Tag from Artifact
+      # ✅ Step 5: Load Version Tag from Artifact
       - name: Load Version Tag
         run: |
           IMAGE_TAG=$(cat version.txt)
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-
-      # ✅ Step 5: Set up Docker Buildx
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.8.0
 
       # ✅ Step 6: Log in to DockerHub
       - name: Log in to DockerHub using secrets
@@ -49,16 +57,17 @@ jobs:
           password: ${{ secrets.DOCKER_PAT }}
 
       # ✅ Step 7: Build and Push Docker Image
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v6.10.0
-        with:
-          context: ./my_app
-          file: ./my_app/Dockerfile.app
-          push: true
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:latest
-            ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${{ env.IMAGE_TAG }}
+      - name: Build and Push All Services Using Docker Compose
+        run: |
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
+          echo "Using TIMESTAMP: $TIMESTAMP"
+          docker compose build --build-arg TAG=$TIMESTAMP
+          docker compose push
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+
       # ✅ Step 8: Confirm Image Pushed
       - name: Confirm Image Push
         run: |
           echo "Docker image pushed with tag: ${{ env.IMAGE_TAG }}"
+          

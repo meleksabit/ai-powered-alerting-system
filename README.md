@@ -91,7 +91,9 @@ Here’s the structure of the project:
 .
 ├── docker-compose.yml
 ├── k8s
+│   ├── grafana-configmap.yaml
 │   ├── grafana-deployment.yaml
+│   ├── grafana-pvc.yaml
 │   ├── grafana-service.yaml
 │   ├── prometheus-configmap.yaml
 │   ├── prometheus-deployment.yaml
@@ -103,7 +105,7 @@ Here’s the structure of the project:
 ├── my_app
 │   ├── app.py
 │   ├── Dockerfile.app
-│   ├── requirements.txt
+│   ├── __init__.py
 │   ├── start_app.py
 │   └── static
 │       └── favicon.ico
@@ -112,9 +114,17 @@ Here’s the structure of the project:
 │   ├── Dockerfile.grafana
 │   └── prometheus.yml
 ├── Prometheus_Grafana_Python_Hugging_Face.png
-└── README.md
+├── README.md
+├── requirements.txt
+├── sonar-project.properties
+└── tests
+    ├── conftest.py
+    ├── __init__.py
+    ├── test_app.py
+    ├── test_parametrized.py
+    └── test_start_app.py
 
-5 directories, 20 files
+6 directories, 29 files
 ```	
 #### - **_Python_**: Core application code.
 #### - **_Docker Compose_**: Multi-container setup in `docker-compose.yml`.
@@ -169,6 +179,9 @@ You can also manually install Prometheus and Grafana on your local machine. Foll
 # Use a slim version of Python to reduce image size
 FROM python:3.11-slim-buster
 
+# App version
+LABEL version="2.0.2"
+
 # Install necessary system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
@@ -177,39 +190,49 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Set the working directory in the container
 WORKDIR /app
 
+# Create a non-root user and group
+RUN groupadd -g 1000 appgroup && \
+    useradd -u 1000 -g appgroup -m appuser
+
 # Copy requirements file and install dependencies
-COPY requirements.txt . 
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt --upgrade pip
 
 # Preload Hugging Face models to avoid downloading on startup
 RUN python -c "from transformers import AutoModelForSequenceClassification, AutoTokenizer; \
     AutoModelForSequenceClassification.from_pretrained('distilbert-base-uncased-finetuned-sst-2-english'); \
     AutoTokenizer.from_pretrained('distilbert-base-uncased-finetuned-sst-2-english')"
 
-# Copy the rest of the application code
-COPY . .
+# Copy only the application code explicitly
+COPY my_app/ ./my_app/
+
+# Change ownership of the /app directory to the non-root user
+RUN chown -R appuser:appgroup /app
+
+# Switch to the non-root user
+USER appuser
 
 # Expose necessary ports for Flask (5000) and Prometheus metrics (8000)
 EXPOSE 5000
 EXPOSE 8000
 
 # Run the application (starting both Prometheus and Gunicorn from Python)
-CMD ["python", "start_app.py"]
+CMD ["python", "my_app/start_app.py"]
 ```
 
 ### Dockerfile for Grafana
 ```dockerfile
-# Use Official Grafana image
-FROM grafana/grafana:latest
+# Use the official Grafana image as a base
+FROM grafana/grafana:main-ubuntu
 
-# Set environment variables if needed
-ENV GF_SECURITY_ADMIN_PASSWORD=admin
+# Copy only the Grafana configuration file
+COPY ./prometheus-grafana/grafana.ini /etc/grafana/grafana.ini
 
-# Expose Grafana port
+# Expose Grafana web port
 EXPOSE 3000
 
-# Set the default command
-CMD ["grafana-server", "--homepath=/usr/share/grafana", "--config=/etc/grafana/grafana.ini"]
+# Use the default entry point for the Grafana image
+CMD ["/run.sh"]
 ```
 
 ### Docker Compose File
@@ -219,7 +242,7 @@ Here’s the **`docker-compose.yml`** that sets up both **Prometheus**, **Grafan
 services:
   # Prometheus service
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:main
     volumes:
       - ./prometheus-grafana/prometheus.yml:/etc/prometheus/prometheus.yml  # Mount config
       - ./prometheus-grafana/alert_rules.yml:/etc/prometheus/alert_rules.yml  # Mount alert rules
@@ -238,7 +261,16 @@ services:
       context: ./prometheus-grafana
       dockerfile: Dockerfile.grafana
     ports:
-      - "3000:3000"  # Expose Grafana on port 3000
+      - "3000:3000"
+    volumes:
+      - ./prometheus-grafana/grafana.ini:/etc/grafana/grafana.ini
+      - grafana_data:/var/lib/grafana
+    secrets:
+      - grafana_admin_user
+      - grafana_admin_password
+    environment:
+      - GF_SECURITY_ADMIN_USER_FILE=/run/secrets/grafana_admin_user
+      - GF_SECURITY_ADMIN_PASSWORD_FILE=/run/secrets/grafana_admin_password  # Expose Grafana on port 3000
     restart: unless-stopped
     networks:
       - monitor-net
@@ -246,8 +278,8 @@ services:
   # Python Flask app service
   python-app:
     build:
-      context: ./my_app
-      dockerfile: Dockerfile.app
+      context: .
+      dockerfile: my_app/Dockerfile.app
     ports:
       - "5000:5000"  # Expose Flask app on port 5000
       - "8000:8000"  # Expose Prometheus metrics on port 8000
@@ -260,6 +292,13 @@ services:
     networks:
       - monitor-net
 
+# Define secrets for Grafana
+secrets:
+  grafana_admin_user:
+    file: ${HOME}/secrets/grafana_admin_user.txt
+  grafana_admin_password:
+    file: ${HOME}/secrets/grafana_admin_password.txt
+
 # Define a shared network
 networks:
   monitor-net:
@@ -268,6 +307,7 @@ networks:
 # Define a volume for Prometheus data storage
 volumes:
   prometheus_data:
+  grafana_data:
 ```
 
 ## 🛠️Configuration
@@ -275,22 +315,6 @@ volumes:
 Edit the **`prometheus-grafana/prometheus.yml`** file to add a scrape config for your Python app that exposes metrics on **`localhost:8000`**:
 
 ```yaml
-# Global settings
-global:
-  scrape_interval: 15s  # Scrape every 15 seconds
-  evaluation_interval: 15s  # Evaluate rules every 15 seconds
-
-# Alertmanager configuration (if using Alertmanager)
-alerting:
-  alertmanagers:
-    - static_configs:
-        - targets: ['alertmanager:9093']  # Define Alertmanager target
-
-# Reference to rule files
-rule_files:
-  - "/etc/prometheus/alert_rules.yml"  # Points to your alert rules file
-
-# Scrape configurations
 # Global settings
 global:
   scrape_interval: 15s  # Scrape every 15 seconds
@@ -331,7 +355,7 @@ groups:
   - name: critical_alert_rules
     rules:
       - alert: CriticalLogAlert
-        expr: log_severity{level="critical"} > 0  # Alert when critical logs are detected
+        expr: log_severity{level="critical"} > 0
         for: 1m
         labels:
           severity: "critical"
@@ -348,29 +372,27 @@ groups:
 In the **`my_app/app.py file`**, we’ll load the **BERT** model from **Hugging Face** and classify log messages.
 
 ```python
-from transformers import pipeline
+from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
 
-# Load Hugging Face's BERT model (sentiment analysis as a placeholder)
-classifier = pipeline("text-classification", model="distilbert-base-uncased-finetuned-sst-2-english")
+def lazy_load_model():
+    """Lazy load the model and tokenizer for text classification."""
+    global model, tokenizer, classifier, app_ready
+    if model is None or tokenizer is None or classifier is None:
+        logging.info("Loading model and tokenizer lazily...")
+        tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
+        model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
+        classifier = pipeline("text-classification", model=model, tokenizer=tokenizer)
+        logging.info("Model and tokenizer loaded.")
+    app_ready = True
 
 def classify_log_event(log_message):
-    """
-    Classify log messages using Hugging Face DistilBERT model for sentiment analysis.
-    Lazily loads the model and tokenizer if they are not already loaded.
-    """
-    lazy_load_model()
+    """Classify log messages using Hugging Face DistilBERT model."""
+    lazy_load_model()  # Ensure the model and tokenizer are loaded
+    result = classifier(log_message)  # Use the classifier pipeline
 
-    result = classifier(log_message)
-
-    # Determine severity based on sentiment
-    if result[0]['label'] 
-       'POSITIVE':
-        severity = 'not_critical'
-    else:
-        severity = 'critical'
-
-    log_severity.labels(severity=severity).inc()
-
+    # Determine severity based on sentiment analysis result
+    severity = 'not_critical' if result[0]['label'] == 'POSITIVE' else 'critical'
+    log_severity.labels(severity=severity).inc()  # Update Prometheus metric
     logging.info(f"Classified log '{log_message}' as {severity}")
     return severity
 ```
@@ -481,7 +503,7 @@ kubectl scale deployment python-app --replicas=3
   ```
 
 ### Kubernetes Deployment Files
-Below are the Kubernetes manifest files located in the k8s/ directory:
+Below are the Kubernetes manifest files located in the `k8s/` directory:
 
 ### Deployment for Python App (python-app-deployment.yaml):
 ```yaml
@@ -499,9 +521,14 @@ spec:
       labels:
         app: python-app
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 3000
+        runAsNonRoot: true
+        fsGroup: 2000
       containers:
         - name: python-app
-          image: angel3/ai-powered-alerting-system:v1.0.0
+          image: angel3/ai-powered-alerting-system:${IMAGE_TAG}
           resources:
             requests:
               cpu: "200m"
@@ -509,6 +536,12 @@ spec:
             limits:
               cpu: "400m"
               memory: "512Mi"
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: SENDER_EMAIL
               valueFrom:
@@ -587,9 +620,14 @@ spec:
       labels:
         app: prometheus
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 3000
+        runAsNonRoot: true
+        fsGroup: 2000
       containers:
         - name: prometheus
-          image: prom/prometheus:latest
+          image: prom/prometheus:main  # Replaced `main` with a stable version
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
           ports:
@@ -601,13 +639,19 @@ spec:
             limits:
               cpu: "1"
               memory: "1Gi"
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           volumeMounts:
             - name: config-volume
               mountPath: /etc/prometheus/
       volumes:
         - name: config-volume
           configMap:
-            name: prometheus-config  # Reference the ConfigMap
+            name: prometheus-config
 ```
 
 ### Service for Prometheus (prometheus-service.yaml):
@@ -692,9 +736,14 @@ spec:
       labels:
         app: grafana
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 3000
+        runAsNonRoot: true
+        fsGroup: 2000
       containers:
         - name: grafana
-          image: grafana/grafana:latest
+          image: grafana/grafana:main-ubuntu
           ports:
             - containerPort: 3000
           resources:
@@ -704,6 +753,25 @@ spec:
             limits:
               cpu: "500m"
               memory: "512Mi"
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: grafana-data
+              mountPath: /var/lib/grafana
+            - name: grafana-config
+              mountPath: /etc/grafana/grafana.ini
+              subPath: grafana.ini
+      volumes:
+        - name: grafana-data
+          persistentVolumeClaim:
+            claimName: grafana-pvc
+        - name: grafana-config
+          configMap:
+            name: grafana-config
 ```
 
 ### Service for Grafana (grafana-service.yaml):
@@ -720,6 +788,31 @@ spec:
       port: 3000
       targetPort: 3000
   type: NodePort
+```
+### ConfigMap for Grafana (grafana-configmap.yaml):
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-config
+data:
+  grafana.ini: |
+    [security]
+    admin_user = ${GF_SECURITY_ADMIN_USER}
+    admin_password = ${GF_SECURITY_ADMIN_PASSWORD}
+```
+### Persistent Volume Claim for Grafana (grafana-pvc.yaml):
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
 ```
 
 > [!NOTE]
