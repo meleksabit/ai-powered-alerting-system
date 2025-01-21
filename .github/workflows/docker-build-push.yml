@@ -5,6 +5,8 @@ on:
     workflows: ["SonarCloud Analysis"]
     types:
       - completed
+    branches:
+      - main
 
 jobs:
   build-and-push:
