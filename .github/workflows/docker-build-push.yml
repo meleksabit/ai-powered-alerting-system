@@ -72,15 +72,23 @@ jobs:
 
       # ✅ Step 8: Conditional Build and Push for Grafana
       - name: Build and Push Grafana
-        if: steps.changes.outputs.grafana == 'true'
         run: |
           # Generate a unique timestamp for tagging
           TIMESTAMP=$(date +%Y%m%d%H%M%S)
           echo "Using TIMESTAMP: $TIMESTAMP"
 
+          # Export environment variables
+          export TAG=$TIMESTAMP
+          export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+
           # Build and push the Grafana image
-          docker compose build --build-arg TAG=$TIMESTAMP grafana
+          docker compose build --build-arg TAG=$TAG grafana
           docker compose push grafana
+
+          # Confirm successful push
+          echo "Grafana image built and pushed with tag: $TAG"
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
 
       # ✅ Step 9: Confirm Images Pushed
       - name: Confirm Image Push
