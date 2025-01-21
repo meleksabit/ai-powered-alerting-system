@@ -1,96 +1,57 @@
 name: Docker Build and Push to DockerHub
 
 on:
-  push:
-    branches:
-      - main  # Trigger only on pushes/merges to the main branch
+  workflow_run:
+    workflows: ["SonarCloud Analysis"]
+    types:
+      - completed
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.head_branch == 'main' }}  # Ensure builds run only for the main branch
 
     steps:
       # ✅ Step 1: Check out the Code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ✅ Step 2: Set up Docker Buildx in Rootless Mode
-      - name: Set up Docker Buildx (Rootless)
+      # ✅ Step 2: Set up Docker Buildx
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.8.0
-        with:
-          driver: docker-container
-          driver-opts: network=host
-          buildkitd-flags: --debug
 
-      # ✅ Step 3: Verify Buildx Configuration
-      - name: Verify Buildx Setup
-        run: docker buildx inspect --bootstrap
-
-      # ✅ Step 4: Detect Changed Files
-      - name: Detect Changed Files
-        id: changes
-        uses: dorny/paths-filter@v2
+      # ✅ Step 3: Download Version Artifact
+      - name: Download Version Artifact
+        uses: dawidd6/action-download-artifact@v7
         with:
-          filters: |
-            python-app:
-              - 'my_app/**'
-            prometheus:
-              - 'prometheus-grafana/prometheus.yml'
-            grafana:
-              - 'prometheus-grafana/grafana.ini'
+          run_id: ${{ github.event.workflow_run.id }}
+          name: version
+          path: .
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ✅ Step 4: Load Version Tag
+      - name: Load Version Tag
+        run: |
+          IMAGE_TAG=$(cat version.txt)
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
       # ✅ Step 5: Log in to DockerHub
-      - name: Log in to DockerHub using secrets
+      - name: Log in to DockerHub
         uses: docker/login-action@v3.3.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PAT }}
 
-      # ✅ Step 6: Conditional Build and Push for Python App
-      - name: Build and Push Python App
-        if: steps.changes.outputs.python-app == 'true'
+      # ✅ Step 6: Build and Push Docker Images
+      - name: Build and Push All Services Using Docker Compose
         run: |
-          # Generate a unique timestamp for tagging
           TIMESTAMP=$(date +%Y%m%d%H%M%S)
           echo "Using TIMESTAMP: $TIMESTAMP"
 
-          # Build and push the Python app image
-          docker compose build --build-arg TAG=$TIMESTAMP python-app
-          docker compose push python-app
-
-      # ✅ Step 7: Conditional Build and Push for Prometheus
-      - name: Build and Push Prometheus
-        if: steps.changes.outputs.prometheus == 'true'
-        run: |
-          # Generate a unique timestamp for tagging
-          TIMESTAMP=$(date +%Y%m%d%H%M%S)
-          echo "Using TIMESTAMP: $TIMESTAMP"
-
-          # Build and push the Prometheus image
-          docker compose build --build-arg TAG=$TIMESTAMP prometheus
-          docker compose push prometheus
-
-      # ✅ Step 8: Conditional Build and Push for Grafana
-      - name: Build and Push Grafana
-        run: |
-          # Generate a unique timestamp for tagging
-          TIMESTAMP=$(date +%Y%m%d%H%M%S)
-          echo "Using TIMESTAMP: $TIMESTAMP"
-
-          # Export environment variables
           export TAG=$TIMESTAMP
           export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
 
-          # Build and push the Grafana image
-          docker compose build --build-arg TAG=$TAG grafana
-          docker compose push grafana
+          docker compose build --build-arg TAG=$TAG
+          docker compose push
 
-          # Confirm successful push
-          echo "Grafana image built and pushed with tag: $TAG"
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-
-      # ✅ Step 9: Confirm Images Pushed
-      - name: Confirm Image Push
-        run: |
-          echo "Docker images pushed if changes were detected."
+          echo "Docker images built and pushed with tag: $TAG"
