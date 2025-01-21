@@ -1,10 +1,9 @@
 name: Docker Build and Push to DockerHub
 
 on:
-  workflow_run:
-    workflows: ["SonarCloud Analysis"]
-    types:
-      - completed
+  push:
+    branches:
+      - main  # Trigger only on pushes/merges to the main branch
 
 jobs:
   build-and-push:
@@ -15,67 +14,75 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ✅ Step 2: Set up Docker Buildx in Rootless Mode (No Insecure Entitlement)
+      # ✅ Step 2: Set up Docker Buildx in Rootless Mode
       - name: Set up Docker Buildx (Rootless)
         uses: docker/setup-buildx-action@v3.8.0
         with:
-          driver: docker-container  # Enables rootless mode
-          driver-opts: network=host  # Optional, ensure host networking if needed
-          buildkitd-flags: --debug  # No insecure entitlements added
+          driver: docker-container
+          driver-opts: network=host
+          buildkitd-flags: --debug
 
       # ✅ Step 3: Verify Buildx Configuration
       - name: Verify Buildx Setup
         run: docker buildx inspect --bootstrap
 
-      # ✅ Debug Step: List Available Artifacts Before Download
-      - name: List Available Artifacts (Debugging)
-        run: |
-          ls -R | find . -name "version.txt"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # ✅ Step 4: Download Artifact
-      - name: Download Version Tag from Sonar Workflow
-        uses: dawidd6/action-download-artifact@v7
+      # ✅ Step 4: Detect Changed Files
+      - name: Detect Changed Files
+        id: changes
+        uses: dorny/paths-filter@v2
         with:
-          run_id: ${{ github.event.workflow_run.id }}
-          name: version
-          path: .
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          filters: |
+            python-app:
+              - 'my_app/**'
+            prometheus:
+              - 'prometheus-grafana/prometheus.yml'
+            grafana:
+              - 'prometheus-grafana/grafana.ini'
 
-      # ✅ Step 5: Load Version Tag from Artifact
-      - name: Load Version Tag
-        run: |
-          IMAGE_TAG=$(cat version.txt)
-          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-
-      # ✅ Step 6: Log in to DockerHub
+      # ✅ Step 5: Log in to DockerHub
       - name: Log in to DockerHub using secrets
         uses: docker/login-action@v3.3.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PAT }}
 
-      # ✅ Step 7: Build and Push Docker Image
-      - name: Build and Push All Services Using Docker Compose
+      # ✅ Step 6: Conditional Build and Push for Python App
+      - name: Build and Push Python App
+        if: steps.changes.outputs.python-app == 'true'
         run: |
           # Generate a unique timestamp for tagging
           TIMESTAMP=$(date +%Y%m%d%H%M%S)
           echo "Using TIMESTAMP: $TIMESTAMP"
 
-          # Export environment variables for Docker Compose
-          export TAG=$TIMESTAMP
-          export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+          # Build and push the Python app image
+          docker compose build --build-arg TAG=$TIMESTAMP python-app
+          docker compose push python-app
 
-          # Build and push images
-          docker compose build --build-arg TAG=$TAG
-          docker compose push
+      # ✅ Step 7: Conditional Build and Push for Prometheus
+      - name: Build and Push Prometheus
+        if: steps.changes.outputs.prometheus == 'true'
+        run: |
+          # Generate a unique timestamp for tagging
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
+          echo "Using TIMESTAMP: $TIMESTAMP"
 
-          # Output the tag for debugging
-          echo "Images built and pushed with tag: $TAG"
+          # Build and push the Prometheus image
+          docker compose build --build-arg TAG=$TIMESTAMP prometheus
+          docker compose push prometheus
 
-      # ✅ Step 8: Confirm Image Pushed
+      # ✅ Step 8: Conditional Build and Push for Grafana
+      - name: Build and Push Grafana
+        if: steps.changes.outputs.grafana == 'true'
+        run: |
+          # Generate a unique timestamp for tagging
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
+          echo "Using TIMESTAMP: $TIMESTAMP"
+
+          # Build and push the Grafana image
+          docker compose build --build-arg TAG=$TIMESTAMP grafana
+          docker compose push grafana
+
+      # ✅ Step 9: Confirm Images Pushed
       - name: Confirm Image Push
         run: |
-          echo "Docker image pushed with tag: ${{ env.IMAGE_TAG }}"
-          
+          echo "Docker images pushed if changes were detected."
