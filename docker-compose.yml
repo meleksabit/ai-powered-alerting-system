@@ -17,8 +17,8 @@ services:
   # Grafana service
   grafana:
     build:
-      context: .
-      dockerfile: ./prometheus-grafana/Dockerfile.grafana
+      context: ./prometheus-grafana
+      dockerfile: Dockerfile.grafana
       args:
         TAG: ${TAG}
     image: ${DOCKER_USERNAME}/grafana:${TAG}
