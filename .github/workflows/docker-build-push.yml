@@ -61,7 +61,7 @@ jobs:
             --push \
             --file ./my_app/Dockerfile.app \
             --tag $DOCKER_USERNAME/ai-powered-alerting-system:$TAG \
-            ./my_app
+            .
 
           docker buildx build \
             --build-arg TAG=$TAG \
