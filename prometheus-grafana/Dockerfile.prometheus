@@ -1,0 +1,12 @@
+# Use the official Prometheus image as the base
+FROM prom/prometheus:main
+
+# Copy custom Prometheus configuration and alert rules into the container
+COPY prometheus.yml /etc/prometheus/prometheus.yml
+COPY alert_rules.yml /etc/prometheus/alert_rules.yml
+
+# Expose Prometheus on the default port
+EXPOSE 9090
+
+# Command to run Prometheus
+CMD ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/etc/prometheus/data"]
