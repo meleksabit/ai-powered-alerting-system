@@ -112,6 +112,8 @@ Here’s the structure of the project:
 ├── prometheus-grafana
 │   ├── alert_rules.yml
 │   ├── Dockerfile.grafana
+│   ├── Dockerfile.prometheus
+│   ├── grafana.ini
 │   └── prometheus.yml
 ├── Prometheus_Grafana_Python_Hugging_Face.png
 ├── README.md
@@ -124,7 +126,7 @@ Here’s the structure of the project:
     ├── test_parametrized.py
     └── test_start_app.py
 
-6 directories, 29 files
+6 directories, 31 files
 ```	
 #### - **_Python_**: Core application code.
 #### - **_Docker Compose_**: Multi-container setup in `docker-compose.yml`.
@@ -180,7 +182,7 @@ You can also manually install Prometheus and Grafana on your local machine. Foll
 FROM python:3.11-slim-buster
 
 # App version
-LABEL version="2.0.2"
+LABEL version="2.0.3"
 
 # Install necessary system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -194,8 +196,10 @@ WORKDIR /app
 RUN groupadd -g 1000 appgroup && \
     useradd -u 1000 -g appgroup -m appuser
 
-# Copy requirements file and install dependencies
+# Copy requirements.txt from root
 COPY requirements.txt ./
+
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt --upgrade pip
 
 # Preload Hugging Face models to avoid downloading on startup
@@ -203,7 +207,7 @@ RUN python -c "from transformers import AutoModelForSequenceClassification, Auto
     AutoModelForSequenceClassification.from_pretrained('distilbert-base-uncased-finetuned-sst-2-english'); \
     AutoTokenizer.from_pretrained('distilbert-base-uncased-finetuned-sst-2-english')"
 
-# Copy only the application code explicitly
+# Copy application code from the root directory
 COPY my_app/ ./my_app/
 
 # Change ownership of the /app directory to the non-root user
@@ -219,6 +223,21 @@ EXPOSE 8000
 # Run the application (starting both Prometheus and Gunicorn from Python)
 CMD ["python", "my_app/start_app.py"]
 ```
+### Dockerfile for Prometheus
+```dockerfile
+# Use the official Prometheus image as the base
+FROM prom/prometheus:main
+
+# Copy custom Prometheus configuration and alert rules into the container
+COPY prometheus.yml /etc/prometheus/prometheus.yml
+COPY alert_rules.yml /etc/prometheus/alert_rules.yml
+
+# Expose Prometheus on the default port
+EXPOSE 9090
+
+# Command to run Prometheus
+CMD ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/etc/prometheus/data"]
+```
 
 ### Dockerfile for Grafana
 ```dockerfile
@@ -226,7 +245,7 @@ CMD ["python", "my_app/start_app.py"]
 FROM grafana/grafana:main-ubuntu
 
 # Copy only the Grafana configuration file
-COPY ./prometheus-grafana/grafana.ini /etc/grafana/grafana.ini
+COPY ./grafana.ini /etc/grafana/grafana.ini
 
 # Expose Grafana web port
 EXPOSE 3000
@@ -242,15 +261,13 @@ Here’s the **`docker-compose.yml`** that sets up both **Prometheus**, **Grafan
 services:
   # Prometheus service
   prometheus:
-    image: prom/prometheus:main
-    volumes:
-      - ./prometheus-grafana/prometheus.yml:/etc/prometheus/prometheus.yml  # Mount config
-      - ./prometheus-grafana/alert_rules.yml:/etc/prometheus/alert_rules.yml  # Mount alert rules
-      - /home/angel3/data/:/etc/prometheus/data  # Data storage
-    user: "65534"  # Run Prometheus as `nobody`
+    build:
+      context: ./prometheus-grafana
+      dockerfile: Dockerfile.prometheus
+    image: ${DOCKER_USERNAME}/prometheus:${TAG}
     ports:
-      - "9090:9090"  # Expose Prometheus on port 9090
-    command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/etc/prometheus/data"]
+      - "9090:9090"
+    user: "65534"
     restart: unless-stopped
     networks:
       - monitor-net
@@ -260,6 +277,9 @@ services:
     build:
       context: ./prometheus-grafana
       dockerfile: Dockerfile.grafana
+      args:
+        TAG: ${TAG}
+    image: ${DOCKER_USERNAME}/grafana:${TAG}
     ports:
       - "3000:3000"
     volumes:
@@ -279,7 +299,10 @@ services:
   python-app:
     build:
       context: .
-      dockerfile: my_app/Dockerfile.app
+      dockerfile: ./my_app/Dockerfile.app
+      args:
+          TAG: ${TAG}
+    image: ${DOCKER_USERNAME}/ai-powered-alerting-system:${TAG}
     ports:
       - "5000:5000"  # Expose Flask app on port 5000
       - "8000:8000"  # Expose Prometheus metrics on port 8000
