@@ -128,10 +128,10 @@ Here’s the structure of the project:
 
 6 directories, 31 files
 ```	
-#### - **_Python_**: Core application code.
-#### - **_Docker Compose_**: Multi-container setup in `docker-compose.yml`.
-#### - **_Kubernetes_**: Deployment manifests in `k8s/`.
-#### - **_GitHub Actions_**: CI/CD workflows in `.github/workflows/`.
+#### -  **_Python_**: Core application code.
+#### -  **_Docker Compose_**: Multi-container setup in `docker-compose.yml`.
+#### -  **_Kubernetes_**: Deployment manifests in `k8s/`.
+#### - ![GitHub Actions](https://techicons.dev/icons/githubactions.png) **_GitHub Actions_**: CI/CD workflows in `.github/workflows/`.
 
 ## 🧑‍🔧Installation
 
