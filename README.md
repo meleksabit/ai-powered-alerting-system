@@ -128,10 +128,10 @@ Here’s the structure of the project:
 
 6 directories, 31 files
 ```	
-#### - **_Python_**: Core application code.
-#### - **_Docker Compose_**: Multi-container setup in `docker-compose.yml`.
-#### - **_Kubernetes_**: Deployment manifests in `k8s/`.
-#### - **_GitHub Actions_**: CI/CD workflows in `.github/workflows/`.
+#### - [![python-1.png](https://i.postimg.cc/KjRBHDzm/python-1.png)](https://postimg.cc/8fg7FWMY) **_Python_**: Core application code.
+#### - [![icons8-docker-48.png](https://i.postimg.cc/13xwv6ZZ/icons8-docker-48.png)](https://postimg.cc/w7V1v1vW) **_Docker Compose_**: Multi-container setup in `docker-compose.yml`.
+#### - [![kubernetes-256x249.png](https://i.postimg.cc/26j44DNb/kubernetes-256x249.png)](https://postimg.cc/Mc4MSgTq) **_Kubernetes_**: Deployment manifests in `k8s/`.
+#### - [![Git-Hub-Actions.png](https://i.postimg.cc/BQP25pkg/Git-Hub-Actions.png)](https://postimg.cc/Vd1SmqYr) **_GitHub Actions_**: CI/CD workflows in `.github/workflows/`.
 
 ## 🧑‍🔧Installation
 
