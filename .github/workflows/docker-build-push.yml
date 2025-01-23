@@ -42,8 +42,8 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PAT }}
 
-      # ✅ Step 6: Build and Push Docker Images
-      - name: Build and Push All Services Using Docker Compose
+      # ✅ Step 6: Build and Push Docker Images with Layer Caching
+      - name: Build and Push All Services with Cache
         run: |
           TIMESTAMP=$(date +%Y%m%d%H%M%S)
           echo "Using TIMESTAMP: $TIMESTAMP"
@@ -51,7 +51,13 @@ jobs:
           export TAG=$TIMESTAMP
           export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
 
-          docker compose build --build-arg TAG=$TAG
+          # Build and push with layer caching enabled
+          docker compose build \
+            --build-arg TAG=$TAG \
+            --cache-from type=gha \
+            --cache-to type=gha,mode=max
           docker compose push
 
           echo "Docker images built and pushed with tag: $TAG"
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
