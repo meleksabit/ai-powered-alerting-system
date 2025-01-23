@@ -1,15 +1,13 @@
 services:
   # Prometheus service
   prometheus:
-    image: prom/prometheus:main
-    volumes:
-      - ./prometheus-grafana/prometheus.yml:/etc/prometheus/prometheus.yml  # Mount config
-      - ./prometheus-grafana/alert_rules.yml:/etc/prometheus/alert_rules.yml  # Mount alert rules
-      - /home/angel3/data/:/etc/prometheus/data  # Data storage
-    user: "65534"  # Run Prometheus as `nobody`
+    build:
+      context: ./prometheus-grafana
+      dockerfile: Dockerfile.prometheus
+    image: ${DOCKER_USERNAME}/prometheus:${TAG}
     ports:
-      - "9090:9090"  # Expose Prometheus on port 9090
-    command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/etc/prometheus/data"]
+      - "9090:9090"
+    user: "65534"
     restart: unless-stopped
     networks:
       - monitor-net
