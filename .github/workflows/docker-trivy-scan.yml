@@ -12,28 +12,51 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # ✅ Step 1: Download TAG Artifact
+      - name: Download TAG Artifact
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: tag
+        id: download-tag
+
+      # ✅ Step 2: Debug TAG File
+      - name: Debug TAG File
+        run: cat tag.txt
+
+      # ✅ Step 3: Load TAG
+      - name: Load TAG
+        run: |
+          TAG=$(cat tag.txt)
+          echo "Using TAG: $TAG"
+          echo "TAG=$TAG" >> $GITHUB_ENV
+
+      # ✅ Step 4: Install Trivy
       - name: Install Trivy
         run: |
           sudo apt-get update && sudo apt-get install -y wget
           wget https://github.com/aquasecurity/trivy/releases/download/v0.58.2/trivy_0.58.2_Linux-64bit.deb
           sudo dpkg -i trivy_0.58.2_Linux-64bit.deb
 
+      # ✅ Step 5: Log in to DockerHub
       - name: Log in to DockerHub
         uses: docker/login-action@v3.3.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PAT }}
 
+      # ✅ Step 6: Pull and Scan Python App Image
       - name: Pull and Scan Python App Image
         run: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${{ env.TAG }}
           trivy image ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${{ env.TAG }}
 
+      # ✅ Step 7: Pull and Scan Prometheus Image
       - name: Pull and Scan Prometheus Image
         run: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/prometheus:${{ env.TAG }}
           trivy image ${{ secrets.DOCKER_USERNAME }}/prometheus:${{ env.TAG }}
 
+      # ✅ Step 8: Pull and Scan Grafana Image
       - name: Pull and Scan Grafana Image
         run: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/grafana:${{ env.TAG }}
