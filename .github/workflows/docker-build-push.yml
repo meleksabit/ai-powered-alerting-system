@@ -49,11 +49,39 @@ jobs:
         env:
           TAG: ${{ env.TAG }}
 
-      # Repeat for Prometheus and Grafana...
+      # ✅ Step 6: Build and Push Prometheus
+      - name: Build and Push Prometheus
+        run: |
+          TAG=$(cat tag.txt)
+          docker buildx build \
+            --build-arg TAG=$TAG \
+            --cache-from type=gha \
+            --cache-to type=gha,mode=max \
+            --push \
+            --file ./prometheus-grafana/Dockerfile.prometheus \
+            --tag ${{ secrets.DOCKER_USERNAME }}/prometheus:$TAG \
+            .
+        env:
+          TAG: ${{ env.TAG }}
+          
+      # ✅ Step 7: Build and Push Grafana
+      - name: Build and Push Grafana
+        run: |
+          TAG=$(cat tag.txt)
+          docker buildx build \
+            --build-arg TAG=$TAG \
+            --cache-from type=gha \
+            --cache-to type=gha,mode=max \
+            --push \
+            --file ./prometheus-grafana/Dockerfile.grafana \
+            --tag ${{ secrets.DOCKER_USERNAME }}/grafana:$TAG \
+            .
+        env:
+          TAG: ${{ env.TAG }}     
 
       # ✅ Step 6: Upload TAG Artifact
       - name: Upload TAG Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: tag
           path: tag.txt
