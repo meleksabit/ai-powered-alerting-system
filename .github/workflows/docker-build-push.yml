@@ -53,7 +53,7 @@ jobs:
 
       # ✅ Step 6: Upload TAG Artifact
       - name: Upload TAG Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: tag
           path: tag.txt
