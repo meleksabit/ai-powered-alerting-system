@@ -7,9 +7,9 @@ on:
       - completed
 
 jobs:
-  scan:
-    name: Scan Docker Images for Vulnerabilities
+  build-and-push:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.head_branch == 'main' }}  # Run only for the main branch
 
     steps:
       # ✅ Step 1: Download TAG Artifact
