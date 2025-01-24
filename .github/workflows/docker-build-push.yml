@@ -9,7 +9,7 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.head_branch == 'main' }}  # Ensure builds run only for the main branch
+    if: ${{ github.event.workflow_run.head_branch == 'main' }}  # Run only for the main branch
 
     steps:
       # ✅ Step 1: Check out the Code
@@ -20,67 +20,60 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.8.0
 
-      # ✅ Step 3: Download Version Artifact
-      - name: Download Version Artifact
-        uses: dawidd6/action-download-artifact@v7
-        with:
-          run_id: ${{ github.event.workflow_run.id }}
-          name: version
-          path: .
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      # ✅ Step 4: Load Version Tag
-      - name: Load Version Tag
-        run: |
-          IMAGE_TAG=$(cat version.txt)
-          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-
-      # ✅ Step 5: Log in to DockerHub
+      # ✅ Step 3: Log in to DockerHub
       - name: Log in to DockerHub
         uses: docker/login-action@v3.3.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PAT }}
 
-      # ✅ Step 6: Build and Push Docker Images with Layer Caching
-      - name: Build and Push All Services with Cache
+      # ✅ Step 4: Generate a Timestamp Tag
+      - name: Generate Timestamp Tag
         run: |
-          # Generate a unique timestamp for tagging
           TIMESTAMP=$(date +%Y%m%d%H%M%S)
           echo "Using TIMESTAMP: $TIMESTAMP"
+          echo "TAG=$TIMESTAMP" >> $GITHUB_ENV
 
-          # Export environment variables
-          export TAG=$TIMESTAMP
-          export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
-
-          # Build and push images with Buildx and caching enabled
+      # ✅ Step 5: Build and Push Python App
+      - name: Build and Push Python App
+        run: |
           docker buildx build \
             --build-arg TAG=$TAG \
             --cache-from type=gha \
             --cache-to type=gha,mode=max \
             --push \
             --file ./my_app/Dockerfile.app \
-            --tag $DOCKER_USERNAME/ai-powered-alerting-system:$TAG \
+            --tag ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:$TAG \
             .
+        env:
+          TAG: ${{ env.TAG }}
 
+      # ✅ Step 6: Build and Push Prometheus
+      - name: Build and Push Prometheus
+        run: |
           docker buildx build \
-            --build-arg TAG=$TAG \
             --cache-from type=gha \
             --cache-to type=gha,mode=max \
             --push \
             --file ./prometheus-grafana/Dockerfile.prometheus \
-            --tag $DOCKER_USERNAME/prometheus:$TAG \
+            --tag ${{ secrets.DOCKER_USERNAME }}/prometheus:$TAG \
             ./prometheus-grafana
+        env:
+          TAG: ${{ env.TAG }}
 
+      # ✅ Step 7: Build and Push Grafana
+      - name: Build and Push Grafana
+        run: |
           docker buildx build \
-            --build-arg TAG=$TAG \
             --cache-from type=gha \
             --cache-to type=gha,mode=max \
             --push \
             --file ./prometheus-grafana/Dockerfile.grafana \
-            --tag $DOCKER_USERNAME/grafana:$TAG \
+            --tag ${{ secrets.DOCKER_USERNAME }}/grafana:$TAG \
             ./prometheus-grafana
-
-          echo "Docker images built and pushed with tag: $TAG"
         env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          TAG: ${{ env.TAG }}
+
+      # ✅ Step 8: Confirm Images Pushed
+      - name: Confirm Docker Images
+        run: docker images

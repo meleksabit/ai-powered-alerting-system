@@ -15,57 +15,64 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      # ✅ Step 1: Check out Code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Docker Compose
-        run: |
-          sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name)/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
-
+      # ✅ Step 2: Install Trivy
       - name: Install Trivy
         run: |
           sudo apt-get update && sudo apt-get install -y wget
-          wget https://github.com/aquasecurity/trivy/releases/download/v0.57.0/trivy_0.57.0_Linux-64bit.deb
-          sudo dpkg -i trivy_0.57.0_Linux-64bit.deb
+          wget https://github.com/aquasecurity/trivy/releases/download/v0.58.2/trivy_0.58.2_Linux-64bit.deb
+          sudo dpkg -i trivy_0.58.2_Linux-64bit.deb
 
-      - name: Docker Login
+      # ✅ Step 3: Log in to DockerHub
+      - name: Log in to DockerHub
         uses: docker/login-action@v3.3.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PAT }}
 
-      # Step to download and cache Trivy vulnerability database
-      - name: Download Trivy DB
-        uses: actions/cache@v4.2.0
-        with:
-          path: ./.trivy-cache
-          key: ${{ runner.os }}-trivy-db
-          restore-keys: |
-            ${{ runner.os }}-trivy-db
-
-      - name: Initialize Trivy Database
+      # ✅ Step 4: Generate TAG or use existing one
+      - name: Set TAG Variable
         run: |
-          mkdir -p .trivy-cache
-          trivy --cache-dir ./.trivy-cache image --download-db-only
+          if [ -z "${{ github.sha }}" ]; then
+            TIMESTAMP=$(date +%Y%m%d%H%M%S)
+            echo "Using fallback TIMESTAMP: $TIMESTAMP"
+            echo "TAG=$TIMESTAMP" >> $GITHUB_ENV
+          else
+            echo "TAG=${{ github.sha }}" >> $GITHUB_ENV
+          fi
 
-      # Build and scan python-app image with GitHub SHA as the tag
-      - name: Build Docker Compose python-app image
-        run: docker-compose -f docker-compose.yml build python-app
+      # ✅ Step 5: Verify and Scan Python App Image
+      - name: Verify Python App Image
+        run: |
+          if ! docker manifest inspect ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${{ env.TAG }}; then
+            echo "Python App image not found. Skipping scan."
+            exit 0
+          fi
 
-      - name: Tag Python App Image with SHA
-        run: docker tag ai-powered-alerting-system-python-app:latest ai-powered-alerting-system-python-app:${{ github.sha }}
+      - name: Scan Python App Image
+        run: trivy image ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${{ env.TAG }}
 
-      - name: Verify Docker images
-        run: docker images
+      # ✅ Step 6: Verify and Scan Prometheus Image
+      - name: Verify Prometheus Image
+        run: |
+          if ! docker manifest inspect ${{ secrets.DOCKER_USERNAME }}/prometheus:${{ env.TAG }}; then
+            echo "Prometheus image not found. Skipping scan."
+            exit 0
+          fi
 
-      - name: Scan ai-powered-alerting-system-python-app image for vulnerabilities (offline mode)
-        run: trivy image --skip-db-update --cache-dir ./.trivy-cache ai-powered-alerting-system-python-app:${{ github.sha }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Scan Prometheus Image
+        run: trivy image ${{ secrets.DOCKER_USERNAME }}/prometheus:${{ env.TAG }}
 
-      - name: Scan ai-powered-alerting-system-python-app image for vulnerabilities (online mode)
-        run: trivy image ai-powered-alerting-system-python-app:${{ github.sha }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+      # ✅ Step 7: Verify and Scan Grafana Image
+      - name: Verify Grafana Image
+        run: |
+          if ! docker manifest inspect ${{ secrets.DOCKER_USERNAME }}/grafana:${{ env.TAG }}; then
+            echo "Grafana image not found. Skipping scan."
+            exit 0
+          fi
+
+      - name: Scan Grafana Image
+        run: trivy image ${{ secrets.DOCKER_USERNAME }}/grafana:${{ env.TAG }}
