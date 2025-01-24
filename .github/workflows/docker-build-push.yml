@@ -27,16 +27,17 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PAT }}
 
-      # ✅ Step 4: Generate a Timestamp Tag
+      # ✅ Step 4: Generate Timestamp Tag
       - name: Generate Timestamp Tag
         run: |
           TIMESTAMP=$(date +%Y%m%d%H%M%S)
           echo "Using TIMESTAMP: $TIMESTAMP"
-          echo "TAG=$TIMESTAMP" >> $GITHUB_ENV
+          echo $TIMESTAMP > tag.txt
 
       # ✅ Step 5: Build and Push Python App
       - name: Build and Push Python App
         run: |
+          TAG=$(cat tag.txt)
           docker buildx build \
             --build-arg TAG=$TAG \
             --cache-from type=gha \
@@ -48,32 +49,11 @@ jobs:
         env:
           TAG: ${{ env.TAG }}
 
-      # ✅ Step 6: Build and Push Prometheus
-      - name: Build and Push Prometheus
-        run: |
-          docker buildx build \
-            --cache-from type=gha \
-            --cache-to type=gha,mode=max \
-            --push \
-            --file ./prometheus-grafana/Dockerfile.prometheus \
-            --tag ${{ secrets.DOCKER_USERNAME }}/prometheus:$TAG \
-            ./prometheus-grafana
-        env:
-          TAG: ${{ env.TAG }}
+      # Repeat for Prometheus and Grafana...
 
-      # ✅ Step 7: Build and Push Grafana
-      - name: Build and Push Grafana
-        run: |
-          docker buildx build \
-            --cache-from type=gha \
-            --cache-to type=gha,mode=max \
-            --push \
-            --file ./prometheus-grafana/Dockerfile.grafana \
-            --tag ${{ secrets.DOCKER_USERNAME }}/grafana:$TAG \
-            ./prometheus-grafana
-        env:
-          TAG: ${{ env.TAG }}
-
-      # ✅ Step 8: Confirm Images Pushed
-      - name: Confirm Docker Images
-        run: docker images
+      # ✅ Step 6: Upload TAG Artifact
+      - name: Upload TAG Artifact
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: tag
+          path: tag.txt
