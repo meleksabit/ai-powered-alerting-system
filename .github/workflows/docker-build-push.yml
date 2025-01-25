@@ -60,7 +60,7 @@ jobs:
             --push \
             --file ./prometheus-grafana/Dockerfile.prometheus \
             --tag ${{ secrets.DOCKER_USERNAME }}/prometheus:$TAG \
-            .
+            ./prometheus-grafana
         env:
           TAG: ${{ env.TAG }}
           
