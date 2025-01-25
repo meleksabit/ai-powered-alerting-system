@@ -20,6 +20,9 @@ jobs:
           name: tag  # Match the artifact name in the Build and Push workflow
           path: .  # Download the artifact to the current directory
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          workflow_search: true
+          repo: meleksabit/ai-powered-alerting-system
+          workflow_conclusion: success
 
       # ✅ Step 2: Debug TAG File
       - name: Debug TAG File
