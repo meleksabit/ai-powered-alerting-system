@@ -30,7 +30,7 @@ services:
       - grafana_admin_password
     environment:
       - GF_SECURITY_ADMIN_USER_FILE=/run/secrets/grafana_admin_user
-      - GF_SECURITY_ADMIN_PASSWORD_FILE=/run/secrets/grafana_admin_password  # Expose Grafana on port 3000
+      - GF_SECURITY_ADMIN_PASSWORD_FILE=/run/secrets/grafana_admin_password
     restart: unless-stopped
     networks:
       - monitor-net
@@ -67,7 +67,7 @@ networks:
   monitor-net:
     driver: bridge
 
-# Define a volume for Prometheus data storage
+# Define a volume for Prometheus & Grafana data storage
 volumes:
   prometheus_data:
   grafana_data:
