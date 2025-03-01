@@ -6,7 +6,7 @@ on:
   pull_request:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   # ✅ Step 1: Run Super-Linter in check-only mode (does not fix issues)
@@ -28,6 +28,7 @@ jobs:
     permissions:
       contents: write  # Allows writing fixed files
       statuses: write  # Allows updating PR status
+      checks: write  # Allows updating PR checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
