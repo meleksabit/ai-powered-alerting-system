@@ -21,7 +21,7 @@ jobs:
       - name: Run Super-Linter (Check Only)
         uses: super-linter/super-linter@v7.3.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
   # ✅ Step 2: Run Super-Linter in fix mode and commit changes
   fix-lint-issues:
