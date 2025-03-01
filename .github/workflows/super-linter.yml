@@ -46,6 +46,10 @@ jobs:
           FIX_PYTHON_ISORT: true
           FIX_PYTHON_PYINK: true
           FIX_MARKDOWN: true
+        with:
+            run: |
+                set -x  # Enable debug mode to print all commands
+                super-linter --fix
       
       - name: Commit and push linting fixes
         if: github.event_name == 'pull_request' && github.ref_name != github.event.repository.default_branch
