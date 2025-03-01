@@ -5,29 +5,49 @@ on: # yamllint disable-line rule:truthy
   push: null
   pull_request: null
 
-permissions: {}
+permissions:
+  contents: read
 
 jobs:
-  build:
-    name: Lint
-    runs-on: ubuntu-latest
+  lint:
+    # Super-linter workflow running in check only mode
+    # See https://github.com/super-linter/super-linter#get-started
 
+  fix-lint-issues:
     permissions:
-      contents: read
-      packages: read
-      # To report GitHub Actions status checks
+      # To write linting fixes
+      contents: write
+      # To write Super-linter status checks
       statuses: write
-
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          # super-linter needs the full git history to get the
-          # list of files that changed across commits
           fetch-depth: 0
-
-      - name: Super-linter
+      - name: Super-Linter
         uses: super-linter/super-linter@v7.3.0 # x-release-please-version
         env:
-          # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Enable auto-fix for Shell, Python, YAML, and Markdown
+          FIX_SHELL_SHFMT: true
+          FIX_YAML_PRETTIER: true
+          FIX_PYTHON_BLACK: true
+          FIX_PYTHON_ISORT: true
+          FIX_PYTHON_PYINK: true
+          FIX_MARKDOWN: true
+          # To reuse the same Super-linter configuration that you use in the
+          # lint job without duplicating it, see
+          # https://github.com/super-linter/super-linter/blob/main/docs/run-linter-locally.md#share-environment-variables-between-environments
+      - name: Commit and push linting fixes
+        # Run only on:
+        # - Pull requests
+        # - Not on the default branch
+        if: >
+          github.event_name == 'pull_request' &&
+          github.ref_name != github.event.repository.default_branch
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          branch: ${{ github.event.pull_request.head.ref || github.head_ref || github.ref }}
+          commit_message: "chore: fix linting issues"
+          commit_user_name: super-linter
+          commit_user_email: super-linter@super-linter.dev
