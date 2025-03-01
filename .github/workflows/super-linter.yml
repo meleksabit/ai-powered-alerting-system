@@ -17,6 +17,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
       
       - name: Run Super-Linter (Check Only)
         uses: super-linter/super-linter@v7.3.0
