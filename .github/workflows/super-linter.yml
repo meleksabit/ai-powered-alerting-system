@@ -21,7 +21,7 @@ jobs:
       - name: Run Super-Linter (Check Only)
         uses: super-linter/super-linter@v7.3.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
           VALIDATE_ALL_CODEBASE: true
 
   # ✅ Step 2: Run Super-Linter in fix mode and commit changes
@@ -40,7 +40,7 @@ jobs:
       - name: Run Super-Linter (Fix Mode)
         uses: super-linter/super-linter@v7.3.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
           # ✅ Enable auto-fix for Shell, Python, YAML, and Markdown:
           FIX_SHELL_SHFMT: true
           FIX_YAML_PRETTIER: true
