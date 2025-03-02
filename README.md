@@ -145,7 +145,7 @@ cd ai-powered-alerting-system
 Install the required Python libraries using pip:
 
 ```bash
-pip install -r my_app/requirements.txt
+pip install -r requirements.txt
 ```
 
 ### Step 3: Install and set up Prometheus and Grafana
