@@ -23,6 +23,7 @@ jobs:
         uses: super-linter/super-linter@v7.3.0
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          VALIDATE_ALL_CODEBASE: true
 
   # ✅ Step 2: Run Super-Linter in fix mode and commit changes
   fix-lint-issues:
