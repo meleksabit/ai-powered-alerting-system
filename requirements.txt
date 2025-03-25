@@ -1,11 +1,11 @@
-transformers==4.49.0
+transformers==4.50.0
 prometheus-client==0.21.1
 requests==2.32.3
 torch==2.6.0
 flask==3.1.0
 gunicorn==23.0.0
 yagmail==0.15.293
-slack-bolt==1.22.0
+slack-bolt==1.23.0
 slack-sdk==3.35.0
 pytest==8.3.5
 pytest-cov==6.0.0
