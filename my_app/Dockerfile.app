@@ -22,10 +22,9 @@ COPY requirements.txt ./
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt --upgrade pip
 
-# Preload Hugging Face models to avoid downloading on startup
-RUN python -c "from transformers import AutoModelForSequenceClassification, AutoTokenizer; \
-    AutoModelForSequenceClassification.from_pretrained('distilbert-base-uncased-finetuned-sst-2-english'); \
-    AutoTokenizer.from_pretrained('distilbert-base-uncased-finetuned-sst-2-english')"
+# Preload Hugging Face model & tokenizer during image build to avoid downloads at runtime
+COPY preload_model.py /tmp/preload_model.py
+RUN python /tmp/preload_model.py
 
 # Copy application code from the root directory
 COPY my_app/ ./my_app/
