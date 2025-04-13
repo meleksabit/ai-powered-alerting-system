@@ -23,7 +23,7 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt --upgrade pip
 
 # Preload Hugging Face model & tokenizer during image build to avoid downloads at runtime
-COPY preload_model.py /tmp/preload_model.py
+COPY my_app/preload_model.py /tmp/preload_model.py
 RUN python /tmp/preload_model.py
 
 # Copy application code from the root directory
