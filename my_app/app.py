@@ -61,8 +61,8 @@ def lazy_load_model():
     global model, tokenizer, classifier, app_ready
     if model is None or tokenizer is None or classifier is None:
         logging.info("Loading model and tokenizer lazily...")
-        tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
-        model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
+        tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english", cache_dir="/model_cache")
+        model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english", cache_dir="/model_cache")
         classifier = pipeline("text-classification", model=model, tokenizer=tokenizer)
         logging.info("Model and tokenizer loaded.")
     app_ready = True

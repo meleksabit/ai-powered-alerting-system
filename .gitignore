@@ -27,3 +27,18 @@ venv/
 .vscode/
 *.sublime-project
 *.sublime-workspace
+
+# Hugging Face / TensorFlow / PyTorch (AI models and cache)
+*.ckpt
+*.pt
+*.pth
+*.h5
+*.onnx
+output/
+logs/
+lightning_logs/
+cache/
+model_cache/
+.tokenizers_cache/
+.transformers_cache/
+__pycache__/
