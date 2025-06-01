@@ -1,5 +1,5 @@
 <a name="top"></a>
-# $\color{SeaGreen}{AI-Powered\ Alerting\ System:}$ $\color{OrangeRed}{Critical\ Alerts\ Only}$
+# ![AI System](https://img.shields.io/badge/AI--Powered%20Alerting%20System-green?style=for-the-badge&labelColor=green&color=green&logo=openai&logoColor=white)![Critical Alerts](https://img.shields.io/badge/Critical%20Alerts%20Only-red?style=for-the-badge&logo=huggingface&logoColor=white)
 
 <div align="center">
   <a href="https://sonarcloud.io/summary/new_code?id=meleksabit_ai-powered-alerting-system">
