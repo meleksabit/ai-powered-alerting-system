@@ -1,13 +1,13 @@
-transformers==4.52.3
-prometheus-client==0.22.0
+transformers==4.52.4
+prometheus-client==0.22.1
 requests==2.32.3
-torch==2.7.0
+torch==2.7.1
 flask==3.1.1
 gunicorn==23.0.0
 yagmail==0.15.293
 slack-bolt==1.23.0
 slack-sdk==3.35.0
-pytest==8.3.5
+pytest==8.4.0
 pytest-cov==6.1.1
 Flask-WTF==1.2.2
 bump2version==1.0.1
