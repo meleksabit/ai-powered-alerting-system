@@ -8,7 +8,7 @@ yagmail==0.15.293
 slack-bolt==1.23.0
 slack-sdk==3.35.0
 pytest==8.4.0
-pytest-cov==6.1.1
+pytest-cov==6.2.1
 Flask-WTF==1.2.2
 bump2version==1.0.1
 huggingface-hub[hf_xet]
