@@ -15,7 +15,7 @@ jobs:
     steps:
       # ✅ Step 1: Download TAG Artifact
       - name: Download TAG Artifact
-        uses: dawidd6/action-download-artifact@v10
+        uses: dawidd6/action-download-artifact@v11
         with:
           name: tag  # Match the artifact name in the Build and Push workflow
           path: .  # Download the artifact to the current directory
