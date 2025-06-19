@@ -4,6 +4,7 @@ services:
     build:
       context: ./prometheus-grafana
       dockerfile: Dockerfile.prometheus
+      network: host
     image: ${DOCKER_USERNAME}/prometheus:${TAG}
     ports:
       - "9090:9090"
@@ -19,6 +20,7 @@ services:
       dockerfile: Dockerfile.grafana
       args:
         TAG: ${TAG}
+      network: host
     image: ${DOCKER_USERNAME}/grafana:${TAG}
     ports:
       - "3000:3000"
@@ -37,17 +39,20 @@ services:
 
   # Python Flask app service
   python-app:
+    environment:
+      - PYTHONPATH=/app
     build:
       context: .
       dockerfile: ./my_app/Dockerfile.app
       args:
           TAG: ${TAG}
+      network: host
     image: ${DOCKER_USERNAME}/ai-powered-alerting-system:${TAG}
     ports:
       - "5000:5000"  # Expose Flask app on port 5000
       - "8000:8000"  # Expose Prometheus metrics on port 8000
     volumes:
-      - ./my_app:/app  # Mount app source code
+      - ./my_app:/app/my_app  # Mount app source code
     restart: unless-stopped
     depends_on:
       - prometheus

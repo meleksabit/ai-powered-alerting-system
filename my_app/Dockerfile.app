@@ -28,6 +28,7 @@ RUN python /tmp/preload_model.py
 
 # Copy application code from the root directory
 COPY my_app/ ./my_app/
+ENV PYTHONPATH=/app
 
 # Change ownership of the /app directory to the non-root user
 RUN chown -R appuser:appgroup /app
