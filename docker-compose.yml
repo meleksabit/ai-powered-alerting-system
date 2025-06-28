@@ -4,7 +4,6 @@ services:
     build:
       context: ./prometheus-grafana
       dockerfile: Dockerfile.prometheus
-      network: host
     image: ${DOCKER_USERNAME}/prometheus:${TAG}
     ports:
       - "9090:9090"
@@ -20,19 +19,26 @@ services:
       dockerfile: Dockerfile.grafana
       args:
         TAG: ${TAG}
-      network: host
     image: ${DOCKER_USERNAME}/grafana:${TAG}
     ports:
       - "3000:3000"
     volumes:
       - ./prometheus-grafana/grafana.ini:/etc/grafana/grafana.ini
       - grafana_data:/var/lib/grafana
-    secrets:
-      - grafana_admin_user
-      - grafana_admin_password
     environment:
-      - GF_SECURITY_ADMIN_USER_FILE=/run/secrets/grafana_admin_user
-      - GF_SECURITY_ADMIN_PASSWORD_FILE=/run/secrets/grafana_admin_password
+      - GF_RENDERING_SERVER_URL=http://renderer:8081/render
+      - GF_RENDERING_CALLBACK_URL=http://grafana:3000/
+    restart: unless-stopped
+    depends_on:
+      - renderer
+    networks:
+      - monitor-net
+
+  # Grafana Image Renderer service
+  renderer:
+    image: grafana/grafana-image-renderer:latest
+    ports:
+      - "8081:8081"
     restart: unless-stopped
     networks:
       - monitor-net
@@ -45,8 +51,7 @@ services:
       context: .
       dockerfile: ./my_app/Dockerfile.app
       args:
-          TAG: ${TAG}
-      network: host
+        TAG: ${TAG}
     image: ${DOCKER_USERNAME}/ai-powered-alerting-system:${TAG}
     ports:
       - "5000:5000"  # Expose Flask app on port 5000
@@ -59,13 +64,6 @@ services:
       - grafana
     networks:
       - monitor-net
-
-# Define secrets for Grafana
-secrets:
-  grafana_admin_user:
-    file: ${HOME}/secrets/grafana_admin_user.txt
-  grafana_admin_password:
-    file: ${HOME}/secrets/grafana_admin_password.txt
 
 # Define a shared network
 networks:
