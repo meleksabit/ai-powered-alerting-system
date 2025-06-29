@@ -19,6 +19,7 @@
 - [Features](#features)
 - [Prerequisites](#prerequisites)
 - [Project Structure](#%EF%B8%8Fproject-structure)
+- [Use a Custom Hugging Face Model](#use-a-custom-hugging-face-model)
 - [Installation](#installation)
 - [Docker-Related Files](#docker-related-files)
 - [Configuration](#%EF%B8%8Fconfiguration)
@@ -134,6 +135,14 @@ Here’s the structure of the project:
 #### - [![kubernetes-256x249.png](https://i.postimg.cc/26j44DNb/kubernetes-256x249.png)](https://postimg.cc/Mc4MSgTq) **_Kubernetes_**: Deployment manifests in `k8s/`.
 #### - [![Git-Hub-Actions.png](https://i.postimg.cc/BQP25pkg/Git-Hub-Actions.png)](https://postimg.cc/Vd1SmqYr) **_GitHub Actions_**: CI/CD workflows in `.github/workflows/`.
 
+## <img height="32" width="32" src="https://cdn.simpleicons.org/huggingface" /> Use a Custom Hugging Face Model
+
+### By default, the app uses the **`distilbert-base-uncased-finetuned-sst-2-english`**
+### To change it, just set the **`HF_MODEL_NAME`** environment variable:
+```bash
+export HF_MODEL_NAME="your-model-name"
+```
+
 ## 🧑‍🔧Installation
 
 ### Step 1: Clone the repository
@@ -183,9 +192,16 @@ You can also manually install Prometheus and Grafana on your local machine. Foll
 FROM python:3.11-slim-buster
 
 # App version
-LABEL version="2.0.3"
+LABEL version="2.3.2"
 
-# Install necessary system dependencies
+# Set environment variables for Hugging Face model
+ENV HF_MODEL_NAME=distilbert-base-uncased-finetuned-sst-2-english \
+    MODEL_CACHE=/model_cache \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/app
+
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
@@ -200,30 +216,30 @@ RUN groupadd -g 1000 appgroup && \
 # Copy requirements.txt from root
 COPY requirements.txt ./
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt --upgrade pip
+# Install Python dependencies
+RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
-# Preload Hugging Face models to avoid downloading on startup
-RUN python -c "from transformers import AutoModelForSequenceClassification, AutoTokenizer; \
-    AutoModelForSequenceClassification.from_pretrained('distilbert-base-uncased-finetuned-sst-2-english'); \
-    AutoTokenizer.from_pretrained('distilbert-base-uncased-finetuned-sst-2-english')"
+# Copy preload script & preload the model
+COPY my_app/preload_model.py /tmp/preload_model.py
+RUN python /tmp/preload_model.py
 
-# Copy application code from the root directory
+# Copy app source code
 COPY my_app/ ./my_app/
 
 # Change ownership of the /app directory to the non-root user
 RUN chown -R appuser:appgroup /app
 
-# Switch to the non-root user
+# Use non-root user
 USER appuser
 
-# Expose necessary ports for Flask (5000) and Prometheus metrics (8000)
+# Expose Flask and Prometheus ports
 EXPOSE 5000
 EXPOSE 8000
 
-# Run the application (starting both Prometheus and Gunicorn from Python)
+# Run the application
 CMD ["python", "my_app/start_app.py"]
 ```
+
 ### Dockerfile for Prometheus
 ```dockerfile
 # Use the official Prometheus image as the base
@@ -286,29 +302,39 @@ services:
     volumes:
       - ./prometheus-grafana/grafana.ini:/etc/grafana/grafana.ini
       - grafana_data:/var/lib/grafana
-    secrets:
-      - grafana_admin_user
-      - grafana_admin_password
     environment:
-      - GF_SECURITY_ADMIN_USER_FILE=/run/secrets/grafana_admin_user
-      - GF_SECURITY_ADMIN_PASSWORD_FILE=/run/secrets/grafana_admin_password  # Expose Grafana on port 3000
+      - GF_RENDERING_SERVER_URL=http://renderer:8081/render
+      - GF_RENDERING_CALLBACK_URL=http://grafana:3000/
+    restart: unless-stopped
+    depends_on:
+      - renderer
+    networks:
+      - monitor-net
+
+  # Grafana Image Renderer service
+  renderer:
+    image: grafana/grafana-image-renderer:latest
+    ports:
+      - "8081:8081"
     restart: unless-stopped
     networks:
       - monitor-net
 
   # Python Flask app service
   python-app:
+    environment:
+      - PYTHONPATH=/app
     build:
       context: .
       dockerfile: ./my_app/Dockerfile.app
       args:
-          TAG: ${TAG}
+        TAG: ${TAG}
     image: ${DOCKER_USERNAME}/ai-powered-alerting-system:${TAG}
     ports:
       - "5000:5000"  # Expose Flask app on port 5000
       - "8000:8000"  # Expose Prometheus metrics on port 8000
     volumes:
-      - ./my_app:/app  # Mount app source code
+      - ./my_app:/app/my_app  # Mount app source code
     restart: unless-stopped
     depends_on:
       - prometheus
@@ -316,19 +342,12 @@ services:
     networks:
       - monitor-net
 
-# Define secrets for Grafana
-secrets:
-  grafana_admin_user:
-    file: ${HOME}/secrets/grafana_admin_user.txt
-  grafana_admin_password:
-    file: ${HOME}/secrets/grafana_admin_password.txt
-
 # Define a shared network
 networks:
   monitor-net:
     driver: bridge
 
-# Define a volume for Prometheus data storage
+# Define a volume for Prometheus & Grafana data storage
 volumes:
   prometheus_data:
   grafana_data:
@@ -379,7 +398,7 @@ groups:
   - name: critical_alert_rules
     rules:
       - alert: CriticalLogAlert
-        expr: log_severity{level="critical"} > 0
+        expr: log_severity{severity="critical"} > 0
         for: 1m
         labels:
           severity: "critical"
