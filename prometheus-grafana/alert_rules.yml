@@ -2,7 +2,7 @@ groups:
   - name: critical_alert_rules
     rules:
       - alert: CriticalLogAlert
-        expr: log_severity{level="critical"} > 0
+        expr: log_severity{severity="critical"} > 0
         for: 1m
         labels:
           severity: "critical"
