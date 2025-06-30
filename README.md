@@ -19,7 +19,7 @@
 - [Features](#features)
 - [Prerequisites](#prerequisites)
 - [Project Structure](#%EF%B8%8Fproject-structure)
-- [Use a Custom Hugging Face Model](#use-a-custom-hugging-face-model)
+- [Use a Custom Hugging Face Model](#-use-a-custom-hugging-face-model)
 - [Installation](#installation)
 - [Docker-Related Files](#docker-related-files)
 - [Configuration](#%EF%B8%8Fconfiguration)
