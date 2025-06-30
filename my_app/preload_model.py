@@ -1,6 +1,7 @@
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
+import os
+from transformers import pipeline
 
-print("⏬ Downloading Hugging Face model and tokenizer...")
-AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english", cache_dir="/model_cache")
-AutoTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english", cache_dir="/model_cache")
-print("✅ Model and tokenizer downloaded successfully!")
+model_name = os.getenv("HF_MODEL_NAME", "distilbert-base-uncased-finetuned-sst-2-english")
+cache_dir = os.getenv("MODEL_CACHE", "/model_cache")
+
+pipeline("text-classification", model=model_name, tokenizer=model_name, cache_dir=cache_dir)
