@@ -1,4 +1,4 @@
-transformers==4.53.1
+transformers==4.53.2
 prometheus-client==0.22.1
 requests==2.32.4
 torch==2.7.1
@@ -6,9 +6,9 @@ flask==3.1.1
 gunicorn==23.0.0
 yagmail==0.15.293
 slack-bolt==1.23.0
-slack-sdk==3.35.0
+slack-sdk==3.36.0
 pytest==8.4.1
 pytest-cov==6.2.1
 Flask-WTF==1.2.2
 bump4version==1.0.0.dev3
-huggingface-hub[hf_xet]==0.33.2
+huggingface-hub[hf_xet]==0.33.4
