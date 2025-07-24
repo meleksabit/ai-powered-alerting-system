@@ -1,5 +1,5 @@
 # Use a slim version of Python to reduce image size
-FROM python:3.11-slim-bullseye
+FROM python:3.13-slim-bullseye
 
 # App version
 LABEL version="2.3.2"
