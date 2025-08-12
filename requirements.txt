@@ -1,7 +1,7 @@
-transformers==4.53.2
+transformers==4.55.0
 prometheus-client==0.22.1
 requests==2.32.4
-torch==2.7.1
+torch==2.8.0
 flask==3.1.1
 gunicorn==23.0.0
 yagmail==0.15.293
@@ -11,4 +11,4 @@ pytest==8.4.1
 pytest-cov==6.2.1
 Flask-WTF==1.2.2
 bump4version==1.0.0.dev3
-huggingface-hub[hf_xet]==0.33.4
+huggingface-hub[hf_xet]==0.34.4
