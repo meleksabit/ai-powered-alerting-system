@@ -20,7 +20,7 @@ jobs:
     steps:
       # Checkout the code from the repository
       - name: Checkout code
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5
 
       # Run Kubescape scan using the GitHub Action for SARIF output
       - name: Run Kubescape scan (SARIF output)
