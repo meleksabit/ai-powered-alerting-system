@@ -2,7 +2,7 @@ transformers==4.55.4
 prometheus-client==0.22.1
 requests==2.32.5
 torch==2.8.0
-flask==3.1.1
+flask==3.1.2
 gunicorn==23.0.0
 yagmail==0.15.293
 slack-bolt==1.23.0
