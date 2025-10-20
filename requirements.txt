@@ -1,7 +1,7 @@
 transformers==4.56.2
 prometheus-client==0.23.1
 requests==2.32.5
-torch==2.8.0
+torch==2.9.0
 flask==3.1.2
 gunicorn==23.0.0
 yagmail==0.15.293
