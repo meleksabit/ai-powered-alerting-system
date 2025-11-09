@@ -9,8 +9,8 @@ on:
 jobs:
   scan:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    name: Scan Docker Images for Vulnerabilities
     runs-on: ubuntu-latest
+    name: Scan Docker Images for Vulnerabilities
     env:
       TRIVY_CACHE_DIR: /home/runner/work/trivy-cache
       TMPDIR: /home/runner/work/tmp
@@ -20,7 +20,7 @@ jobs:
         run: |
           mkdir -p $TRIVY_CACHE_DIR
           mkdir -p $TMPDIR
-          echo "Expanded /tmp to $TMPDIR"
+          echo "Expanded temporary space at $TMPDIR"
 
       - name: Download TAG Artifact
         uses: dawidd6/action-download-artifact@v11
@@ -40,8 +40,11 @@ jobs:
       - name: Install Trivy
         run: |
           sudo apt-get update && sudo apt-get install -y wget
-          wget https://github.com/aquasecurity/trivy/releases/download/v0.59.1/trivy_0.59.1_Linux-64bit.deb
-          sudo dpkg -i trivy_0.59.1_Linux-64bit.deb
+          wget https://github.com/aquasecurity/trivy/releases/download/v0.67.2/trivy_0.67.2_Linux-64bit.deb
+          sudo dpkg -i trivy_0.67.2_Linux-64bit.deb
+
+      - name: Pre-download Trivy DB
+        run: trivy --download-db-only
 
       - name: Log in to DockerHub
         uses: docker/login-action@v3.6.0
@@ -52,23 +55,23 @@ jobs:
       - name: Pull and Scan Python App Image
         run: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${{ env.TAG }}
-          trivy image --severity HIGH,CRITICAL --ignore-unfixed \
+          trivy image --light --severity HIGH,CRITICAL --ignore-unfixed \
             ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${{ env.TAG }}
           docker system prune -af
-          sudo rm -rf /tmp/*
+          rm -rf $TRIVY_CACHE_DIR/*
 
       - name: Pull and Scan Prometheus Image
         run: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/prometheus:${{ env.TAG }}
-          trivy image --severity HIGH,CRITICAL --ignore-unfixed \
+          trivy image --light --severity HIGH,CRITICAL --ignore-unfixed \
             ${{ secrets.DOCKER_USERNAME }}/prometheus:${{ env.TAG }}
           docker system prune -af
-          sudo rm -rf /tmp/*
+          rm -rf $TRIVY_CACHE_DIR/*
 
       - name: Pull and Scan Grafana Image
         run: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/grafana:${{ env.TAG }}
-          trivy image --severity HIGH,CRITICAL --ignore-unfixed \
+          trivy image --light --severity HIGH,CRITICAL --ignore-unfixed \
             ${{ secrets.DOCKER_USERNAME }}/grafana:${{ env.TAG }}
           docker system prune -af
-          sudo rm -rf /tmp/*
+          rm -rf $TRIVY_CACHE_DIR/*
