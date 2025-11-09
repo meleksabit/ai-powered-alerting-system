@@ -13,10 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TRIVY_CACHE_DIR: /home/runner/work/trivy-cache
+      TMPDIR: /home/runner/work/tmp
 
     steps:
-      - name: Prepare Cache Space
-        run: mkdir -p $TRIVY_CACHE_DIR
+      - name: Prepare Space
+        run: |
+          mkdir -p $TRIVY_CACHE_DIR
+          mkdir -p $TMPDIR
+          echo "Expanded /tmp to $TMPDIR"
 
       - name: Download TAG Artifact
         uses: dawidd6/action-download-artifact@v11
