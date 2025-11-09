@@ -14,6 +14,8 @@ jobs:
     env:
       TRIVY_CACHE_DIR: /home/runner/work/trivy-cache
       TMPDIR: /home/runner/work/tmp
+      TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db
+
 
     steps:
       - name: Prepare Space
@@ -44,7 +46,7 @@ jobs:
           sudo dpkg -i trivy_0.67.2_Linux-64bit.deb
 
       - name: Pre-download Trivy DB
-        run: trivy --download-db-only
+        run: trivy db update --cache-dir $TRIVY_CACHE_DIR
 
       - name: Log in to DockerHub
         uses: docker/login-action@v3.6.0
