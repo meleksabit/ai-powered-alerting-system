@@ -2,67 +2,69 @@ name: Docker Vulnerability Scan
 
 on:
   workflow_run:
-    workflows: ["Docker Build and Push to DockerHub"]  # Triggered after the Build and Push workflow
+    workflows: ["Docker Build and Push to DockerHub"]
     types:
       - completed
 
 jobs:
   scan:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}  # Ensure the Build and Push workflow completed successfully
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Scan Docker Images for Vulnerabilities
     runs-on: ubuntu-latest
+    env:
+      TRIVY_CACHE_DIR: /home/runner/work/trivy-cache
 
     steps:
-      # ✅ Step 1: Download TAG Artifact
+      - name: Prepare Cache Space
+        run: mkdir -p $TRIVY_CACHE_DIR
+
       - name: Download TAG Artifact
         uses: dawidd6/action-download-artifact@v11
         with:
-          name: tag  # Match the artifact name in the Build and Push workflow
-          path: .  # Download the artifact to the current directory
+          name: tag
+          path: .
           github_token: ${{ secrets.GITHUB_TOKEN }}
           workflow_search: true
           repo: meleksabit/ai-powered-alerting-system
           workflow_conclusion: success
 
-      # ✅ Step 2: Debug TAG File
-      - name: Debug TAG File
-        run: cat tag.txt
-
-      # ✅ Step 3: Load TAG
       - name: Load TAG
         run: |
           TAG=$(cat tag.txt)
-          echo "Using TAG: $TAG"
           echo "TAG=$TAG" >> $GITHUB_ENV
 
-      # ✅ Step 4: Install Trivy
       - name: Install Trivy
         run: |
           sudo apt-get update && sudo apt-get install -y wget
           wget https://github.com/aquasecurity/trivy/releases/download/v0.59.1/trivy_0.59.1_Linux-64bit.deb
           sudo dpkg -i trivy_0.59.1_Linux-64bit.deb
 
-      # ✅ Step 5: Log in to DockerHub
       - name: Log in to DockerHub
         uses: docker/login-action@v3.6.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PAT }}
 
-      # ✅ Step 6: Pull and Scan Python App Image
       - name: Pull and Scan Python App Image
         run: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${{ env.TAG }}
-          trivy image ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${{ env.TAG }}
+          trivy image --severity HIGH,CRITICAL --ignore-unfixed \
+            ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${{ env.TAG }}
+          docker system prune -af
+          sudo rm -rf /tmp/*
 
-      # ✅ Step 7: Pull and Scan Prometheus Image
       - name: Pull and Scan Prometheus Image
         run: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/prometheus:${{ env.TAG }}
-          trivy image ${{ secrets.DOCKER_USERNAME }}/prometheus:${{ env.TAG }}
+          trivy image --severity HIGH,CRITICAL --ignore-unfixed \
+            ${{ secrets.DOCKER_USERNAME }}/prometheus:${{ env.TAG }}
+          docker system prune -af
+          sudo rm -rf /tmp/*
 
-      # ✅ Step 8: Pull and Scan Grafana Image
       - name: Pull and Scan Grafana Image
         run: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/grafana:${{ env.TAG }}
-          trivy image ${{ secrets.DOCKER_USERNAME }}/grafana:${{ env.TAG }}
+          trivy image --severity HIGH,CRITICAL --ignore-unfixed \
+            ${{ secrets.DOCKER_USERNAME }}/grafana:${{ env.TAG }}
+          docker system prune -af
+          sudo rm -rf /tmp/*
