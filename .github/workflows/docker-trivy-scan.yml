@@ -44,6 +44,8 @@ jobs:
           sudo apt-get update && sudo apt-get install -y wget
           wget https://github.com/aquasecurity/trivy/releases/download/v0.67.2/trivy_0.67.2_Linux-64bit.deb
           sudo dpkg -i trivy_0.67.2_Linux-64bit.deb
+          sudo cp /usr/local/bin/trivy /usr/bin/trivy || true
+          trivy --version
 
       - name: Pre-download Trivy DB
         run: trivy db update --cache-dir $TRIVY_CACHE_DIR
