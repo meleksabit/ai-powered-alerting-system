@@ -39,12 +39,17 @@ jobs:
           TAG=$(cat tag.txt)
           echo "TAG=$TAG" >> $GITHUB_ENV
 
-      - name: Install Trivy
+      - name: Remove preinstalled Trivy
+        run: |
+          sudo rm -f $(which trivy) || true
+          sudo rm -rf /opt/hostedtoolcache/trivy || true
+
+      - name: Install Trivy v0.67.2
         run: |
           sudo apt-get update && sudo apt-get install -y wget
           wget https://github.com/aquasecurity/trivy/releases/download/v0.67.2/trivy_0.67.2_Linux-64bit.deb
           sudo dpkg -i trivy_0.67.2_Linux-64bit.deb
-          sudo cp /usr/local/bin/trivy /usr/bin/trivy || true
+          which trivy
           trivy --version
 
       - name: Pre-download Trivy DB
