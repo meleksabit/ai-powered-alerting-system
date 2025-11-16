@@ -10,21 +10,31 @@ jobs:
   scan:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    name: Scan Docker Images for Vulnerabilities
-    env:
-      TRIVY_CACHE_DIR: /home/runner/work/trivy-cache
-      TMPDIR: /home/runner/work/tmp
-      TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db
-
 
     steps:
-      - name: Prepare Space
+      ######################################################################
+      # 1. EXPAND DISK SPACE
+      ######################################################################
+      - name: Expand available disk space for Trivy + Docker
         run: |
-          mkdir -p $TRIVY_CACHE_DIR
-          mkdir -p $TMPDIR
-          echo "Expanded temporary space at $TMPDIR"
+          echo "Allocating additional disk..."
+          sudo fallocate -l 15G /mnt/extra.img
+          sudo mkfs.ext4 /mnt/extra.img
+          sudo mkdir -p /mnt/extra
+          sudo mount -o loop /mnt/extra.img /mnt/extra
+          sudo chown -R $USER:$USER /mnt/extra
 
-      - name: Download TAG Artifact
+          echo "Setting up directories..."
+          mkdir -p /mnt/extra/tmp
+          mkdir -p /mnt/extra/trivy-cache
+
+          echo "TMPDIR=/mnt/extra/tmp" >> $GITHUB_ENV
+          echo "TRIVY_CACHE_DIR=/mnt/extra/trivy-cache" >> $GITHUB_ENV
+
+      ######################################################################
+      # 2. DOWNLOAD IMAGE TAG ARTIFACT
+      ######################################################################
+      - name: Download TAG artifact
         uses: dawidd6/action-download-artifact@v11
         with:
           name: tag
@@ -39,48 +49,49 @@ jobs:
           TAG=$(cat tag.txt)
           echo "TAG=$TAG" >> $GITHUB_ENV
 
-      - name: Remove preinstalled Trivy
+      ######################################################################
+      # 3. INSTALL TRIVY
+      ######################################################################
+      - name: Install Trivy
         run: |
-          sudo rm -f $(which trivy) || true
-          sudo rm -rf /opt/hostedtoolcache/trivy || true
-
-      - name: Install Trivy v0.67.2
-        run: |
-          sudo apt-get update && sudo apt-get install -y wget
+          sudo apt-get update -y
+          sudo apt-get install -y wget
           wget https://github.com/aquasecurity/trivy/releases/download/v0.67.2/trivy_0.67.2_Linux-64bit.deb
           sudo dpkg -i trivy_0.67.2_Linux-64bit.deb
-          which trivy
           trivy --version
 
-      - name: Pre-download Trivy DB
-        run: trivy image --download-db-only --cache-dir $TRIVY_CACHE_DIR
-
+      ######################################################################
+      # 4. DOCKER LOGIN
+      ######################################################################
       - name: Log in to DockerHub
         uses: docker/login-action@v3.6.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PAT }}
 
-      - name: Pull and Scan Python App Image
+      ######################################################################
+      # 5. IMAGE SCANNING FUNCTION (REUSABLE)
+      ######################################################################
+      - name: Scan Images (App, Prometheus, Grafana)
         run: |
-          docker pull ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${{ env.TAG }}
-          trivy image --light --severity HIGH,CRITICAL --ignore-unfixed \
-            ${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${{ env.TAG }}
-          docker system prune -af
-          rm -rf $TRIVY_CACHE_DIR/*
+          scan() {
+            local IMAGE="$1"
+            echo "=== Pulling $IMAGE ==="
+            docker pull "$IMAGE"
 
-      - name: Pull and Scan Prometheus Image
-        run: |
-          docker pull ${{ secrets.DOCKER_USERNAME }}/prometheus:${{ env.TAG }}
-          trivy image --light --severity HIGH,CRITICAL --ignore-unfixed \
-            ${{ secrets.DOCKER_USERNAME }}/prometheus:${{ env.TAG }}
-          docker system prune -af
-          rm -rf $TRIVY_CACHE_DIR/*
+            echo "=== Scanning $IMAGE ==="
+            trivy image \
+              --scanners vuln \
+              --severity HIGH,CRITICAL \
+              --ignore-unfixed \
+              --cache-dir "$TRIVY_CACHE_DIR" \
+              "$IMAGE"
 
-      - name: Pull and Scan Grafana Image
-        run: |
-          docker pull ${{ secrets.DOCKER_USERNAME }}/grafana:${{ env.TAG }}
-          trivy image --light --severity HIGH,CRITICAL --ignore-unfixed \
-            ${{ secrets.DOCKER_USERNAME }}/grafana:${{ env.TAG }}
-          docker system prune -af
-          rm -rf $TRIVY_CACHE_DIR/*
+            echo "Cleaning temporary data..."
+            docker system prune -af || true
+            rm -rf "$TMPDIR"/* || true
+          }
+
+          scan "${{ secrets.DOCKER_USERNAME }}/ai-powered-alerting-system:${{ env.TAG }}"
+          scan "${{ secrets.DOCKER_USERNAME }}/prometheus:${{ env.TAG }}"
+          scan "${{ secrets.DOCKER_USERNAME }}/grafana:${{ env.TAG }}"
