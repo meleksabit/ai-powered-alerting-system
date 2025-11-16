@@ -27,7 +27,9 @@ RUN groupadd -g 1000 appgroup && \
 COPY requirements.txt ./
 
 # Install git (required for installing transformers from GitHub)
-RUN apt-get update && apt-get install -y git
+RUN apt-get update -qq && \
+    apt-get install -y --no-install-recommends git && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
