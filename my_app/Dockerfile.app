@@ -11,9 +11,11 @@ ENV HF_MODEL_NAME=distilbert-base-uncased-finetuned-sst-2-english \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Install system dependencies (build-essential + git)
+RUN apt-get update -qq && \
+    apt-get install -y --no-install-recommends \
     build-essential \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory in the container
@@ -25,11 +27,6 @@ RUN groupadd -g 1000 appgroup && \
 
 # Copy requirements.txt from root
 COPY requirements.txt ./
-
-# Install git (required for installing transformers from GitHub)
-RUN apt-get update -qq && \
-    apt-get install -y --no-install-recommends git && \
-    rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
