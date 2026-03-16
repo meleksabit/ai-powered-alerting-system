@@ -35,7 +35,7 @@ jobs:
       # 2. DOWNLOAD IMAGE TAG ARTIFACT
       ######################################################################
       - name: Download TAG artifact
-        uses: dawidd6/action-download-artifact@v12
+        uses: dawidd6/action-download-artifact@v18
         with:
           name: tag
           path: .
