@@ -56,8 +56,8 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo apt-get install -y wget
-          wget https://github.com/aquasecurity/trivy/releases/download/v0.67.2/trivy_0.67.2_Linux-64bit.deb
-          sudo dpkg -i trivy_0.67.2_Linux-64bit.deb
+          wget https://github.com/aquasecurity/trivy/releases/download/v0.69.3/trivy_0.69.3_Linux-64bit.deb
+          sudo dpkg -i trivy_0.69.3_Linux-64bit.deb
           trivy --version
 
       ######################################################################
