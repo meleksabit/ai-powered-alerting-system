@@ -4,7 +4,7 @@ requests==2.34.2
 torch==2.12.0
 flask==3.1.3
 gunicorn==26.0.0
-yagmail==0.15.293
+yagmail==0.16.0
 slack-sdk==3.42.0
 slack-bolt==1.28.0
 pytest==9.0.3
