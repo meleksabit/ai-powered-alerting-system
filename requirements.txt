@@ -1,5 +1,5 @@
 git+https://github.com/huggingface/transformers.git
-prometheus-client==0.25.0
+prometheus-client==0.26.0
 requests==2.34.2
 torch==2.12.0
 flask==3.1.3
